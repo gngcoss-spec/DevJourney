@@ -1,0 +1,10 @@
+{
+  "project": "DevJourney",
+  "mode": "normal",
+  "currentPhase": 0,
+  "currentTask": null,
+  "completedTasks": [],
+  "failedTasks": [],
+  "startedAt": "2026-02-11T22:00:00Z",
+  "slackWebhookUrl": null
+}

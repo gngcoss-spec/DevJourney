@@ -8,7 +8,17 @@
       "Bash(npx vitest run)",
       "Bash(npx next build:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git branch:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nchore: initialize DevJourney project\n\n- Next.js 14+ \\(App Router\\) + TypeScript + Tailwind CSS\n- Supabase client setup \\(browser + server\\)\n- TanStack Query, Zustand, React Hook Form + Zod\n- shadcn/ui dependencies \\(Radix, lucide-react, clsx, tailwind-merge\\)\n- @dnd-kit \\(Kanban\\), Recharts \\(charts\\), Framer Motion\n- Vitest + React Testing Library test setup\n- 7 planning docs \\(PRD, TRD, User Flow, DB Design, Design System, Screens, Coding Convention\\)\n- 11 screen specs \\(YAML v2.0\\) + domain resources + shared components/types\n- TASKS.md with 39 tasks across 5 phases\n- Agent team: backend/frontend/database/test specialists\n- Orchestrate command for automated development workflow\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(dir:*)",
+      "Bash(npx shadcn@latest init:*)",
+      "Bash(ls:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npx next lint:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

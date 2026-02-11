@@ -76,7 +76,7 @@ flowchart TD
 
 > main 브랜치에서 작업 (Worktree 불필요)
 
-### [ ] P0-T0.1: Next.js + TypeScript + Tailwind 초기화
+### [x] P0-T0.1: Next.js + TypeScript + Tailwind 초기화
 - **담당**: frontend-specialist
 - **스펙**: Next.js 14+ App Router, TypeScript strict mode, Tailwind CSS 3.x 프로젝트 생성
 - **파일**: `package.json`, `tsconfig.json`, `tailwind.config.ts`, `next.config.js`
@@ -85,7 +85,7 @@ flowchart TD
   - [ ] TypeScript strict mode 활성화
   - [ ] Tailwind CSS 동작 확인
 
-### [ ] P0-T0.2: Supabase 프로젝트 연결
+### [x] P0-T0.2: Supabase 프로젝트 연결
 - **담당**: backend-specialist
 - **스펙**: Supabase 클라이언트/서버 설정, 환경 변수 구성
 - **파일**: `src/lib/supabase/client.ts`, `src/lib/supabase/server.ts`, `.env.local.example`
@@ -95,7 +95,7 @@ flowchart TD
   - [ ] Supabase 서버 클라이언트 (`createServerClient`)
   - [ ] `.env.local.example`에 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-### [ ] P0-T0.3: shadcn/ui + 디자인 토큰 설정
+### [x] P0-T0.3: shadcn/ui + 디자인 토큰 설정
 - **담당**: frontend-specialist
 - **스펙**: shadcn/ui 설치, 05-design-system.md 기반 다크 모드 색상/타이포 설정
 - **파일**: `components.json`, `src/app/globals.css`, `tailwind.config.ts`
@@ -106,7 +106,7 @@ flowchart TD
   - [ ] Inter + JetBrains Mono 폰트 설정
   - [ ] 기본 컴포넌트: Button, Input, Badge, Card, Dialog, Tabs, Select, Textarea
 
-### [ ] P0-T0.4: 프로젝트 구조 생성
+### [x] P0-T0.4: 프로젝트 구조 생성
 - **담당**: frontend-specialist
 - **스펙**: TRD 기반 폴더 구조 생성
 - **파일**: `src/app/`, `src/components/`, `src/lib/`
