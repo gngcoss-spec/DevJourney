@@ -75,9 +75,12 @@ export interface AISession {
 
 export type CreateAISessionInput = Pick<AISession, 'work_item_id' | 'title'> & Partial<Pick<AISession, 'provider' | 'session_url' | 'summary' | 'key_decisions'>>;
 
+// @TASK P4-R1-T1 - Dev Log interface with user tracking
+// @SPEC docs/planning/TASKS.md#dev-logs-table
 export interface DevLog {
   id: string;
   service_id: string;
+  user_id: string;
   log_date: string;
   done: string | null;
   decided: string | null;
@@ -86,6 +89,10 @@ export interface DevLog {
   created_at: string;
   updated_at: string;
 }
+
+export type CreateDevLogInput = Pick<DevLog, 'service_id'> & Partial<Pick<DevLog, 'done' | 'decided' | 'deferred' | 'next_action' | 'log_date'>>;
+
+export type UpdateDevLogInput = Partial<Pick<DevLog, 'done' | 'decided' | 'deferred' | 'next_action'>>;
 
 // @TASK P3-R3-T1 - Work item comments interface with user tracking
 // @SPEC docs/planning/TASKS.md#work-item-comments-table

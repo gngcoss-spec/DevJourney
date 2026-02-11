@@ -13,7 +13,9 @@ export const queryKeys = {
   },
   devLogs: {
     all: ['dev-logs'] as const,
+    byService: (serviceId: string) => ['dev-logs', 'service', serviceId] as const,
     detail: (id: string) => ['dev-logs', id] as const,
+    byDate: (serviceId: string, date: string) => ['dev-logs', serviceId, date] as const,
   },
   dashboard: {
     stats: ['dashboard', 'stats'] as const,

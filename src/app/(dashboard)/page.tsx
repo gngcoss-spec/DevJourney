@@ -1,19 +1,23 @@
 // @TASK P2-S1-T1 - Dashboard UI with TDD
+// @TASK P4-S3-T1 - Dashboard Integrated Dev Log Tab
 // @SPEC docs/planning/TASKS.md#dashboard-ui
 // @TEST src/__tests__/pages/dashboard.test.tsx
 
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useServices } from '@/lib/hooks/use-services';
 import { SummaryCards } from '@/components/dashboard/summary-cards';
 import { MilestoneChart } from '@/components/dashboard/milestone-chart';
 import { ServiceCardList } from '@/components/dashboard/service-card-list';
+import { IntegratedLogTab } from '@/components/dashboard/integrated-log-tab';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
 export default function DashboardPage() {
   const { data: services, isLoading, isError } = useServices();
+  const [activeTab, setActiveTab] = useState<'services' | 'logs'>('services');
 
   // 로딩 상태
   if (isLoading) {
@@ -86,8 +90,53 @@ export default function DashboardPage() {
       <MilestoneChart services={services} />
 
       <div>
-        <h2 className="text-2xl font-bold text-slate-50 mb-4">서비스 목록</h2>
-        <ServiceCardList services={services} />
+        {/* Tab buttons */}
+        <div className="flex items-center gap-2 mb-4" role="tablist">
+          <button
+            onClick={() => setActiveTab('services')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'services'
+                ? 'bg-slate-800 text-slate-50 font-semibold'
+                : 'bg-transparent text-slate-400 hover:text-slate-300'
+            }`}
+            role="tab"
+            aria-selected={activeTab === 'services'}
+            aria-controls="services-panel"
+          >
+            서비스 목록
+          </button>
+          <button
+            onClick={() => setActiveTab('logs')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'logs'
+                ? 'bg-slate-800 text-slate-50 font-semibold'
+                : 'bg-transparent text-slate-400 hover:text-slate-300'
+            }`}
+            role="tab"
+            aria-selected={activeTab === 'logs'}
+            aria-controls="logs-panel"
+          >
+            통합 로그
+          </button>
+        </div>
+
+        {/* Tab panels */}
+        <div
+          id="services-panel"
+          role="tabpanel"
+          aria-labelledby="services-tab"
+          hidden={activeTab !== 'services'}
+        >
+          {activeTab === 'services' && <ServiceCardList services={services} />}
+        </div>
+        <div
+          id="logs-panel"
+          role="tabpanel"
+          aria-labelledby="logs-tab"
+          hidden={activeTab !== 'logs'}
+        >
+          {activeTab === 'logs' && <IntegratedLogTab />}
+        </div>
       </div>
     </div>
   );
