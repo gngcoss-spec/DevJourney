@@ -4,6 +4,8 @@
 import SidebarNavigation from '@/components/layout/sidebar-navigation';
 import { QueryProvider } from '@/components/providers/query-provider';
 
+export const dynamic = 'force-dynamic';
+
 export default function DashboardLayout({
   children,
 }: {
