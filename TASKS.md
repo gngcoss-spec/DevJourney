@@ -222,7 +222,7 @@ flowchart TD
 
 ### P2-R1: Services Resource
 
-#### [ ] P2-R1-T1: Services DB 스키마 + RLS 구현
+#### [x] P2-R1-T1: Services DB 스키마 + RLS 구현
 - **담당**: database-specialist
 - **리소스**: services
 - **스펙**: services 테이블 생성, RLS 정책, 인덱스, updated_at 트리거, last_activity_at 트리거
@@ -237,7 +237,7 @@ flowchart TD
   - [ ] current_stage ENUM: idea/planning/design/development/testing/launch/enhancement
   - [ ] status ENUM: active/stalled/paused
 
-#### [ ] P2-R1-T2: Services 쿼리 함수 구현
+#### [x] P2-R1-T2: Services 쿼리 함수 구현
 - **담당**: backend-specialist
 - **리소스**: services
 - **스펙**: Supabase 쿼리 함수 (CRUD + 목록)
@@ -253,7 +253,7 @@ flowchart TD
   - [ ] `deleteService(id)` - 삭제
   - [ ] TypeScript 타입 (`Service`, `CreateServiceInput`, `UpdateServiceInput`)
 
-#### [ ] P2-R1-T3: Services TanStack Query 훅 구현
+#### [x] P2-R1-T3: Services TanStack Query 훅 구현
 - **담당**: frontend-specialist
 - **리소스**: services
 - **스펙**: TanStack Query 훅 (useQuery, useMutation)
@@ -272,7 +272,7 @@ flowchart TD
 
 ### P2-S1: Dashboard 화면
 
-#### [ ] P2-S1-T1: Dashboard UI 구현
+#### [x] P2-S1-T1: Dashboard UI 구현
 - **담당**: frontend-specialist
 - **화면**: /
 - **컴포넌트**: SummaryCards (stat-card x4), MilestoneChart (chart), ServiceCardList (grid)
@@ -290,7 +290,7 @@ flowchart TD
   - [ ] 정체 경고: 7일 이상 활동 없음 → 노란색
   - [ ] 서비스 카드 클릭 → `/services/[id]` 이동
 
-#### [ ] P2-S1-V: Dashboard 연결점 검증
+#### [x] P2-S1-V: Dashboard 연결점 검증
 - **담당**: test-specialist
 - **화면**: /
 - **검증 항목**:
@@ -302,7 +302,7 @@ flowchart TD
 
 ### P2-S2: Services 목록 화면
 
-#### [ ] P2-S2-T1: Services 목록 UI 구현
+#### [x] P2-S2-T1: Services 목록 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /services
 - **컴포넌트**: ServicesHeader, ServicesSearch, ServicesTable
@@ -320,7 +320,7 @@ flowchart TD
   - [ ] "새 서비스" 버튼 → `/services/new`
   - [ ] 행 클릭 → `/services/[id]`
 
-#### [ ] P2-S2-V: Services 목록 연결점 검증
+#### [x] P2-S2-V: Services 목록 연결점 검증
 - **담당**: test-specialist
 - **화면**: /services
 - **검증 항목**:
@@ -332,7 +332,7 @@ flowchart TD
 
 ### P2-S3: Service 등록/편집 폼
 
-#### [ ] P2-S3-T1: Service 폼 UI 구현
+#### [x] P2-S3-T1: Service 폼 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /services/new, /services/[id]/edit
 - **컴포넌트**: ServiceForm (8개 필드)
@@ -351,7 +351,7 @@ flowchart TD
   - [ ] 생성 모드: 빈 폼 → 저장 → `/services` 이동
   - [ ] 편집 모드: 기존 데이터 프리필 → 저장
 
-#### [ ] P2-S3-V: Service 폼 연결점 검증
+#### [x] P2-S3-V: Service 폼 연결점 검증
 - **담당**: test-specialist
 - **화면**: /services/new, /services/[id]/edit
 - **검증 항목**:
@@ -363,7 +363,7 @@ flowchart TD
 
 ### P2-S4: Service Overview 화면
 
-#### [ ] P2-S4-T1: Service Overview UI 구현
+#### [x] P2-S4-T1: Service Overview UI 구현
 - **담당**: frontend-specialist
 - **화면**: /services/[id]
 - **컴포넌트**: ServiceHeader, DetailMilestoneChart, ServiceInfo, RecentDecisions, ServiceTabs
@@ -381,7 +381,7 @@ flowchart TD
   - [ ] 최근 의사결정 목록 (Work Item의 decision 필드)
   - [ ] 4탭 네비게이션 (Overview/Board/Work Items/Dev Logs)
 
-#### [ ] P2-S4-V: Service Overview 연결점 검증
+#### [x] P2-S4-V: Service Overview 연결점 검증
 - **담당**: test-specialist
 - **화면**: /services/[id]
 - **검증 항목**:
