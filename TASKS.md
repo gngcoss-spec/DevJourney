@@ -400,7 +400,7 @@ flowchart TD
 
 ### P3-R1: Work Items Resource
 
-#### [ ] P3-R1-T1: Work Items DB 스키마 + RLS 구현
+#### [x] P3-R1-T1: Work Items DB 스키마 + RLS 구현
 - **담당**: database-specialist
 - **리소스**: work_items
 - **스펙**: work_items 테이블, RLS, 인덱스, service last_activity_at 트리거
@@ -415,7 +415,7 @@ flowchart TD
   - [ ] type ENUM: feature/bug/refactor/infra/ai-prompt
   - [ ] status ENUM: backlog/ready/in-progress/review/done
 
-#### [ ] P3-R1-T2: Work Items 쿼리 함수 구현
+#### [x] P3-R1-T2: Work Items 쿼리 함수 구현
 - **담당**: backend-specialist
 - **리소스**: work_items
 - **스펙**: Supabase 쿼리 함수 (CRUD + 상태별 조회 + 위치 업데이트)
@@ -433,7 +433,7 @@ flowchart TD
   - [ ] `deleteWorkItem(id)` - 삭제
   - [ ] TypeScript 타입 (`WorkItem`, `CreateWorkItemInput`)
 
-#### [ ] P3-R1-T3: Work Items TanStack Query 훅 구현
+#### [x] P3-R1-T3: Work Items TanStack Query 훅 구현
 - **담당**: frontend-specialist
 - **리소스**: work_items
 - **스펙**: TanStack Query 훅 + Kanban 낙관적 업데이트
@@ -452,7 +452,7 @@ flowchart TD
 
 ### P3-R2: AI Sessions Resource
 
-#### [ ] P3-R2-T1: AI Sessions DB 스키마 + 쿼리 구현
+#### [x] P3-R2-T1: AI Sessions DB 스키마 + 쿼리 구현
 - **담당**: database-specialist
 - **리소스**: ai_sessions
 - **스펙**: ai_sessions 테이블, RLS, 쿼리 함수
@@ -472,7 +472,7 @@ flowchart TD
 
 ### P3-R3: Work Item Comments Resource
 
-#### [ ] P3-R3-T1: Comments DB 스키마 + 쿼리 구현
+#### [x] P3-R3-T1: Comments DB 스키마 + 쿼리 구현
 - **담당**: database-specialist
 - **리소스**: work_item_comments
 - **스펙**: work_item_comments 테이블, RLS, 쿼리 함수 (커멘트 + 상태변경 로그)
@@ -492,7 +492,7 @@ flowchart TD
 
 ### P3-S1: Kanban Board 화면
 
-#### [ ] P3-S1-T1: Kanban Board UI 구현
+#### [x] P3-S1-T1: Kanban Board UI 구현
 - **담당**: frontend-specialist
 - **화면**: /services/[id]/board
 - **컴포넌트**: KanbanBoard, KanbanColumn, WorkItemCard, QuickCreateModal
@@ -511,7 +511,7 @@ flowchart TD
   - [ ] "+" 빠른 생성 → 제목 + 유형 입력 모달
   - [ ] 카드 클릭 → Work Item 모달 열기
 
-#### [ ] P3-S1-V: Kanban Board 연결점 검증
+#### [x] P3-S1-V: Kanban Board 연결점 검증
 - **담당**: test-specialist
 - **화면**: /services/[id]/board
 - **검증 항목**:
@@ -524,7 +524,7 @@ flowchart TD
 
 ### P3-S2: Work Items 목록 화면
 
-#### [ ] P3-S2-T1: Work Items 목록 UI 구현
+#### [x] P3-S2-T1: Work Items 목록 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /services/[id]/work-items
 - **컴포넌트**: WorkItemsHeader, WorkItemsFilter, WorkItemsTable
@@ -543,7 +543,7 @@ flowchart TD
   - [ ] "새 Work Item" 버튼 → 모달
   - [ ] 행 클릭 → Work Item 모달
 
-#### [ ] P3-S2-V: Work Items 목록 연결점 검증
+#### [x] P3-S2-V: Work Items 목록 연결점 검증
 - **담당**: test-specialist
 - **화면**: /services/[id]/work-items
 - **검증 항목**:
@@ -554,7 +554,7 @@ flowchart TD
 
 ### P3-S3: Work Item 모달
 
-#### [ ] P3-S3-T1: Work Item 모달 UI 구현
+#### [x] P3-S3-T1: Work Item 모달 UI 구현
 - **담당**: frontend-specialist
 - **화면**: 오버레이 (모달)
 - **컴포넌트**: WorkItemModal, TabBasicInfo, TabDecision, TabAISessions, TabActivityLog
@@ -573,7 +573,7 @@ flowchart TD
   - [ ] 상태 변경 시 활동 로그 자동 기록
   - [ ] 필드 변경 자동 저장 (debounce)
 
-#### [ ] P3-S3-V: Work Item 모달 연결점 검증
+#### [x] P3-S3-V: Work Item 모달 연결점 검증
 - **담당**: test-specialist
 - **화면**: Work Item 모달
 - **검증 항목**:
