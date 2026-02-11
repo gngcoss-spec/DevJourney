@@ -1,14 +1,56 @@
-// @TASK P0-T0.4 - Supabase Middleware Placeholder
-// @SPEC docs/planning/02-trd.md#백엔드-구조
+// @TASK P1-R1-T1 - Supabase Auth 미들웨어 유틸리티
+// @SPEC specs/screens/01-login.yaml
+// @TEST src/__tests__/lib/auth.test.ts
 
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+/**
+ * 보호된 라우트 패턴 목록.
+ * 이 경로들은 인증된 사용자만 접근 가능합니다.
+ */
+const PROTECTED_ROUTES = ['/', '/services'];
+
+/**
+ * 인증 전용 (auth-only) 라우트 패턴 목록.
+ * 인증된 사용자가 접근하면 메인 페이지로 리다이렉트됩니다.
+ */
+const AUTH_ROUTES = ['/login', '/signup'];
+
+/**
+ * 주어진 pathname이 보호된 라우트인지 확인합니다.
+ */
+function isProtectedRoute(pathname: string): boolean {
+  // 정확히 '/'이거나 보호 패턴으로 시작하는 경로
+  return PROTECTED_ROUTES.some((route) => {
+    if (route === '/') {
+      return pathname === '/';
+    }
+    return pathname === route || pathname.startsWith(`${route}/`);
+  });
+}
+
+/**
+ * 주어진 pathname이 인증 전용 라우트인지 확인합니다.
+ */
+function isAuthRoute(pathname: string): boolean {
+  return AUTH_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
+}
+
+/**
+ * 미들웨어에서 Supabase 세션을 갱신하고 인증 상태에 따라 리다이렉트를 처리합니다.
+ *
+ * 동작:
+ * 1. Supabase 서버 클라이언트를 쿠키 기반으로 생성
+ * 2. getUser()를 호출하여 세션 토큰을 자동 갱신
+ * 3. 미인증 사용자가 보호된 라우트 접근 시 /login으로 리다이렉트
+ * 4. 인증된 사용자가 /login 또는 /signup 접근 시 /로 리다이렉트
+ */
 export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
+  let supabaseResponse = NextResponse.next({
+    request,
   });
 
   const supabase = createServerClient(
@@ -16,48 +58,45 @@ export async function updateSession(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
+        getAll() {
+          return request.cookies.getAll();
         },
-        set(name: string, value: string, options: any) {
-          request.cookies.set({
-            name,
-            value,
-            ...options,
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
+          supabaseResponse = NextResponse.next({
+            request,
           });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-        },
-        remove(name: string, options: any) {
-          request.cookies.set({
-            name,
-            value: '',
-            ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
         },
       },
     }
   );
 
-  await supabase.auth.getUser();
+  // 세션 토큰 자동 갱신 - getUser()는 서버에서 토큰을 검증합니다.
+  // getSession()과 달리 getUser()는 매번 Supabase Auth 서버에 검증 요청을 보냅니다.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  return response;
+  const { pathname } = request.nextUrl;
+
+  // 미인증 사용자가 보호된 라우트에 접근 시 /login으로 리다이렉트
+  if (!user && isProtectedRoute(pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    return NextResponse.redirect(url);
+  }
+
+  // 인증된 사용자가 auth 라우트(/login, /signup)에 접근 시 /로 리다이렉트
+  if (user && isAuthRoute(pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/';
+    return NextResponse.redirect(url);
+  }
+
+  return supabaseResponse;
 }
