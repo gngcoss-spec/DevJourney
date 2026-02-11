@@ -9,24 +9,30 @@ export type WorkItemStatus = 'backlog' | 'ready' | 'in-progress' | 'review' | 'd
 export type AIProvider = 'chatgpt' | 'gemini' | 'claude' | 'other';
 export type CommentType = 'comment' | 'status_change' | 'system';
 
+// @TASK P2-R1-T1 - Service interface updated with new fields
+// @SPEC docs/planning/TASKS.md#services-table
 export interface Service {
   id: string;
   user_id: string;
   name: string;
   description: string | null;
   goal: string | null;
+  target_users: string | null;
   current_stage: ServiceStage;
-  status: ServiceStatus;
+  current_server: string | null;
   tech_stack: string[];
-  chatgpt_role: string | null;
-  repository_url: string | null;
-  figma_url: string | null;
+  ai_role: string | null;
+  status: ServiceStatus;
+  progress: number;
+  next_action: string | null;
+  last_activity_at: string;
   created_at: string;
   updated_at: string;
-  last_activity_at: string;
-  sort_order: number;
-  is_archived: boolean;
 }
+
+export type CreateServiceInput = Pick<Service, 'name'> & Partial<Pick<Service, 'description' | 'goal' | 'target_users' | 'current_stage' | 'current_server' | 'tech_stack' | 'ai_role' | 'status' | 'progress' | 'next_action'>>;
+
+export type UpdateServiceInput = Partial<Omit<Service, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'last_activity_at'>>;
 
 export interface WorkItem {
   id: string;
