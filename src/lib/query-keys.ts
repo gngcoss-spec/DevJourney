@@ -6,8 +6,8 @@ export const queryKeys = {
     devLogs: (id: string) => ['services', id, 'dev-logs'] as const,
   },
   workItems: {
-    all: ['work-items'] as const,
-    detail: (id: string) => ['work-items', id] as const,
+    all: (serviceId: string) => ['work-items', serviceId] as const,
+    detail: (id: string) => ['work-items', 'detail', id] as const,
     comments: (id: string) => ['work-items', id, 'comments'] as const,
     aiSessions: (id: string) => ['work-items', id, 'ai-sessions'] as const,
   },

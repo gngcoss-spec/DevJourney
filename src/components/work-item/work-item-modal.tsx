@@ -1,0 +1,209 @@
+// @TASK P3-S3-T1 - Work Item Modal Container
+// @SPEC docs/planning/TASKS.md#work-item-modal
+// @TEST src/__tests__/components/work-item-modal.test.tsx
+
+'use client';
+
+import { useState } from 'react';
+import { X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { TabBasicInfo } from './tab-basic-info';
+import { TabDecision } from './tab-decision';
+import { TabAISessions } from './tab-ai-sessions';
+import { TabActivityLog } from './tab-activity-log';
+import type { WorkItem } from '@/types/database';
+import { useCreateWorkItem, useUpdateWorkItem } from '@/lib/hooks/use-work-items';
+import { createClient } from '@/lib/supabase/client';
+import { createStatusChangeLog } from '@/lib/supabase/queries/comments';
+import type { CreateWorkItemInput, UpdateWorkItemInput } from '@/types/database';
+
+export interface WorkItemModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  workItem?: WorkItem;
+  serviceId: string;
+}
+
+type TabType = 'basic' | 'decision' | 'ai-sessions' | 'activity';
+
+export function WorkItemModal({ isOpen, onClose, workItem, serviceId }: WorkItemModalProps) {
+  const [activeTab, setActiveTab] = useState<TabType>('basic');
+  const [formData, setFormData] = useState<Partial<CreateWorkItemInput | UpdateWorkItemInput>>(
+    workItem || {
+      title: '',
+      description: '',
+      type: 'feature',
+      priority: 'medium',
+      status: 'backlog',
+      assignee_name: '',
+    }
+  );
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  const isEditMode = !!workItem;
+  const createMutation = useCreateWorkItem();
+  const updateMutation = useUpdateWorkItem();
+
+  if (!isOpen) {
+    return null;
+  }
+
+  const handleFormChange = (field: string, value: unknown) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+    // Clear validation error when user types
+    if (field === 'title' && value) {
+      setValidationError(null);
+    }
+  };
+
+  const handleSave = () => {
+    if (!formData.title || (typeof formData.title === 'string' && !formData.title.trim())) {
+      setValidationError('제목을 입력해주세요');
+      return;
+    }
+
+    if (isEditMode && workItem) {
+      // 상태 변경 시 활동 로그 자동 기록
+      if (formData.status && formData.status !== workItem.status) {
+        const supabase = createClient();
+        createStatusChangeLog(supabase, workItem.id, workItem.status, formData.status as string).catch(() => {});
+      }
+      updateMutation.mutate({
+        id: workItem.id,
+        serviceId: workItem.service_id,
+        data: formData as UpdateWorkItemInput,
+      });
+    } else {
+      createMutation.mutate({
+        service_id: serviceId,
+        title: formData.title,
+        ...formData,
+      } as CreateWorkItemInput);
+    }
+
+    onClose();
+  };
+
+  const tabs = [
+    { id: 'basic' as TabType, label: '기본정보', disabled: false },
+    { id: 'decision' as TabType, label: '의사결정', disabled: false },
+    { id: 'ai-sessions' as TabType, label: 'AI 세션', disabled: !isEditMode },
+    { id: 'activity' as TabType, label: '활동로그', disabled: !isEditMode },
+  ];
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <div className="w-[640px] max-h-[80vh] bg-slate-900 rounded-lg shadow-xl overflow-hidden flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-slate-700">
+          <h2 id="modal-title" className="text-lg font-semibold text-slate-100">
+            {isEditMode ? '작업 아이템 수정' : '작업 아이템 생성'}
+          </h2>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={onClose}
+            aria-label="닫기"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+
+        {/* Tabs */}
+        <div
+          role="tablist"
+          className="flex border-b border-slate-700 bg-slate-900/50"
+        >
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              aria-disabled={tab.disabled}
+              aria-controls={`panel-${tab.id}`}
+              onClick={() => !tab.disabled && setActiveTab(tab.id)}
+              disabled={tab.disabled}
+              className={`
+                flex-1 px-4 py-3 text-sm font-medium transition-colors
+                ${
+                  activeTab === tab.id
+                    ? 'text-slate-100 border-b-2 border-blue-500'
+                    : 'text-slate-400 hover:text-slate-200'
+                }
+                ${tab.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+              `}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <div className="flex-1 overflow-y-auto p-4">
+          {activeTab === 'basic' && (
+            <>
+              {validationError && (
+                <div className="mb-4 p-3 bg-red-900/20 border border-red-700/50 rounded-md">
+                  <p className="text-sm text-red-400">{validationError}</p>
+                </div>
+              )}
+              <TabBasicInfo
+                formData={formData}
+                onChange={handleFormChange}
+                isEditMode={isEditMode}
+              />
+            </>
+          )}
+          {activeTab === 'decision' && (
+            <TabDecision
+              formData={formData}
+              onChange={handleFormChange}
+            />
+          )}
+          {activeTab === 'ai-sessions' && workItem && (
+            <TabAISessions workItemId={workItem.id} />
+          )}
+          {activeTab === 'activity' && workItem && (
+            <TabActivityLog workItemId={workItem.id} />
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-3 p-4 border-t border-slate-700">
+          <Button
+            variant="ghost"
+            onClick={onClose}
+          >
+            취소
+          </Button>
+          {!isEditMode && (
+            <Button
+              onClick={handleSave}
+              disabled={createMutation.isPending}
+            >
+              {createMutation.isPending ? '저장 중...' : '저장'}
+            </Button>
+          )}
+          {isEditMode && (
+            <span className="text-sm text-slate-400">
+              {updateMutation.isPending ? '저장 중...' : '자동 저장됨'}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
