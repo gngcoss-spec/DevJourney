@@ -1,0 +1,88 @@
+version: "2.0"
+
+screen:
+  name: Dashboard
+  route: /
+  layout: dashboard
+  auth: true
+
+data_requirements:
+  - resource: services
+    needs: [id, name, status, progress, current_stage, last_activity_at, next_action]
+  - resource: dev_logs
+    needs: [id, service_id, done, next_action, log_date]
+    filters: { scope: "all", limit: 20 }
+
+components:
+  - id: summary_cards
+    type: stat-card
+    position: main
+    function: 전체 서비스 수, 진행중, 정체, 중단 위험 4개 카드 표시
+    data_source:
+      resource: services
+    events:
+      - on: click:card
+        do: 해당 상태 서비스 목록으로 필터링
+
+  - id: milestone_chart
+    type: chart
+    position: main
+    function: 전체 서비스 마일스톤 진행률 그래프 (Recharts)
+    data_source:
+      resource: services
+    events:
+      - on: click:bar
+        do: 해당 서비스 상세로 이동
+
+  - id: service_card_list
+    type: grid
+    position: main
+    function: 서비스 카드 목록 (이름, 상태색상, 진행률, 단계, 마지막활동일, 다음액션)
+    data_source:
+      resource: services
+    events:
+      - on: click:card
+        do: /services/[id]로 이동
+
+  - id: integrated_log_tab
+    type: tabs
+    position: main
+    function: 통합 Dev Log 탭 (모든 서비스 최근 로그 타임라인)
+    data_source:
+      resource: dev_logs
+    events:
+      - on: click:tab
+        do: 서비스 카드 목록 / 통합 로그 탭 전환
+      - on: click:log_item
+        do: 해당 서비스 Dev Logs 페이지로 이동
+
+connections:
+  navigations:
+    - from: service_card_list
+      to: /services/:id
+    - from: integrated_log_tab
+      to: /services/:id/dev-logs
+  shared_components:
+    - sidebar_navigation
+  external:
+    - auth
+
+tests:
+  - name: 초기 로드
+    when: Dashboard 접속
+    then:
+      - 요약 카드 4개 표시
+      - 마일스톤 그래프 표시
+      - 서비스 카드 목록 표시
+  - name: 서비스 카드 클릭
+    when: 서비스 카드 클릭
+    then:
+      - /services/[id]로 이동
+  - name: 통합 로그 탭
+    when: 통합 로그 탭 클릭
+    then:
+      - 모든 서비스 최근 Dev Log 타임라인 표시
+  - name: 정체 경고
+    when: 7일 이상 활동 없는 서비스 존재
+    then:
+      - 해당 서비스 카드에 노란색 경고 표시

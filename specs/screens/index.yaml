@@ -1,0 +1,69 @@
+# DevJourney - 화면 인덱스
+version: "2.0"
+
+screens:
+  # 인증
+  - file: 01-login.yaml
+    name: 로그인
+    route: /login
+    auth: false
+
+  - file: 02-signup.yaml
+    name: 회원가입
+    route: /signup
+    auth: false
+
+  # 메인
+  - file: 03-dashboard.yaml
+    name: Dashboard
+    route: /
+    auth: true
+
+  # 서비스 관리
+  - file: 04-services-list.yaml
+    name: Services 목록
+    route: /services
+    auth: true
+
+  - file: 05-service-form.yaml
+    name: Service 등록/편집
+    route: /services/new | /services/:id/edit
+    auth: true
+
+  # 서비스 상세
+  - file: 06-service-overview.yaml
+    name: Service Detail - Overview
+    route: /services/:id
+    auth: true
+
+  - file: 07-service-board.yaml
+    name: Service Detail - Board
+    route: /services/:id/board
+    auth: true
+
+  - file: 08-service-work-items.yaml
+    name: Service Detail - Work Items
+    route: /services/:id/work-items
+    auth: true
+
+  # 오버레이
+  - file: 09-work-item-modal.yaml
+    name: Work Item 모달
+    route: overlay
+    auth: true
+
+  - file: 10-service-dev-logs.yaml
+    name: Service Detail - Dev Logs
+    route: /services/:id/dev-logs
+    auth: true
+
+  - file: 11-dev-log-form.yaml
+    name: Dev Log 작성 폼
+    route: overlay
+    auth: true
+
+summary:
+  total: 11
+  auth_required: 9
+  public: 2
+  overlays: 2

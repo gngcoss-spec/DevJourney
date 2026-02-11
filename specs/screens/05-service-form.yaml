@@ -1,0 +1,60 @@
+version: "2.0"
+
+screen:
+  name: Service 등록/편집
+  route: /services/new | /services/:id/edit
+  layout: dashboard
+  auth: true
+
+data_requirements:
+  - resource: services
+    needs: [name, description, goal, target_users, current_stage, current_server, tech_stack, ai_role]
+
+components:
+  - id: service_form
+    type: form
+    position: main
+    function: 서비스 8개 필드 입력 폼
+    data_source:
+      resource: services
+    events:
+      - on: submit
+        do: 서비스 생성/수정 → /services 목록으로 이동
+      - on: click:cancel
+        do: 이전 화면으로 이동
+      - on: change:tech_stack
+        do: 태그 추가/삭제
+
+connections:
+  navigations:
+    - from: service_form
+      to: /services
+      condition: 저장 성공 또는 취소
+  shared_components:
+    - sidebar_navigation
+
+notes: |
+  필드 상세:
+  - 서비스명 (필수, text)
+  - 설명 (textarea)
+  - 목표 (textarea)
+  - 주요 사용자 (text)
+  - 현재 단계 (select: idea/planning/design/development/testing/launch/enhancement)
+  - 현재 서버 (text)
+  - 기술 스택 (tag 입력)
+  - AI 역할 정의 (textarea)
+
+tests:
+  - name: 서비스 생성
+    when: 필수 필드 입력 후 저장
+    then:
+      - 서비스 생성 성공 토스트
+      - /services로 이동
+  - name: 필수 필드 누락
+    when: 서비스명 없이 저장
+    then:
+      - 서비스명 필수 에러 표시
+  - name: 편집 모드
+    when: /services/[id]/edit 접속
+    then:
+      - 기존 데이터 프리필

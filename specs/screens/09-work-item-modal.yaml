@@ -1,0 +1,105 @@
+version: "2.0"
+
+screen:
+  name: Work Item 모달
+  route: overlay
+  layout: full-width
+  auth: true
+
+data_requirements:
+  - resource: work_items
+    needs: [id, title, description, type, priority, status, assignee_id, problem, options, decision_reason, result]
+    filters: { id: ":workItemId" }
+  - resource: ai_sessions
+    needs: [id, url, summary, ai_provider, created_at]
+    filters: { work_item_id: ":workItemId" }
+  - resource: work_item_comments
+    needs: [id, content, type, metadata, created_at]
+    filters: { work_item_id: ":workItemId" }
+
+components:
+  - id: modal_container
+    type: modal
+    position: overlay
+    function: Work Item 상세 모달 (640px, 4탭)
+    events:
+      - on: click:close
+        do: 모달 닫기
+      - on: click:delete
+        do: 삭제 확인 후 Work Item 삭제
+
+  - id: tab_basic_info
+    type: form
+    position: overlay
+    function: "탭1 기본정보: 제목, 설명, 유형(select), 우선순위(select), 담당자, 상태(select)"
+    data_source:
+      resource: work_items
+    events:
+      - on: change:field
+        do: 필드 값 자동 저장
+      - on: change:status
+        do: 상태 변경 + 활동 로그 자동 기록
+
+  - id: tab_decision
+    type: form
+    position: overlay
+    function: "탭2 의사결정: Problem(textarea), 고려한 선택지(textarea), 최종 결정 이유(textarea), 결과(textarea)"
+    data_source:
+      resource: work_items
+    events:
+      - on: change:field
+        do: 필드 값 자동 저장
+
+  - id: tab_ai_sessions
+    type: list
+    position: overlay
+    function: "탭3 AI세션: AI 대화 링크 + 요약 목록, 세션 추가 버튼"
+    data_source:
+      resource: ai_sessions
+    events:
+      - on: click:add_session
+        do: AI 세션 추가 폼 표시 (URL + 요약 + AI 제공자)
+      - on: submit:session
+        do: AI 세션 저장
+      - on: click:session_url
+        do: 외부 링크 새 탭으로 열기
+
+  - id: tab_activity_log
+    type: list
+    position: overlay
+    function: "탭4 활동로그: 상태 변경 이력(자동) + 커멘트 목록 + 커멘트 입력"
+    data_source:
+      resource: work_item_comments
+    events:
+      - on: submit:comment
+        do: 커멘트 저장 후 목록 갱신
+
+connections:
+  navigations: []
+  shared_components: []
+  external:
+    - auth
+
+tests:
+  - name: 모달 열기
+    when: Work Item 카드/행 클릭
+    then:
+      - 모달 표시
+      - 기본정보 탭 활성화
+      - 기존 데이터 로드
+  - name: 의사결정 기록
+    when: 의사결정 탭에서 Problem, 결정 이유 입력
+    then:
+      - 자동 저장
+  - name: AI 세션 추가
+    when: AI 세션 탭에서 URL + 요약 입력 후 저장
+    then:
+      - 세션 목록에 추가
+  - name: 상태 변경
+    when: 기본정보 탭에서 상태 변경
+    then:
+      - 활동 로그에 자동 기록
+  - name: 커멘트 작성
+    when: 활동로그 탭에서 커멘트 입력 후 제출
+    then:
+      - 커멘트 목록에 추가

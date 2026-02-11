@@ -1,0 +1,55 @@
+version: "2.0"
+
+screen:
+  name: Dev Log 작성 폼
+  route: overlay
+  layout: full-width
+  auth: true
+
+data_requirements:
+  - resource: dev_logs
+    needs: [done, decided, deferred, next_action, log_date]
+  - resource: services
+    needs: [id, name]
+    filters: { id: ":serviceId" }
+
+components:
+  - id: dev_log_form
+    type: form
+    position: overlay
+    function: Dev Log 4개 필드 입력 폼 (모달 또는 인라인)
+    data_source:
+      resource: dev_logs
+    events:
+      - on: submit
+        do: Dev Log 저장 → 타임라인 목록에 추가
+      - on: click:cancel
+        do: 폼 닫기
+
+notes: |
+  필드 상세:
+  - 날짜 (date, 기본값: 오늘)
+  - 오늘 한 것 (textarea, 템플릿 프리필)
+  - 확정한 것 (textarea)
+  - 보류한 것 (textarea)
+  - 다음에 할 것 (textarea)
+  유효성: 최소 하나의 필드는 입력
+
+connections:
+  navigations: []
+  shared_components: []
+
+tests:
+  - name: 로그 저장
+    when: 최소 1개 필드 입력 후 저장
+    then:
+      - Dev Log 저장 성공 토스트
+      - 타임라인에 새 로그 추가
+  - name: 필드 미입력
+    when: 모든 필드 비어있을 때 저장
+    then:
+      - 최소 1개 입력 필요 에러 표시
+  - name: 같은 날짜 중복
+    when: 이미 로그가 있는 날짜로 저장 시도
+    then:
+      - 해당 날짜 로그 이미 존재 에러 또는 기존 로그 편집 모드 전환

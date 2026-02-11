@@ -1,0 +1,90 @@
+version: "2.0"
+
+screen:
+  name: Service Detail - Board (Kanban)
+  route: /services/:id/board
+  layout: dashboard
+  auth: true
+
+data_requirements:
+  - resource: work_items
+    needs: [id, title, type, priority, status, assignee_id, position]
+    filters: { service_id: ":id" }
+
+components:
+  - id: kanban_board
+    type: grid
+    position: main
+    function: 5개 컬럼 Kanban 보드 (Backlog/Ready/In Progress/Review/Done)
+    data_source:
+      resource: work_items
+    events:
+      - on: drag:card
+        do: 컬럼 간 이동 → work_item status + position 업데이트
+      - on: click:card
+        do: Work Item 모달 열기
+      - on: click:add_button
+        do: 빠른 생성 모달 열기 (해당 컬럼 상태로)
+
+  - id: quick_create_modal
+    type: modal
+    position: overlay
+    function: Work Item 빠른 생성 (제목 + 유형만)
+    data_source:
+      resource: work_items
+    events:
+      - on: submit
+        do: Work Item 생성 → 해당 컬럼에 카드 추가
+      - on: click:close
+        do: 모달 닫기
+
+  - id: service_tabs
+    type: tabs
+    position: main
+    function: Overview / Board / Work Items / Dev Logs 탭 네비게이션
+    events:
+      - on: click:tab
+        do: 해당 탭 페이지로 이동
+
+connections:
+  navigations:
+    - from: service_tabs
+      to: /services/:id
+    - from: service_tabs
+      to: /services/:id/work-items
+    - from: service_tabs
+      to: /services/:id/dev-logs
+  shared_components:
+    - sidebar_navigation
+    - work_item_modal
+
+notes: |
+  Kanban 컬럼:
+  - Backlog (상태색: Slate 400)
+  - Ready (상태색: Blue 500)
+  - In Progress (상태색: Blue 500)
+  - Review (상태색: Purple 500)
+  - Done (상태색: Green 500)
+  각 컬럼 상단: 상태명 + 카운트 + "+" 빠른 생성 버튼
+  카드 표시: 제목, 유형뱃지, 우선순위색상
+  드래그앤드롭: @dnd-kit 라이브러리 사용
+
+tests:
+  - name: 초기 로드
+    when: 페이지 접속
+    then:
+      - 5개 컬럼 표시
+      - 각 컬럼에 해당 상태 Work Item 카드 표시
+  - name: 드래그앤드롭
+    when: 카드를 다른 컬럼으로 드래그
+    then:
+      - 카드 상태 변경
+      - 활동 로그에 상태 변경 기록
+  - name: 빠른 생성
+    when: 컬럼 "+" 버튼 클릭 후 제목 입력
+    then:
+      - 해당 컬럼에 새 카드 추가
+  - name: 카드 클릭
+    when: Work Item 카드 클릭
+    then:
+      - Work Item 상세 모달 열기

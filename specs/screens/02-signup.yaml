@@ -1,0 +1,46 @@
+version: "2.0"
+
+screen:
+  name: 회원가입
+  route: /signup
+  layout: full-width
+  auth: false
+
+data_requirements:
+  - resource: auth_users
+    needs: [email]
+    auth_required: false
+
+components:
+  - id: signup_form
+    type: form
+    position: main
+    function: 이메일/비밀번호/비밀번호확인 회원가입 폼
+    data_source:
+      resource: auth_users
+    events:
+      - on: submit
+        do: Supabase Auth 회원가입 → 이메일 인증 안내 → /login 이동
+      - on: click:login_link
+        do: /login으로 이동
+
+connections:
+  navigations:
+    - from: signup_form
+      to: /login
+      condition: 가입 완료 또는 로그인 링크 클릭
+
+tests:
+  - name: 회원가입 성공
+    when: 유효한 이메일/비밀번호 입력 후 제출
+    then:
+      - 이메일 인증 안내 표시
+      - /login으로 이동
+  - name: 비밀번호 불일치
+    when: 비밀번호와 확인이 다를 때 제출
+    then:
+      - 비밀번호 불일치 에러 표시
+  - name: 로그인 이동
+    when: 로그인 링크 클릭
+    then:
+      - /login으로 이동

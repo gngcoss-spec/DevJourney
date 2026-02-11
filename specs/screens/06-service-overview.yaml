@@ -1,0 +1,90 @@
+version: "2.0"
+
+screen:
+  name: Service Detail - Overview
+  route: /services/:id
+  layout: dashboard
+  auth: true
+
+data_requirements:
+  - resource: services
+    needs: [id, name, status, description, goal, current_stage, progress, next_action, tech_stack]
+    filters: { id: ":id" }
+  - resource: work_items
+    needs: [id, title, decision_reason, status, updated_at]
+    filters: { service_id: ":id", has_decision: true, limit: 5 }
+
+components:
+  - id: service_header
+    type: container
+    position: main
+    function: 서비스 이름 + 상태 뱃지 + 편집 버튼
+    data_source:
+      resource: services
+    events:
+      - on: click:edit
+        do: /services/[id]/edit로 이동
+
+  - id: detail_milestone_chart
+    type: chart
+    position: main
+    function: 상세 마일스톤 그래프 + 진행률 (Dashboard보다 상세)
+    data_source:
+      resource: services
+    events:
+      - on: hover:stage
+        do: 단계별 상세 정보 툴팁 표시
+
+  - id: service_info
+    type: detail
+    position: main
+    function: 서비스 정보 요약 (목적, 현재 단계, 핵심 목표)
+    data_source:
+      resource: services
+
+  - id: recent_decisions
+    type: list
+    position: main
+    function: 최근 의사결정 사항 (Work Item의 의사결정 필드)
+    data_source:
+      resource: work_items
+    events:
+      - on: click:item
+        do: Work Item 모달 열기
+
+  - id: service_tabs
+    type: tabs
+    position: main
+    function: Overview / Board / Work Items / Dev Logs 탭 네비게이션
+    events:
+      - on: click:tab
+        do: 해당 탭 페이지로 이동
+
+connections:
+  navigations:
+    - from: service_header
+      to: /services/:id/edit
+    - from: service_tabs
+      to: /services/:id/board
+    - from: service_tabs
+      to: /services/:id/work-items
+    - from: service_tabs
+      to: /services/:id/dev-logs
+  shared_components:
+    - sidebar_navigation
+
+tests:
+  - name: 초기 로드
+    when: 페이지 접속
+    then:
+      - 서비스 헤더 (이름, 상태 뱃지) 표시
+      - 상세 마일스톤 그래프 표시
+      - 서비스 정보 요약 표시
+  - name: 탭 전환
+    when: Board 탭 클릭
+    then:
+      - /services/[id]/board로 이동
+  - name: 최근 의사결정
+    when: 의사결정 항목 클릭
+    then:
+      - Work Item 모달 열기

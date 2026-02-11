@@ -1,0 +1,22 @@
+export const queryKeys = {
+  services: {
+    all: ['services'] as const,
+    detail: (id: string) => ['services', id] as const,
+    workItems: (id: string) => ['services', id, 'work-items'] as const,
+    devLogs: (id: string) => ['services', id, 'dev-logs'] as const,
+  },
+  workItems: {
+    all: ['work-items'] as const,
+    detail: (id: string) => ['work-items', id] as const,
+    comments: (id: string) => ['work-items', id, 'comments'] as const,
+    aiSessions: (id: string) => ['work-items', id, 'ai-sessions'] as const,
+  },
+  devLogs: {
+    all: ['dev-logs'] as const,
+    detail: (id: string) => ['dev-logs', id] as const,
+  },
+  dashboard: {
+    stats: ['dashboard', 'stats'] as const,
+    recentActivity: ['dashboard', 'recent-activity'] as const,
+  },
+};

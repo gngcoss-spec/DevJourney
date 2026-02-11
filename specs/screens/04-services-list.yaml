@@ -1,0 +1,63 @@
+version: "2.0"
+
+screen:
+  name: Services 목록
+  route: /services
+  layout: dashboard
+  auth: true
+
+data_requirements:
+  - resource: services
+    needs: [id, name, description, status, current_stage, progress, last_activity_at]
+    filters: { search: "?q", status: "?status" }
+
+components:
+  - id: services_header
+    type: container
+    position: main
+    function: 페이지 제목 + "새 서비스" 버튼
+    events:
+      - on: click:new_service
+        do: /services/new로 이동
+
+  - id: services_search
+    type: search-form
+    position: main
+    function: 서비스 검색 및 상태 필터
+    events:
+      - on: submit
+        do: 검색어로 서비스 목록 필터링
+
+  - id: services_table
+    type: table
+    position: main
+    function: 서비스 테이블/카드 목록 (이름, 상태, 단계, 진행률, 마지막활동)
+    data_source:
+      resource: services
+    events:
+      - on: click:row
+        do: /services/[id]로 이동
+
+connections:
+  navigations:
+    - from: services_header
+      to: /services/new
+    - from: services_table
+      to: /services/:id
+  shared_components:
+    - sidebar_navigation
+
+tests:
+  - name: 초기 로드
+    when: 페이지 접속
+    then:
+      - 전체 서비스 목록 표시
+      - "새 서비스" 버튼 표시
+  - name: 서비스 클릭
+    when: 서비스 행 클릭
+    then:
+      - /services/[id]로 이동
+  - name: 검색
+    when: 검색어 입력
+    then:
+      - 서비스명으로 필터링된 목록 표시

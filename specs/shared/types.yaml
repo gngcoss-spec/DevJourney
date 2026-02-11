@@ -1,0 +1,35 @@
+# DevJourney - 공통 타입 정의
+version: "2.0"
+
+types:
+  ServiceStatus:
+    type: enum
+    values: [active, stalled, paused]
+    colors: { active: green-500, stalled: yellow-500, paused: red-500 }
+
+  ServiceStage:
+    type: enum
+    values: [idea, planning, design, development, testing, launch, enhancement]
+
+  WorkItemType:
+    type: enum
+    values: [feature, bug, refactor, infra, ai-prompt]
+    colors: { feature: blue-500, bug: red-500, refactor: purple-500, infra: green-500, ai-prompt: amber-500 }
+
+  WorkItemPriority:
+    type: enum
+    values: [low, medium, high, urgent]
+    colors: { urgent: red-500, high: orange-500, medium: yellow-500, low: slate-400 }
+
+  WorkItemStatus:
+    type: enum
+    values: [backlog, ready, in-progress, review, done]
+    kanban_order: [backlog, ready, in-progress, review, done]
+
+  AIProvider:
+    type: enum
+    values: [chatgpt, gemini, claude, other]
+
+  CommentType:
+    type: enum
+    values: [comment, status_change, system]

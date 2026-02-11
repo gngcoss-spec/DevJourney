@@ -1,0 +1,74 @@
+version: "2.0"
+
+screen:
+  name: Service Detail - Work Items
+  route: /services/:id/work-items
+  layout: dashboard
+  auth: true
+
+data_requirements:
+  - resource: work_items
+    needs: [id, title, type, priority, status, created_at]
+    filters: { service_id: ":id", status: "?status", type: "?type", priority: "?priority", sort: "?sort" }
+
+components:
+  - id: work_items_header
+    type: container
+    position: main
+    function: 페이지 제목 + "새 Work Item" 버튼
+    events:
+      - on: click:new
+        do: Work Item 모달 열기 (생성 모드)
+
+  - id: work_items_filter
+    type: filter-form
+    position: main
+    function: 상태/유형/우선순위 필터 + 정렬 (생성일, 우선순위)
+    events:
+      - on: change:filter
+        do: 필터 적용하여 목록 갱신
+
+  - id: work_items_table
+    type: table
+    position: main
+    function: Work Item 테이블 (제목, 유형, 우선순위, 상태, 생성일)
+    data_source:
+      resource: work_items
+    events:
+      - on: click:row
+        do: Work Item 모달 열기
+
+  - id: service_tabs
+    type: tabs
+    position: main
+    function: Overview / Board / Work Items / Dev Logs 탭 네비게이션
+    events:
+      - on: click:tab
+        do: 해당 탭 페이지로 이동
+
+connections:
+  navigations:
+    - from: service_tabs
+      to: /services/:id
+    - from: service_tabs
+      to: /services/:id/board
+    - from: service_tabs
+      to: /services/:id/dev-logs
+  shared_components:
+    - sidebar_navigation
+    - work_item_modal
+
+tests:
+  - name: 초기 로드
+    when: 페이지 접속
+    then:
+      - Work Item 테이블 전체 목록 표시
+      - 필터 영역 표시
+  - name: 필터링
+    when: 상태 필터 "In Progress" 선택
+    then:
+      - In Progress 상태만 표시
+  - name: 항목 클릭
+    when: Work Item 행 클릭
+    then:
+      - Work Item 상세 모달 열기

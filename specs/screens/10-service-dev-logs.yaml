@@ -1,0 +1,73 @@
+version: "2.0"
+
+screen:
+  name: Service Detail - Dev Logs
+  route: /services/:id/dev-logs
+  layout: dashboard
+  auth: true
+
+data_requirements:
+  - resource: dev_logs
+    needs: [id, done, decided, deferred, next_action, log_date, created_at]
+    filters: { service_id: ":id", sort: "log_date:desc" }
+
+components:
+  - id: dev_logs_header
+    type: container
+    position: main
+    function: 페이지 제목 + "새 로그 작성" 버튼
+    events:
+      - on: click:new_log
+        do: Dev Log 작성 폼 열기
+
+  - id: dev_logs_timeline
+    type: list
+    position: main
+    function: 타임라인 목록 (최신순, 날짜별 그룹)
+    data_source:
+      resource: dev_logs
+    events:
+      - on: click:log_card
+        do: 로그 상세 확장 (아코디언)
+
+  - id: service_tabs
+    type: tabs
+    position: main
+    function: Overview / Board / Work Items / Dev Logs 탭 네비게이션
+    events:
+      - on: click:tab
+        do: 해당 탭 페이지로 이동
+
+connections:
+  navigations:
+    - from: service_tabs
+      to: /services/:id
+    - from: service_tabs
+      to: /services/:id/board
+    - from: service_tabs
+      to: /services/:id/work-items
+  shared_components:
+    - sidebar_navigation
+    - dev_log_form
+
+notes: |
+  각 로그 카드 표시:
+  - 날짜
+  - 오늘 한 것 미리보기 (1-2줄)
+  - 다음 액션 미리보기
+  클릭 시 아코디언 확장으로 전체 내용 표시
+
+tests:
+  - name: 초기 로드
+    when: 페이지 접속
+    then:
+      - 최신순 Dev Log 타임라인 표시
+      - "새 로그 작성" 버튼 표시
+  - name: 로그 확장
+    when: 로그 카드 클릭
+    then:
+      - 4개 필드 전체 내용 아코디언 확장
+  - name: 새 로그 작성
+    when: "새 로그 작성" 버튼 클릭
+    then:
+      - Dev Log 작성 폼 열기

@@ -1,0 +1,93 @@
+# Domain Resources - DevJourney
+# 04-database-design.md 기반 도메인 리소스 정의
+
+version: "1.0"
+
+resources:
+  # === MVP 리소스 ===
+
+  services:
+    description: "서비스(프로젝트) - DevJourney 최상위 단위"
+    fields:
+      id: { type: uuid, pk: true }
+      user_id: { type: uuid, fk: auth.users, required: true }
+      name: { type: text, required: true }
+      description: { type: text }
+      goal: { type: text }
+      target_users: { type: text }
+      current_stage: { type: text, required: true, default: "idea", enum: [idea, planning, design, development, testing, launch, enhancement] }
+      current_server: { type: text }
+      tech_stack: { type: "text[]", default: "[]" }
+      ai_role: { type: text }
+      status: { type: text, required: true, default: "active", enum: [active, stalled, paused] }
+      progress: { type: integer, default: 0, check: "0-100" }
+      next_action: { type: text }
+      last_activity_at: { type: timestamptz, default: "now()" }
+      created_at: { type: timestamptz, default: "now()" }
+      updated_at: { type: timestamptz, default: "now()" }
+
+  work_items:
+    description: "작업 + 의사결정 통합 엔티티 - DevJourney 핵심"
+    fields:
+      id: { type: uuid, pk: true }
+      service_id: { type: uuid, fk: services, required: true }
+      user_id: { type: uuid, fk: auth.users, required: true }
+      title: { type: text, required: true }
+      description: { type: text }
+      type: { type: text, required: true, default: "feature", enum: [feature, bug, refactor, infra, ai-prompt] }
+      priority: { type: text, required: true, default: "medium", enum: [low, medium, high, urgent] }
+      status: { type: text, required: true, default: "backlog", enum: [backlog, ready, in-progress, review, done] }
+      assignee_id: { type: uuid, fk: auth.users }
+      problem: { type: text }
+      options: { type: text }
+      decision_reason: { type: text }
+      result: { type: text }
+      position: { type: integer, required: true, default: 0 }
+      created_at: { type: timestamptz, default: "now()" }
+      updated_at: { type: timestamptz, default: "now()" }
+
+  ai_sessions:
+    description: "Work Item에 연결된 AI 대화 세션"
+    fields:
+      id: { type: uuid, pk: true }
+      work_item_id: { type: uuid, fk: work_items, required: true }
+      user_id: { type: uuid, fk: auth.users, required: true }
+      url: { type: text, required: true }
+      summary: { type: text, required: true }
+      ai_provider: { type: text, default: "chatgpt", enum: [chatgpt, gemini, claude, other] }
+      created_at: { type: timestamptz, default: "now()" }
+
+  dev_logs:
+    description: "일일 개발 로그"
+    fields:
+      id: { type: uuid, pk: true }
+      service_id: { type: uuid, fk: services, required: true }
+      user_id: { type: uuid, fk: auth.users, required: true }
+      done: { type: text }
+      decided: { type: text }
+      deferred: { type: text }
+      next_action: { type: text }
+      log_date: { type: date, required: true, default: "CURRENT_DATE" }
+      created_at: { type: timestamptz, default: "now()" }
+      updated_at: { type: timestamptz, default: "now()" }
+    constraints:
+      - unique: [service_id, log_date]
+
+  work_item_comments:
+    description: "Work Item 활동 로그 / 커멘트"
+    fields:
+      id: { type: uuid, pk: true }
+      work_item_id: { type: uuid, fk: work_items, required: true }
+      user_id: { type: uuid, fk: auth.users, required: true }
+      content: { type: text, required: true }
+      type: { type: text, required: true, default: "comment", enum: [comment, status_change, system] }
+      metadata: { type: jsonb, default: "{}" }
+      created_at: { type: timestamptz, default: "now()" }
+
+  # === 인증 (Supabase Auth 내장) ===
+
+  auth_users:
+    description: "Supabase Auth 내장 사용자 (직접 관리 안 함)"
+    fields:
+      id: { type: uuid, pk: true }
+      email: { type: text, required: true }

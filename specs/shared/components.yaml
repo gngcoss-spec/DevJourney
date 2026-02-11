@@ -1,0 +1,78 @@
+# DevJourney - 공통 컴포넌트
+version: "2.0"
+
+shared_components:
+  - id: sidebar_navigation
+    type: navigation
+    description: 좌측 사이드바 네비게이션 (Dashboard, Services)
+    used_in:
+      - 03-dashboard
+      - 04-services-list
+      - 05-service-form
+      - 06-service-overview
+      - 07-service-board
+      - 08-service-work-items
+      - 10-service-dev-logs
+    specs:
+      width: 240px (desktop), collapsible (tablet), overlay (mobile)
+      items:
+        - label: Dashboard
+          route: /
+          icon: home
+        - label: Services
+          route: /services
+          icon: layers
+
+  - id: service_tabs
+    type: tabs
+    description: Service Detail 탭 네비게이션 (Overview/Board/Work Items/Dev Logs)
+    used_in:
+      - 06-service-overview
+      - 07-service-board
+      - 08-service-work-items
+      - 10-service-dev-logs
+    specs:
+      tabs:
+        - label: Overview
+          route: /services/:id
+        - label: Board
+          route: /services/:id/board
+        - label: Work Items
+          route: /services/:id/work-items
+        - label: Dev Logs
+          route: /services/:id/dev-logs
+
+  - id: work_item_modal
+    type: modal
+    description: Work Item 상세 모달 (4탭)
+    used_in:
+      - 06-service-overview
+      - 07-service-board
+      - 08-service-work-items
+    specs:
+      width: 640px
+      tabs: [기본정보, 의사결정, AI 세션, 활동로그]
+
+  - id: dev_log_form
+    type: modal
+    description: Dev Log 작성 폼 (모달 또는 인라인)
+    used_in:
+      - 10-service-dev-logs
+    specs:
+      fields: [log_date, done, decided, deferred, next_action]
+
+  - id: status_badge
+    type: card
+    description: 서비스/Work Item 상태 뱃지
+    used_in:
+      - 03-dashboard
+      - 04-services-list
+      - 06-service-overview
+      - 07-service-board
+      - 08-service-work-items
+    specs:
+      variants:
+        service: { active: green, stalled: yellow, paused: red }
+        work_item: { backlog: slate, ready: blue, in-progress: blue, review: purple, done: green }
+        priority: { urgent: red, high: orange, medium: yellow, low: slate }
+        type: { feature: blue, bug: red, refactor: purple, infra: green, ai-prompt: amber }
