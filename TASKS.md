@@ -590,7 +590,7 @@ flowchart TD
 
 ### P4-R1: Dev Logs Resource
 
-#### [ ] P4-R1-T1: Dev Logs DB 스키마 + 쿼리 구현
+#### [x] P4-R1-T1: Dev Logs DB 스키마 + 쿼리 구현
 - **담당**: database-specialist
 - **리소스**: dev_logs
 - **스펙**: dev_logs 테이블, RLS, UNIQUE(service_id, log_date), 쿼리 함수, service last_activity_at 트리거
@@ -599,21 +599,21 @@ flowchart TD
 - **Worktree**: `worktree/phase-4-dev-logs`
 - **TDD**: RED → GREEN → REFACTOR
 - **완료 조건**:
-  - [ ] dev_logs 테이블 + RLS + 인덱스
-  - [ ] UNIQUE 제약: (service_id, log_date)
-  - [ ] 트리거: update_updated_at, update_service_activity
-  - [ ] `getDevLogs(serviceId)` - 서비스별 (최신순)
-  - [ ] `getAllDevLogs(userId, limit)` - 통합 로그 (최신순)
-  - [ ] `getDevLogByDate(serviceId, date)` - 날짜별 조회
-  - [ ] `createDevLog(data)` - 생성
-  - [ ] `updateDevLog(id, data)` - 수정
-  - [ ] TanStack Query 훅: `useDevLogs`, `useAllDevLogs`, `useCreateDevLog`
+  - [x] dev_logs 테이블 + RLS + 인덱스
+  - [x] UNIQUE 제약: (service_id, log_date)
+  - [x] 트리거: update_updated_at, update_service_activity
+  - [x] `getDevLogs(serviceId)` - 서비스별 (최신순)
+  - [x] `getAllDevLogs(userId, limit)` - 통합 로그 (최신순)
+  - [x] `getDevLogByDate(serviceId, date)` - 날짜별 조회
+  - [x] `createDevLog(data)` - 생성
+  - [x] `updateDevLog(id, data)` - 수정
+  - [x] TanStack Query 훅: `useDevLogs`, `useAllDevLogs`, `useCreateDevLog`
 
 ---
 
 ### P4-S1: Dev Logs 타임라인 화면
 
-#### [ ] P4-S1-T1: Dev Logs 타임라인 UI 구현
+#### [x] P4-S1-T1: Dev Logs 타임라인 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /services/[id]/dev-logs
 - **컴포넌트**: DevLogsHeader, DevLogsTimeline, DevLogCard
@@ -625,23 +625,23 @@ flowchart TD
 - **의존**: P4-R1-T1
 - **데모 상태**: loading, empty, normal, expanded
 - **완료 조건**:
-  - [ ] 타임라인 목록 (최신순)
-  - [ ] 각 카드: 날짜, "오늘 한 것" 미리보기, "다음 액션" 미리보기
-  - [ ] 클릭 시 아코디언 확장 (4개 필드 전체)
-  - [ ] "새 로그 작성" 버튼
+  - [x] 타임라인 목록 (최신순)
+  - [x] 각 카드: 날짜, "오늘 한 것" 미리보기, "다음 액션" 미리보기
+  - [x] 클릭 시 아코디언 확장 (4개 필드 전체)
+  - [x] "새 로그 작성" 버튼
 
-#### [ ] P4-S1-V: Dev Logs 연결점 검증
+#### [x] P4-S1-V: Dev Logs 연결점 검증
 - **담당**: test-specialist
 - **화면**: /services/[id]/dev-logs
 - **검증 항목**:
-  - [ ] Field Coverage: dev_logs.[id,done,decided,deferred,next_action,log_date,created_at] 존재
-  - [ ] Navigation: "새 로그 작성" → Dev Log 작성 폼 열기
+  - [x] Field Coverage: dev_logs.[id,done,decided,deferred,next_action,log_date,created_at] 존재
+  - [x] Navigation: "새 로그 작성" → Dev Log 작성 폼 열기
 
 ---
 
 ### P4-S2: Dev Log 작성 폼
 
-#### [ ] P4-S2-T1: Dev Log 작성 폼 UI 구현
+#### [x] P4-S2-T1: Dev Log 작성 폼 UI 구현
 - **담당**: frontend-specialist
 - **화면**: 오버레이 (모달 또는 인라인)
 - **컴포넌트**: DevLogForm
@@ -654,24 +654,24 @@ flowchart TD
 - **병렬**: P4-S1-T1과 병렬 가능
 - **데모 상태**: create, edit, error
 - **완료 조건**:
-  - [ ] 날짜 필드 (기본값: 오늘)
-  - [ ] 4개 textarea (템플릿 프리필 가능)
-  - [ ] 최소 1개 필드 입력 유효성 검사
-  - [ ] 같은 날짜 중복 방지 (기존 로그 있으면 편집 모드)
-  - [ ] 저장 → 타임라인에 추가
+  - [x] 날짜 필드 (기본값: 오늘)
+  - [x] 4개 textarea (템플릿 프리필 가능)
+  - [x] 최소 1개 필드 입력 유효성 검사
+  - [x] 같은 날짜 중복 방지 (기존 로그 있으면 편집 모드)
+  - [x] 저장 → 타임라인에 추가
 
-#### [ ] P4-S2-V: Dev Log 폼 연결점 검증
+#### [x] P4-S2-V: Dev Log 폼 연결점 검증
 - **담당**: test-specialist
 - **화면**: Dev Log 작성 폼
 - **검증 항목**:
-  - [ ] Field Coverage: dev_logs.[done,decided,deferred,next_action,log_date] 존재
-  - [ ] UNIQUE 제약: 같은 서비스+날짜 중복 생성 시 에러 처리
+  - [x] Field Coverage: dev_logs.[done,decided,deferred,next_action,log_date] 존재
+  - [x] UNIQUE 제약: 같은 서비스+날짜 중복 생성 시 에러 처리
 
 ---
 
 ### P4-S3: Dashboard 통합 로그 탭
 
-#### [ ] P4-S3-T1: Dashboard 통합 Dev Log 탭 구현
+#### [x] P4-S3-T1: Dashboard 통합 Dev Log 탭 구현
 - **담당**: frontend-specialist
 - **화면**: / (Dashboard 내 탭)
 - **컴포넌트**: IntegratedLogTab
@@ -682,17 +682,17 @@ flowchart TD
 - **TDD**: RED → GREEN → REFACTOR
 - **의존**: P4-R1-T1, P2-S1-T1
 - **완료 조건**:
-  - [ ] 서비스 카드 목록 / 통합 로그 탭 전환
-  - [ ] 통합 로그: 모든 서비스 최근 Dev Log 타임라인
-  - [ ] 각 로그에 서비스명 표시
-  - [ ] 로그 클릭 → 해당 서비스 Dev Logs 페이지 이동
+  - [x] 서비스 카드 목록 / 통합 로그 탭 전환
+  - [x] 통합 로그: 모든 서비스 최근 Dev Log 타임라인
+  - [x] 각 로그에 서비스명 표시
+  - [x] 로그 클릭 → 해당 서비스 Dev Logs 페이지 이동
 
-#### [ ] P4-S3-V: Dashboard 통합 로그 연결점 검증
+#### [x] P4-S3-V: Dashboard 통합 로그 연결점 검증
 - **담당**: test-specialist
 - **화면**: / (통합 로그 탭)
 - **검증 항목**:
-  - [ ] Field Coverage: dev_logs.[id,service_id,done,next_action,log_date] 존재
-  - [ ] Navigation: 로그 클릭 → /services/:id/dev-logs 라우트 존재
+  - [x] Field Coverage: dev_logs.[id,service_id,done,next_action,log_date] 존재
+  - [x] Navigation: 로그 클릭 → /services/:id/dev-logs 라우트 존재
 
 ---
 
