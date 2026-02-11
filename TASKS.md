@@ -124,7 +124,7 @@ flowchart TD
 
 ### P1-R1: Auth Resource
 
-#### [ ] P1-R1-T1: Supabase Auth 미들웨어 구현
+#### [x] P1-R1-T1: Supabase Auth 미들웨어 구현
 - **담당**: backend-specialist
 - **리소스**: auth_users
 - **스펙**: Supabase Auth 미들웨어, 세션 관리, 인증 가드
@@ -140,7 +140,7 @@ flowchart TD
 
 ### P1-S0: 공통 레이아웃
 
-#### [ ] P1-S0-T1: 사이드바 + 인증 레이아웃 구현
+#### [x] P1-S0-T1: 사이드바 + 인증 레이아웃 구현
 - **담당**: frontend-specialist
 - **화면**: 공통 (`(dashboard)/layout.tsx`, `(auth)/layout.tsx`)
 - **컴포넌트**: SidebarNavigation, AuthLayout, DashboardLayout
@@ -159,7 +159,7 @@ flowchart TD
 
 ### P1-S1: 로그인 화면
 
-#### [ ] P1-S1-T1: 로그인 UI 구현
+#### [x] P1-S1-T1: 로그인 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /login
 - **컴포넌트**: LoginForm
@@ -176,7 +176,7 @@ flowchart TD
   - [ ] 로그인 실패 → 에러 메시지
   - [ ] `/signup` 링크
 
-#### [ ] P1-S1-V: 로그인 연결점 검증
+#### [x] P1-S1-V: 로그인 연결점 검증
 - **담당**: test-specialist
 - **화면**: /login
 - **검증 항목**:
@@ -188,7 +188,7 @@ flowchart TD
 
 ### P1-S2: 회원가입 화면
 
-#### [ ] P1-S2-T1: 회원가입 UI 구현
+#### [x] P1-S2-T1: 회원가입 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /signup
 - **컴포넌트**: SignupForm
@@ -206,7 +206,7 @@ flowchart TD
   - [ ] 가입 성공 → 이메일 인증 안내 → `/login` 이동
   - [ ] `/login` 링크
 
-#### [ ] P1-S2-V: 회원가입 연결점 검증
+#### [x] P1-S2-V: 회원가입 연결점 검증
 - **담당**: test-specialist
 - **화면**: /signup
 - **검증 항목**:

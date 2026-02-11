@@ -18,7 +18,14 @@
       "Bash(npx next lint:*)",
       "Bash(npx eslint:*)",
       "Bash(npx tsc:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git worktree:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(test:*)",
+      "Bash(findstr:*)",
+      "Bash(timeout 60 sh:*)",
+      "Bash(NODE_PATH=\"D:\\\\DEV_2026\\\\DevJourney\\\\node_modules\" npx vitest:*)",
+      "Bash(git merge:*)"
     ]
   }
 }
