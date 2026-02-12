@@ -103,6 +103,12 @@ export function ServicesTable({ services }: ServicesTableProps) {
               scope="col"
               className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
             >
+              다음 액션
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
+            >
               마지막 활동
             </th>
           </tr>
@@ -138,6 +144,11 @@ export function ServicesTable({ services }: ServicesTableProps) {
               </td>
               <td className="px-6 py-4">
                 <ProgressBar progress={service.progress} />
+              </td>
+              <td className="px-6 py-4">
+                <span className="text-sm text-slate-300">
+                  {service.next_action || '-'}
+                </span>
               </td>
               <td className="px-6 py-4">
                 <time

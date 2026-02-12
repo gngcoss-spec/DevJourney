@@ -53,7 +53,7 @@ function createMockWorkItem(overrides: Partial<WorkItem> = {}): WorkItem {
  *   - `await client.from().select().eq().single()` (single resolves)
  *   - `await client.from().delete().eq()` (eq resolves via then)
  */
-function createMockClient(terminateWith: { data: unknown; error: unknown }) {
+function createMockClient(terminateWith: { data: unknown; error: unknown }, userId: string = 'user-1') {
   const mock: Record<string, unknown> = {};
 
   // Make mock thenable so `await mock.from().delete().eq()` works
@@ -68,6 +68,11 @@ function createMockClient(terminateWith: { data: unknown; error: unknown }) {
   mock.eq = vi.fn(() => mock);
   mock.order = vi.fn(() => Promise.resolve(terminateWith));
   mock.single = vi.fn(() => Promise.resolve(terminateWith));
+
+  // Auth mock for user_id injection
+  mock.auth = {
+    getUser: vi.fn(() => Promise.resolve({ data: { user: { id: userId } }, error: null })),
+  };
 
   return mock as unknown as SupabaseClient & {
     from: ReturnType<typeof vi.fn>;
@@ -242,7 +247,7 @@ describe('Work Items Query Functions', () => {
 
       // Assert
       expect(client.from).toHaveBeenCalledWith('work_items');
-      expect(client.insert).toHaveBeenCalledWith(input);
+      expect(client.insert).toHaveBeenCalledWith({ ...input, user_id: 'user-1' });
       expect(client.select).toHaveBeenCalled();
       expect(client.single).toHaveBeenCalled();
       expect(result).toEqual(createdItem);
@@ -265,7 +270,7 @@ describe('Work Items Query Functions', () => {
       const result = await createWorkItem(client, input);
 
       // Assert
-      expect(client.insert).toHaveBeenCalledWith(input);
+      expect(client.insert).toHaveBeenCalledWith({ ...input, user_id: 'user-1' });
       expect(result).toEqual(createdItem);
     });
 

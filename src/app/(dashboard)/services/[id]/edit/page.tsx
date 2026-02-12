@@ -5,9 +5,9 @@
 'use client';
 
 import { useRouter, useParams } from 'next/navigation';
-import { ServiceForm } from '@/components/service/service-form';
+import { ServiceForm, type ServiceFormValues } from '@/components/service/service-form';
 import { useService, useUpdateService } from '@/lib/hooks/use-services';
-import type { CreateServiceInput } from '@/types/database';
+import { arrayToTechStack } from '@/lib/utils/tech-stack';
 
 export default function ServiceEditPage() {
   const router = useRouter();
@@ -17,13 +17,13 @@ export default function ServiceEditPage() {
   const { data: service, isLoading: isLoadingService } = useService(serviceId);
   const updateService = useUpdateService();
 
-  const handleSubmit = async (data: CreateServiceInput) => {
+  const handleSubmit = async (data: ServiceFormValues) => {
     try {
-      await updateService.mutateAsync({ id: serviceId, data });
+      // tech_stack conversion (TechStack → string[]) is handled in the query layer
+      await updateService.mutateAsync({ id: serviceId, data: data as any });
       router.push(`/services/${serviceId}`);
     } catch (error) {
       console.error('Failed to update service:', error);
-      // TODO: 에러 토스트 표시 (향후 P2-S4에서 구현)
     }
   };
 
@@ -66,7 +66,7 @@ export default function ServiceEditPage() {
             target_users: service.target_users || '',
             current_stage: service.current_stage,
             current_server: service.current_server || '',
-            tech_stack: service.tech_stack || [],
+            tech_stack: arrayToTechStack(service.tech_stack || []),
             ai_role: service.ai_role || '',
           }}
           onSubmit={handleSubmit}

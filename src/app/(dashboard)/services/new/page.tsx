@@ -5,21 +5,20 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ServiceForm } from '@/components/service/service-form';
+import { ServiceForm, type ServiceFormValues } from '@/components/service/service-form';
 import { useCreateService } from '@/lib/hooks/use-services';
-import type { CreateServiceInput } from '@/types/database';
 
 export default function ServiceNewPage() {
   const router = useRouter();
   const createService = useCreateService();
 
-  const handleSubmit = async (data: CreateServiceInput) => {
+  const handleSubmit = async (data: ServiceFormValues) => {
     try {
-      await createService.mutateAsync(data);
+      // tech_stack conversion (TechStack → string[]) is handled in the query layer
+      await createService.mutateAsync(data as any);
       router.push('/services');
     } catch (error) {
       console.error('Failed to create service:', error);
-      // TODO: 에러 토스트 표시 (향후 P2-S4에서 구현)
     }
   };
 

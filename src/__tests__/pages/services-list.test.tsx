@@ -43,7 +43,7 @@ const mockServices: Service[] = [
     target_users: '개발자',
     current_stage: 'development',
     current_server: null,
-    tech_stack: ['Next.js', 'Supabase'],
+    tech_stack: ['frontend:Next.js', 'backend:Supabase'],
     ai_role: null,
     status: 'active',
     progress: 45,
@@ -61,7 +61,7 @@ const mockServices: Service[] = [
     target_users: '소상공인',
     current_stage: 'planning',
     current_server: null,
-    tech_stack: ['React', 'Node.js'],
+    tech_stack: ['frontend:React', 'backend:Node.js'],
     ai_role: null,
     status: 'stalled',
     progress: 20,
@@ -79,7 +79,7 @@ const mockServices: Service[] = [
     target_users: '일반 사용자',
     current_stage: 'idea',
     current_server: null,
-    tech_stack: ['React Native'],
+    tech_stack: ['frontend:React Native'],
     ai_role: null,
     status: 'paused',
     progress: 10,
@@ -165,6 +165,21 @@ describe('ServicesPage', () => {
       expect(screen.getByText('development')).toBeInTheDocument();
       expect(screen.getByText('planning')).toBeInTheDocument();
       expect(screen.getByText('idea')).toBeInTheDocument();
+    });
+
+    it('다음 액션 컬럼 표시', () => {
+      vi.spyOn(useServicesHook, 'useServices').mockReturnValue({
+        data: mockServices,
+        isLoading: false,
+        isError: false,
+        error: null,
+      } as any);
+
+      render(<ServicesPage />, { wrapper: createWrapper() });
+
+      // next_action이 있는 서비스 확인
+      expect(screen.getByText('Services 목록 화면 구현')).toBeInTheDocument();
+      expect(screen.getByText('요구사항 정리')).toBeInTheDocument();
     });
 
     it('헤더에 "새 서비스" 버튼 표시', () => {

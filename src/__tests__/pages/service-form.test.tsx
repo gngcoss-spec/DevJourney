@@ -5,8 +5,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ServiceForm } from '@/components/service/service-form';
-import type { CreateServiceInput } from '@/types/database';
+import { ServiceForm, type ServiceFormValues } from '@/components/service/service-form';
 
 describe('ServiceForm', () => {
   const mockOnSubmit = vi.fn();
@@ -24,7 +23,7 @@ describe('ServiceForm', () => {
         />
       );
 
-      // 8개 필드 존재 확인
+      // 기본 필드 존재 확인
       expect(screen.getByLabelText(/서비스명/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/설명/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/목표/i)).toBeInTheDocument();
@@ -33,6 +32,12 @@ describe('ServiceForm', () => {
       expect(screen.getByLabelText(/현재 서버/i)).toBeInTheDocument();
       expect(screen.getByText(/기술 스택/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/AI 역할/i)).toBeInTheDocument();
+
+      // 기술 스택 카테고리 확인
+      expect(screen.getByLabelText('Frontend')).toBeInTheDocument();
+      expect(screen.getByLabelText('Backend')).toBeInTheDocument();
+      expect(screen.getByLabelText('AI Engine')).toBeInTheDocument();
+      expect(screen.getByLabelText('Deployment')).toBeInTheDocument();
 
       // 제출 버튼
       expect(screen.getByRole('button', { name: /생성/i })).toBeInTheDocument();
@@ -84,7 +89,10 @@ describe('ServiceForm', () => {
             name: 'Test Service',
             description: 'Test description',
             current_stage: 'idea', // 기본값
-            tech_stack: [], // 기본값
+            tech_stack: expect.objectContaining({
+              frontend: [],
+              backend: [],
+            }),
           })
         );
       });
@@ -92,14 +100,14 @@ describe('ServiceForm', () => {
   });
 
   describe('편집 모드 (mode: edit)', () => {
-    const defaultValues: Partial<CreateServiceInput> = {
+    const defaultValues: Partial<ServiceFormValues> = {
       name: 'Existing Service',
       description: 'Existing description',
       goal: 'Existing goal',
       target_users: 'Developers',
       current_stage: 'development',
       current_server: 'https://example.com',
-      tech_stack: ['React', 'Node.js'],
+      tech_stack: { frontend: ['React'], backend: ['Node.js'] },
       ai_role: 'Code assistant',
     };
 
@@ -128,8 +136,8 @@ describe('ServiceForm', () => {
     });
   });
 
-  describe('기술 스택 태그 입력', () => {
-    it('쉼표로 태그를 추가할 수 있다', async () => {
+  describe('기술 스택 카테고리별 태그 입력', () => {
+    it('Frontend 카테고리에 쉼표로 태그를 추가할 수 있다', async () => {
       const user = userEvent.setup();
       render(
         <ServiceForm
@@ -138,15 +146,15 @@ describe('ServiceForm', () => {
         />
       );
 
-      const techStackInput = screen.getByPlaceholderText(/쉼표나 엔터로 추가/i);
-      await user.type(techStackInput, 'React,');
+      const frontendInput = screen.getByLabelText('Frontend');
+      await user.type(frontendInput, 'React,');
 
       await waitFor(() => {
         expect(screen.getByText('React')).toBeInTheDocument();
       });
     });
 
-    it('엔터키로 태그를 추가할 수 있다', async () => {
+    it('Backend 카테고리에 엔터키로 태그를 추가할 수 있다', async () => {
       const user = userEvent.setup();
       render(
         <ServiceForm
@@ -155,11 +163,11 @@ describe('ServiceForm', () => {
         />
       );
 
-      const techStackInput = screen.getByPlaceholderText(/쉼표나 엔터로 추가/i);
-      await user.type(techStackInput, 'TypeScript{Enter}');
+      const backendInput = screen.getByLabelText('Backend');
+      await user.type(backendInput, 'Supabase{Enter}');
 
       await waitFor(() => {
-        expect(screen.getByText('TypeScript')).toBeInTheDocument();
+        expect(screen.getByText('Supabase')).toBeInTheDocument();
       });
     });
 
@@ -168,21 +176,22 @@ describe('ServiceForm', () => {
       render(
         <ServiceForm
           mode="edit"
-          defaultValues={{ tech_stack: ['React', 'Node.js'] }}
+          defaultValues={{ tech_stack: { frontend: ['React', 'Vue'], backend: [] } }}
           onSubmit={mockOnSubmit}
         />
       );
 
       expect(screen.getByText('React')).toBeInTheDocument();
+      expect(screen.getByText('Vue')).toBeInTheDocument();
 
-      // React 태그의 삭제 버튼 클릭
+      // 첫 번째 삭제 버튼 클릭 (React)
       const deleteButtons = screen.getAllByRole('button', { name: /삭제/i });
       await user.click(deleteButtons[0]);
 
       await waitFor(() => {
         expect(screen.queryByText('React')).not.toBeInTheDocument();
       });
-      expect(screen.getByText('Node.js')).toBeInTheDocument();
+      expect(screen.getByText('Vue')).toBeInTheDocument();
     });
   });
 

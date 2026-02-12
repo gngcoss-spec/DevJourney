@@ -52,6 +52,11 @@ function createMockClient(terminateWith: { data: unknown; error: unknown }) {
   mock.order = vi.fn(() => Promise.resolve(terminateWith));
   mock.single = vi.fn(() => Promise.resolve(terminateWith));
 
+  // Auth mock for user_id injection
+  mock.auth = {
+    getUser: vi.fn(() => Promise.resolve({ data: { user: { id: 'user-1' } }, error: null })),
+  };
+
   return mock as unknown as SupabaseClient & {
     from: ReturnType<typeof vi.fn>;
     select: ReturnType<typeof vi.fn>;
@@ -142,7 +147,7 @@ describe('AI Sessions Query Functions', () => {
 
       // Assert
       expect(client.from).toHaveBeenCalledWith('ai_sessions');
-      expect(client.insert).toHaveBeenCalledWith(input);
+      expect(client.insert).toHaveBeenCalledWith({ ...input, user_id: 'user-1' });
       expect(client.select).toHaveBeenCalled();
       expect(client.single).toHaveBeenCalled();
       expect(result).toEqual(createdSession);
@@ -166,7 +171,7 @@ describe('AI Sessions Query Functions', () => {
       const result = await createAISession(client, input);
 
       // Assert
-      expect(client.insert).toHaveBeenCalledWith(input);
+      expect(client.insert).toHaveBeenCalledWith({ ...input, user_id: 'user-1' });
       expect(result).toEqual(createdSession);
     });
 

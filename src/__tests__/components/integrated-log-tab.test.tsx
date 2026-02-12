@@ -44,7 +44,7 @@ const createMockService = (overrides: Partial<Service> = {}): Service => ({
   target_users: 'Developers',
   current_stage: 'development',
   current_server: 'Vercel',
-  tech_stack: ['Next.js', 'Supabase'],
+  tech_stack: ['frontend:Next.js', 'backend:Supabase'],
   ai_role: 'Assistant',
   status: 'active',
   progress: 50,

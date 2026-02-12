@@ -7,7 +7,7 @@
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { useState } from 'react';
-import type { CreateServiceInput } from '@/types/database';
+import type { CreateServiceInput, TechStack } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -20,6 +20,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+const techStackCategorySchema = z.array(z.string()).default([]);
+
 // Zod v4 스키마
 export const serviceFormSchema = z.object({
   name: z.string().min(1, '서비스명을 입력해주세요'),
@@ -30,7 +32,23 @@ export const serviceFormSchema = z.object({
     .enum(['idea', 'planning', 'design', 'development', 'testing', 'launch', 'enhancement'])
     .default('idea'),
   current_server: z.string().optional(),
-  tech_stack: z.array(z.string()).default([]),
+  tech_stack: z.object({
+    frontend: techStackCategorySchema,
+    backend: techStackCategorySchema,
+    ai_engine: techStackCategorySchema,
+    visualization: techStackCategorySchema,
+    security: techStackCategorySchema,
+    integration: techStackCategorySchema,
+    deployment: techStackCategorySchema,
+  }).default({
+    frontend: [],
+    backend: [],
+    ai_engine: [],
+    visualization: [],
+    security: [],
+    integration: [],
+    deployment: [],
+  }),
   ai_role: z.string().optional(),
 });
 
@@ -55,10 +73,22 @@ function zodResolver<T extends z.ZodType>(schema: T) {
   };
 }
 
+/** Form uses TechStack (categorized object), not string[] (DB format). Conversion happens in query layer. */
+export interface ServiceFormValues {
+  name: string;
+  description?: string;
+  goal?: string;
+  target_users?: string;
+  current_stage?: CreateServiceInput['current_stage'];
+  current_server?: string;
+  tech_stack?: TechStack;
+  ai_role?: string;
+}
+
 export interface ServiceFormProps {
   mode: 'create' | 'edit';
-  defaultValues?: Partial<CreateServiceInput>;
-  onSubmit: (data: CreateServiceInput) => void;
+  defaultValues?: Partial<ServiceFormValues>;
+  onSubmit: (data: ServiceFormValues) => void;
   isLoading?: boolean;
 }
 
@@ -72,13 +102,33 @@ const STAGE_OPTIONS = [
   { value: 'enhancement', label: '개선' },
 ] as const;
 
+const TECH_STACK_CATEGORIES = [
+  { key: 'frontend' as const, label: 'Frontend', placeholder: 'React, Next.js, Vue...' },
+  { key: 'backend' as const, label: 'Backend', placeholder: 'Node.js, Supabase, Django...' },
+  { key: 'ai_engine' as const, label: 'AI Engine', placeholder: 'ChatGPT, Claude, Gemini...' },
+  { key: 'visualization' as const, label: 'Visualization', placeholder: 'Recharts, D3.js, Three.js...' },
+  { key: 'security' as const, label: 'Security', placeholder: 'OAuth, JWT, RLS...' },
+  { key: 'integration' as const, label: 'Integration', placeholder: 'Slack, GitHub, Stripe...' },
+  { key: 'deployment' as const, label: 'Deployment', placeholder: 'Vercel, AWS, Docker...' },
+] as const;
+
+const DEFAULT_TECH_STACK: TechStack = {
+  frontend: [],
+  backend: [],
+  ai_engine: [],
+  visualization: [],
+  security: [],
+  integration: [],
+  deployment: [],
+};
+
 export function ServiceForm({
   mode,
   defaultValues,
   onSubmit,
   isLoading = false,
 }: ServiceFormProps) {
-  const [techStackInput, setTechStackInput] = useState('');
+  const [categoryInputs, setCategoryInputs] = useState<Record<string, string>>({});
 
   const {
     register,
@@ -96,44 +146,43 @@ export function ServiceForm({
       target_users: defaultValues?.target_users || '',
       current_stage: defaultValues?.current_stage || 'idea',
       current_server: defaultValues?.current_server || '',
-      tech_stack: defaultValues?.tech_stack || [],
+      tech_stack: { ...DEFAULT_TECH_STACK, ...(defaultValues?.tech_stack || {}) },
       ai_role: defaultValues?.ai_role || '',
     },
   });
 
-  const techStack = watch('tech_stack') || [];
+  const techStack = watch('tech_stack') || DEFAULT_TECH_STACK;
 
-  const handleAddTechStack = (value: string) => {
+  const handleAddTag = (category: keyof TechStack, value: string) => {
     const trimmed = value.trim();
-    if (trimmed && !techStack.includes(trimmed)) {
-      setValue('tech_stack', [...techStack, trimmed]);
+    const current = techStack[category] || [];
+    if (trimmed && !current.includes(trimmed)) {
+      setValue(`tech_stack.${category}`, [...current, trimmed]);
     }
-    setTechStackInput('');
+    setCategoryInputs((prev) => ({ ...prev, [category]: '' }));
   };
 
-  const handleTechStackKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+  const handleTagKeyDown = (category: keyof TechStack, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
-      handleAddTechStack(techStackInput);
-    } else if (e.key === ',') {
-      e.preventDefault();
-      handleAddTechStack(techStackInput);
+      handleAddTag(category, categoryInputs[category] || '');
     }
   };
 
-  const handleTechStackBlur = () => {
-    if (techStackInput.trim()) {
-      handleAddTechStack(techStackInput);
+  const handleTagBlur = (category: keyof TechStack) => {
+    const value = categoryInputs[category] || '';
+    if (value.trim()) {
+      handleAddTag(category, value);
     }
   };
 
-  const removeTechStack = (index: number) => {
-    const newTechStack = techStack.filter((_, i) => i !== index);
-    setValue('tech_stack', newTechStack);
+  const removeTag = (category: keyof TechStack, index: number) => {
+    const current = techStack[category] || [];
+    setValue(`tech_stack.${category}`, current.filter((_, i) => i !== index));
   };
 
   const onFormSubmit = (data: ServiceFormData) => {
-    onSubmit(data as CreateServiceInput);
+    onSubmit(data as ServiceFormValues);
   };
 
   return (
@@ -230,40 +279,48 @@ export function ServiceForm({
         />
       </div>
 
-      {/* 기술 스택 - 태그 입력 */}
-      <div className="space-y-2">
-        <Label htmlFor="tech_stack_input" className="text-sm font-medium">
-          기술 스택
-        </Label>
-        <Input
-          id="tech_stack_input"
-          value={techStackInput}
-          onChange={(e) => setTechStackInput(e.target.value)}
-          onKeyDown={handleTechStackKeyDown}
-          onBlur={handleTechStackBlur}
-          placeholder="쉼표나 엔터로 추가"
-        />
-        {/* 태그 목록 */}
-        {techStack.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-2">
-            {techStack.map((tag, index) => (
-              <div
-                key={index}
-                className="inline-flex items-center gap-1 px-3 py-1 bg-slate-700 text-slate-100 rounded-full text-sm"
-              >
-                <span>{tag}</span>
-                <button
-                  type="button"
-                  onClick={() => removeTechStack(index)}
-                  aria-label="삭제"
-                  className="hover:text-red-400 transition-colors"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+      {/* 기술 스택 - 카테고리별 태그 입력 */}
+      <div className="space-y-4">
+        <Label className="text-sm font-medium">기술 스택</Label>
+        <div className="space-y-3">
+          {TECH_STACK_CATEGORIES.map(({ key, label, placeholder }) => (
+            <div key={key} className="space-y-1.5">
+              <Label htmlFor={`tech_stack_${key}`} className="text-xs text-slate-400">
+                {label}
+              </Label>
+              <Input
+                id={`tech_stack_${key}`}
+                value={categoryInputs[key] || ''}
+                onChange={(e) =>
+                  setCategoryInputs((prev) => ({ ...prev, [key]: e.target.value }))
+                }
+                onKeyDown={(e) => handleTagKeyDown(key, e)}
+                onBlur={() => handleTagBlur(key)}
+                placeholder={placeholder}
+              />
+              {(techStack[key] || []).length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-1">
+                  {(techStack[key] || []).map((tag, index) => (
+                    <div
+                      key={index}
+                      className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-700 text-slate-100 rounded-full text-xs"
+                    >
+                      <span>{tag}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeTag(key, index)}
+                        aria-label="삭제"
+                        className="hover:text-red-400 transition-colors"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* AI 역할 */}

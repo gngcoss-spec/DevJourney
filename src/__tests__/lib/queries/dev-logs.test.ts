@@ -56,6 +56,11 @@ function createMockClient(terminateWith: { data: unknown; error: unknown }) {
   mock.limit = vi.fn(() => Promise.resolve(terminateWith)); // limit resolves promise
   mock.single = vi.fn(() => Promise.resolve(terminateWith));
 
+  // Auth mock for user_id injection
+  mock.auth = {
+    getUser: vi.fn(() => Promise.resolve({ data: { user: { id: 'user-1' } }, error: null })),
+  };
+
   return mock as unknown as SupabaseClient & {
     from: ReturnType<typeof vi.fn>;
     select: ReturnType<typeof vi.fn>;
@@ -221,7 +226,7 @@ describe('Dev Logs Query Functions', () => {
 
       // Assert
       expect(client.from).toHaveBeenCalledWith('dev_logs');
-      expect(client.insert).toHaveBeenCalledWith(input);
+      expect(client.insert).toHaveBeenCalledWith({ ...input, user_id: 'user-1' });
       expect(client.select).toHaveBeenCalledWith();
       expect(client.single).toHaveBeenCalled();
       expect(result).toEqual(mockLog);

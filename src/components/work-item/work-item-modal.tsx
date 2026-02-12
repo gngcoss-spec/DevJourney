@@ -11,7 +11,7 @@ import { TabBasicInfo } from './tab-basic-info';
 import { TabDecision } from './tab-decision';
 import { TabAISessions } from './tab-ai-sessions';
 import { TabActivityLog } from './tab-activity-log';
-import type { WorkItem } from '@/types/database';
+import type { WorkItem, WorkItemStatus } from '@/types/database';
 import { useCreateWorkItem, useUpdateWorkItem } from '@/lib/hooks/use-work-items';
 import { createClient } from '@/lib/supabase/client';
 import { createStatusChangeLog } from '@/lib/supabase/queries/comments';
@@ -22,11 +22,12 @@ export interface WorkItemModalProps {
   onClose: () => void;
   workItem?: WorkItem;
   serviceId: string;
+  defaultStatus?: WorkItemStatus;
 }
 
 type TabType = 'basic' | 'decision' | 'ai-sessions' | 'activity';
 
-export function WorkItemModal({ isOpen, onClose, workItem, serviceId }: WorkItemModalProps) {
+export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultStatus }: WorkItemModalProps) {
   const [activeTab, setActiveTab] = useState<TabType>('basic');
   const [formData, setFormData] = useState<Partial<CreateWorkItemInput | UpdateWorkItemInput>>(
     workItem || {
@@ -34,7 +35,7 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId }: WorkItem
       description: '',
       type: 'feature',
       priority: 'medium',
-      status: 'backlog',
+      status: defaultStatus || 'backlog',
       assignee_name: '',
     }
   );

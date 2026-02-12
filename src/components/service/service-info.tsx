@@ -8,6 +8,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import type { Service } from '@/types/database';
+import { arrayToTechStack } from '@/lib/utils/tech-stack';
+
+const TECH_STACK_LABELS = [
+  { key: 'frontend' as const, label: 'Frontend' },
+  { key: 'backend' as const, label: 'Backend' },
+  { key: 'ai_engine' as const, label: 'AI Engine' },
+  { key: 'visualization' as const, label: 'Visualization' },
+  { key: 'security' as const, label: 'Security' },
+  { key: 'integration' as const, label: 'Integration' },
+  { key: 'deployment' as const, label: 'Deployment' },
+];
 
 interface ServiceInfoProps {
   service: Service;
@@ -47,22 +58,36 @@ export function ServiceInfo({ service }: ServiceInfoProps) {
           )}
 
           {/* Tech Stack */}
-          {service.tech_stack && service.tech_stack.length > 0 && (
-            <div>
-              <h3 className="text-sm font-medium text-slate-400 mb-2">Tech Stack</h3>
-              <div className="flex flex-wrap gap-2">
-                {service.tech_stack.map((tech) => (
-                  <Badge
-                    key={tech}
-                    variant="outline"
-                    className="bg-slate-800/50 text-slate-300 border-slate-700"
-                  >
-                    {tech}
-                  </Badge>
-                ))}
+          {service.tech_stack && service.tech_stack.length > 0 && (() => {
+            const categorized = arrayToTechStack(service.tech_stack);
+            return (
+              <div>
+                <h3 className="text-sm font-medium text-slate-400 mb-2">Tech Stack</h3>
+                <div className="space-y-2">
+                  {TECH_STACK_LABELS.map(({ key, label }) => {
+                    const items = categorized[key];
+                    if (!items || items.length === 0) return null;
+                    return (
+                      <div key={key}>
+                        <span className="text-xs text-slate-500 mr-2">{label}</span>
+                        <div className="inline-flex flex-wrap gap-1.5">
+                          {items.map((tech) => (
+                            <Badge
+                              key={tech}
+                              variant="outline"
+                              className="bg-slate-800/50 text-slate-300 border-slate-700"
+                            >
+                              {tech}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* AI Role */}
           {service.ai_role && (

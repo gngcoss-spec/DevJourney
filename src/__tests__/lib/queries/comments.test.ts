@@ -51,6 +51,11 @@ function createMockClient(terminateWith: { data: unknown; error: unknown }) {
   mock.order = vi.fn(() => Promise.resolve(terminateWith));
   mock.single = vi.fn(() => Promise.resolve(terminateWith));
 
+  // Auth mock for user_id injection
+  mock.auth = {
+    getUser: vi.fn(() => Promise.resolve({ data: { user: { id: 'user-1' } }, error: null })),
+  };
+
   return mock as unknown as SupabaseClient & {
     from: ReturnType<typeof vi.fn>;
     select: ReturnType<typeof vi.fn>;
@@ -142,6 +147,7 @@ describe('Comments Query Functions', () => {
       expect(client.from).toHaveBeenCalledWith('work_item_comments');
       expect(client.insert).toHaveBeenCalledWith({
         work_item_id: 'wi-1',
+        user_id: 'user-1',
         author_name: 'John Doe',
         content: 'This is a new comment',
         comment_type: 'comment',
@@ -174,6 +180,7 @@ describe('Comments Query Functions', () => {
       // Assert
       expect(client.insert).toHaveBeenCalledWith({
         work_item_id: 'wi-1',
+        user_id: 'user-1',
         author_name: 'Jane Doe',
         content: 'Minimal comment',
         comment_type: 'comment',
@@ -204,6 +211,7 @@ describe('Comments Query Functions', () => {
       // Assert
       expect(client.insert).toHaveBeenCalledWith({
         work_item_id: 'wi-1',
+        user_id: 'user-1',
         author_name: 'Test User',
         content: 'Comment with metadata',
         comment_type: 'comment',
@@ -254,6 +262,7 @@ describe('Comments Query Functions', () => {
       expect(client.from).toHaveBeenCalledWith('work_item_comments');
       expect(client.insert).toHaveBeenCalledWith({
         work_item_id: 'wi-1',
+        user_id: 'user-1',
         author_name: 'System',
         content: 'Status changed from backlog to ready',
         comment_type: 'status_change',
@@ -286,6 +295,7 @@ describe('Comments Query Functions', () => {
       // Assert
       expect(client.insert).toHaveBeenCalledWith({
         work_item_id: 'wi-1',
+        user_id: 'user-1',
         author_name: 'System',
         content: 'Status changed from in-progress to review',
         comment_type: 'status_change',
