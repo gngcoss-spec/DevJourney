@@ -28,11 +28,14 @@ describe('SidebarNavigation', () => {
     vi.clearAllMocks();
   });
 
-  it('Dashboard와 Services 메뉴가 렌더링된다', () => {
+  it('5개 메뉴가 렌더링된다', () => {
     render(<SidebarNavigation />);
 
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
     expect(screen.getByText('Services')).toBeInTheDocument();
+    expect(screen.getByText('Servers')).toBeInTheDocument();
+    expect(screen.getByText('Team')).toBeInTheDocument();
+    expect(screen.getByText('Activity')).toBeInTheDocument();
   });
 
   it('로그아웃 버튼이 존재한다', () => {

@@ -5,7 +5,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Mock @supabase/ssr
-const mockGetUser = vi.fn();
+const mockGetSession = vi.fn();
 const mockCreateServerClient = vi.fn();
 
 vi.mock('@supabase/ssr', () => ({
@@ -13,7 +13,7 @@ vi.mock('@supabase/ssr', () => ({
     mockCreateServerClient(...args);
     return {
       auth: {
-        getUser: mockGetUser,
+        getSession: mockGetSession,
       },
     };
   },
@@ -147,8 +147,8 @@ describe('Supabase Auth Middleware', () => {
   describe('updateSession', () => {
     it('should create Supabase client with correct env variables and cookie handlers', async () => {
       // Arrange
-      mockGetUser.mockResolvedValue({
-        data: { user: { id: 'user-1', email: 'test@test.com' } },
+      mockGetSession.mockResolvedValue({
+        data: { session: { user: { id: 'user-1', email: 'test@test.com' } } },
         error: null,
       });
       const request = createMockRequest('/');
@@ -172,9 +172,9 @@ describe('Supabase Auth Middleware', () => {
 
     it('should redirect unauthenticated user to /login when accessing protected route', async () => {
       // Arrange - getUser returns no user (unauthenticated)
-      mockGetUser.mockResolvedValue({
-        data: { user: null },
-        error: { message: 'Not authenticated' },
+      mockGetSession.mockResolvedValue({
+        data: { session: null },
+        error: null,
       });
       const request = createMockRequest('/');
 
@@ -191,9 +191,9 @@ describe('Supabase Auth Middleware', () => {
 
     it('should redirect unauthenticated user to /login when accessing /services route', async () => {
       // Arrange
-      mockGetUser.mockResolvedValue({
-        data: { user: null },
-        error: { message: 'Not authenticated' },
+      mockGetSession.mockResolvedValue({
+        data: { session: null },
+        error: null,
       });
       const request = createMockRequest('/services/my-project');
 
@@ -210,8 +210,8 @@ describe('Supabase Auth Middleware', () => {
 
     it('should redirect authenticated user from /login to /', async () => {
       // Arrange - getUser returns authenticated user
-      mockGetUser.mockResolvedValue({
-        data: { user: { id: 'user-1', email: 'test@test.com' } },
+      mockGetSession.mockResolvedValue({
+        data: { session: { user: { id: 'user-1', email: 'test@test.com' } } },
         error: null,
       });
       const request = createMockRequest('/login');
@@ -229,8 +229,8 @@ describe('Supabase Auth Middleware', () => {
 
     it('should redirect authenticated user from /signup to /', async () => {
       // Arrange
-      mockGetUser.mockResolvedValue({
-        data: { user: { id: 'user-1', email: 'test@test.com' } },
+      mockGetSession.mockResolvedValue({
+        data: { session: { user: { id: 'user-1', email: 'test@test.com' } } },
         error: null,
       });
       const request = createMockRequest('/signup');
@@ -248,8 +248,8 @@ describe('Supabase Auth Middleware', () => {
 
     it('should allow authenticated user to access protected routes without redirect', async () => {
       // Arrange
-      mockGetUser.mockResolvedValue({
-        data: { user: { id: 'user-1', email: 'test@test.com' } },
+      mockGetSession.mockResolvedValue({
+        data: { session: { user: { id: 'user-1', email: 'test@test.com' } } },
         error: null,
       });
       const request = createMockRequest('/');
@@ -265,9 +265,9 @@ describe('Supabase Auth Middleware', () => {
 
     it('should allow unauthenticated user to access /login without redirect', async () => {
       // Arrange
-      mockGetUser.mockResolvedValue({
-        data: { user: null },
-        error: { message: 'Not authenticated' },
+      mockGetSession.mockResolvedValue({
+        data: { session: null },
+        error: null,
       });
       const request = createMockRequest('/login');
 
@@ -279,10 +279,10 @@ describe('Supabase Auth Middleware', () => {
       expect(NextResponse.redirect).not.toHaveBeenCalled();
     });
 
-    it('should call supabase.auth.getUser() for session refresh', async () => {
+    it('should call supabase.auth.getSession() for session check', async () => {
       // Arrange
-      mockGetUser.mockResolvedValue({
-        data: { user: { id: 'user-1', email: 'test@test.com' } },
+      mockGetSession.mockResolvedValue({
+        data: { session: { user: { id: 'user-1', email: 'test@test.com' } } },
         error: null,
       });
       const request = createMockRequest('/');
@@ -292,7 +292,7 @@ describe('Supabase Auth Middleware', () => {
       await updateSession(request);
 
       // Assert
-      expect(mockGetUser).toHaveBeenCalled();
+      expect(mockGetSession).toHaveBeenCalled();
     });
   });
 });

@@ -3,7 +3,7 @@
 
 'use client';
 
-import { Home, Layers, LogOut, Menu, X } from 'lucide-react';
+import { Home, Layers, Server, Users, Clock, LogOut, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,6 +14,9 @@ import { cn } from '@/lib/utils';
 const menuItems = [
   { name: 'Dashboard', href: '/', icon: Home },
   { name: 'Services', href: '/services', icon: Layers },
+  { name: 'Servers', href: '/servers', icon: Server },
+  { name: 'Team', href: '/team', icon: Users },
+  { name: 'Activity', href: '/activity', icon: Clock },
 ];
 
 export default function SidebarNavigation() {
