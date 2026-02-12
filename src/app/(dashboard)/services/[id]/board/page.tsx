@@ -69,7 +69,7 @@ export default function KanbanBoardPage() {
       {isEmpty && (
         <div className="mb-4 text-center">
           <p className="text-slate-400 text-sm">
-            작업 항목이 없습니다. "+" 버튼으로 새로운 작업 항목을 추가해보세요.
+            작업 항목이 없습니다. &quot;+&quot; 버튼으로 새로운 작업 항목을 추가해보세요.
           </p>
         </div>
       )}

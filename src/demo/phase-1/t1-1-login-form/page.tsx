@@ -80,12 +80,12 @@ export default function LoginFormDemoPage() {
         <h2 className="text-xl font-semibold text-white mb-2">테스트 방법</h2>
         <div className="bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-md">
           <ol className="list-decimal list-inside space-y-2 text-sm">
-            <li>이메일 입력란에 유효하지 않은 이메일 입력 (예: "test") → 에러 메시지 확인</li>
-            <li>비밀번호 입력란에 5자 이하 입력 (예: "123") → 에러 메시지 확인</li>
+            <li>이메일 입력란에 유효하지 않은 이메일 입력 (예: &quot;test&quot;) → 에러 메시지 확인</li>
+            <li>비밀번호 입력란에 5자 이하 입력 (예: &quot;123&quot;) → 에러 메시지 확인</li>
             <li>
               유효한 데이터 입력 (이메일: test@example.com, 비밀번호: 123456) → 로그인 버튼 활성화
             </li>
-            <li>"회원가입" 링크 클릭 → /signup으로 이동 확인</li>
+            <li>&quot;회원가입&quot; 링크 클릭 → /signup으로 이동 확인</li>
           </ol>
         </div>
       </div>
