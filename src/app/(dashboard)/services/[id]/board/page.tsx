@@ -1,21 +1,25 @@
-// @TASK P3-S1-T1 - Kanban Board Page
-// @SPEC docs/planning/TASKS.md#kanban-board-ui
-// @TEST src/__tests__/pages/kanban-board.test.tsx
-
 'use client';
 
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useWorkItems, useMoveWorkItem } from '@/lib/hooks/use-work-items';
+import { useWorkItems, useMoveWorkItem, useWorkItem } from '@/lib/hooks/use-work-items';
 import { KanbanBoard } from '@/components/kanban/kanban-board';
+import { WorkItemModal } from '@/components/work-item/work-item-modal';
+import { PageLoading } from '@/components/common/page-loading';
+import { PageError } from '@/components/common/page-error';
 import type { WorkItemStatus } from '@/types/database';
 
 export default function KanbanBoardPage() {
   const params = useParams();
   const id = params.id as string;
-  const { data: workItems, isLoading, error } = useWorkItems(id);
+  const { data: workItems, isLoading, error, refetch } = useWorkItems(id);
   const { mutate: moveWorkItem } = useMoveWorkItem(id);
 
-  // Loading state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [defaultStatus, setDefaultStatus] = useState<WorkItemStatus>('backlog');
+  const [selectedWorkItemId, setSelectedWorkItemId] = useState<string | null>(null);
+  const { data: selectedWorkItem } = useWorkItem(selectedWorkItemId || '');
+
   if (isLoading) {
     return (
       <div data-testid="kanban-skeleton" className="flex gap-4 overflow-x-auto animate-pulse">
@@ -29,35 +33,33 @@ export default function KanbanBoardPage() {
     );
   }
 
-  // Error state
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="text-center space-y-2">
-          <p className="text-red-400 text-lg font-medium">
-            작업 항목을 불러오는 중 오류가 발생했습니다
-          </p>
-          <p className="text-slate-400 text-sm">
-            {error instanceof Error ? error.message : '알 수 없는 오류'}
-          </p>
-        </div>
-      </div>
+      <PageError
+        message="작업 항목을 불러오는 중 오류가 발생했습니다"
+        onRetry={() => refetch()}
+      />
     );
   }
 
-  // Success state (빈 배열도 보드를 렌더링)
   const handleMoveItem = (itemId: string, status: WorkItemStatus, position: number) => {
     moveWorkItem({ id: itemId, status, position });
   };
 
   const handleQuickCreate = (status: WorkItemStatus) => {
-    // TODO: P3-S3-T1에서 모달 열기
-    console.log('Quick create for status:', status);
+    setDefaultStatus(status);
+    setSelectedWorkItemId(null);
+    setIsModalOpen(true);
   };
 
   const handleCardClick = (workItemId: string) => {
-    // TODO: P3-S3-T1에서 상세 모달 열기
-    console.log('Card clicked:', workItemId);
+    setSelectedWorkItemId(workItemId);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedWorkItemId(null);
   };
 
   const isEmpty = !workItems || workItems.length === 0;
@@ -76,6 +78,14 @@ export default function KanbanBoardPage() {
         onMoveItem={handleMoveItem}
         onQuickCreate={handleQuickCreate}
         onCardClick={handleCardClick}
+      />
+
+      <WorkItemModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        serviceId={id}
+        workItem={selectedWorkItem || undefined}
+        defaultStatus={defaultStatus}
       />
     </div>
   );

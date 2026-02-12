@@ -10,11 +10,22 @@ import type { WorkItem } from '@/types/database';
 // Mock hooks
 vi.mock('@/lib/hooks/use-work-items', () => ({
   useWorkItems: vi.fn(),
+  useWorkItem: vi.fn(() => ({ data: undefined, isLoading: false })),
   useMoveWorkItem: vi.fn(() => ({ mutate: vi.fn() })),
+  useCreateWorkItem: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
+  useUpdateWorkItem: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
 }));
 
 vi.mock('next/navigation', () => ({
   useParams: vi.fn(() => ({ id: 'service-1' })),
+}));
+
+vi.mock('@/lib/supabase/client', () => ({
+  createClient: vi.fn(() => ({})),
+}));
+
+vi.mock('@/lib/supabase/queries/comments', () => ({
+  createStatusChangeLog: vi.fn(),
 }));
 
 // Import after mocks
@@ -245,6 +256,7 @@ describe('KanbanBoardPage', () => {
 
     renderWithProviders(<KanbanBoardPage />);
 
-    expect(screen.getByText(/오류가 발생했습니다|error/i)).toBeInTheDocument();
+    expect(screen.getByTestId('page-error')).toBeInTheDocument();
+    expect(screen.getByText(/오류가 발생했습니다/i)).toBeInTheDocument();
   });
 });

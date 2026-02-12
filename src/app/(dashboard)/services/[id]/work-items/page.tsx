@@ -1,7 +1,3 @@
-// @TASK P3-S2-T1 - Work Items List Page
-// @SPEC docs/planning/TASKS.md#work-items-list-ui
-// @TEST src/__tests__/pages/work-items-list.test.tsx
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -11,15 +7,18 @@ import { WorkItemsFilter } from '@/components/work-item/work-items-filter';
 import { WorkItemsTable } from '@/components/work-item/work-items-table';
 import { WorkItemModal } from '@/components/work-item/work-item-modal';
 import { Button } from '@/components/ui/button';
+import { PageLoading } from '@/components/common/page-loading';
+import { PageError } from '@/components/common/page-error';
+import { PageEmpty } from '@/components/common/page-empty';
+import { ListTodo } from 'lucide-react';
 import type { WorkItemType, WorkItemPriority, WorkItemStatus } from '@/types/database';
 
 export default function WorkItemsPage() {
   const params = useParams();
   const serviceId = params.id as string;
 
-  const { data: workItems, isLoading, isError } = useWorkItems(serviceId);
+  const { data: workItems, isLoading, isError, refetch } = useWorkItems(serviceId);
 
-  // 모달 상태
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedWorkItemId, setSelectedWorkItemId] = useState<string | null>(null);
   const { data: selectedWorkItem } = useWorkItem(selectedWorkItemId || '');
@@ -39,12 +38,10 @@ export default function WorkItemsPage() {
     setSelectedWorkItemId(null);
   };
 
-  // 필터 상태
   const [statusFilter, setStatusFilter] = useState<WorkItemStatus | 'all'>('all');
   const [typeFilter, setTypeFilter] = useState<WorkItemType | 'all'>('all');
   const [priorityFilter, setPriorityFilter] = useState<WorkItemPriority | 'all'>('all');
 
-  // 필터링된 Work Items (클라이언트 사이드)
   const filteredWorkItems = useMemo(() => {
     if (!workItems) return [];
 
@@ -57,61 +54,65 @@ export default function WorkItemsPage() {
     });
   }, [workItems, statusFilter, typeFilter, priorityFilter]);
 
-  // 로딩 상태
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <p className="text-slate-400">로딩 중...</p>
-      </div>
-    );
+    return <PageLoading />;
   }
 
-  // 에러 상태
   if (isError) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <p className="text-red-400">Work Items를 불러오는 중 오류가 발생했습니다.</p>
-      </div>
-    );
-  }
-
-  // 빈 상태 (Work Item이 없을 때)
-  if (!workItems || workItems.length === 0) {
-    return (
       <div className="space-y-6">
-        {/* 헤더 */}
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-white">Work Items</h1>
+          <h1 className="text-2xl font-bold text-slate-50">Work Items</h1>
           <Button onClick={() => handleCreateNew()}>
             새 Work Item
           </Button>
         </div>
+        <PageError message="Work Items를 불러오는 중 오류가 발생했습니다." onRetry={() => refetch()} />
+        <WorkItemModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          serviceId={serviceId}
+          workItem={selectedWorkItem || undefined}
+        />
+      </div>
+    );
+  }
 
-        {/* 빈 상태 메시지 */}
-        <div className="flex flex-col items-center justify-center min-h-[40vh] text-center">
-          <p className="text-slate-400 text-lg mb-4">등록된 Work Item이 없습니다</p>
-          <p className="text-slate-500 text-sm mb-6">
-            새 Work Item을 생성하여 작업을 시작하세요
-          </p>
+  if (!workItems || workItems.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-slate-50">Work Items</h1>
           <Button onClick={() => handleCreateNew()}>
-            첫 Work Item 만들기
+            새 Work Item
           </Button>
         </div>
+        <PageEmpty
+          icon={ListTodo}
+          message="등록된 Work Item이 없습니다"
+          description="새 Work Item을 생성하여 작업을 시작하세요"
+          actionLabel="첫 Work Item 만들기"
+          onAction={handleCreateNew}
+        />
+        <WorkItemModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          serviceId={serviceId}
+          workItem={selectedWorkItem || undefined}
+        />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* 헤더 */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-white">Work Items</h1>
+        <h1 className="text-2xl font-bold text-slate-50">Work Items</h1>
         <Button onClick={() => handleCreateNew()}>
           새 Work Item
         </Button>
       </div>
 
-      {/* 필터 */}
       <WorkItemsFilter
         statusFilter={statusFilter}
         typeFilter={typeFilter}
@@ -121,7 +122,6 @@ export default function WorkItemsPage() {
         onPriorityChange={setPriorityFilter}
       />
 
-      {/* 필터 결과 없음 */}
       {filteredWorkItems.length === 0 && (
         <div className="flex flex-col items-center justify-center min-h-[30vh] text-center">
           <p className="text-slate-400 text-lg">필터 조건에 맞는 Work Item이 없습니다</p>
@@ -131,12 +131,10 @@ export default function WorkItemsPage() {
         </div>
       )}
 
-      {/* Work Items 테이블 */}
       {filteredWorkItems.length > 0 && (
         <WorkItemsTable workItems={filteredWorkItems} onRowClick={handleRowClick} />
       )}
 
-      {/* Work Item 모달 */}
       <WorkItemModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}

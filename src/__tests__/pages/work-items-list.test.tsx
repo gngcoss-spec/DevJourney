@@ -160,7 +160,7 @@ describe('WorkItemsPage', () => {
 
       render(<WorkItemsPage />, { wrapper: createWrapper() });
 
-      expect(screen.getByText(/로딩 중/i)).toBeInTheDocument();
+      expect(screen.getByTestId('page-loading')).toBeInTheDocument();
     });
   });
 

@@ -88,7 +88,7 @@ describe('DevLogsPage', () => {
     } as any);
   });
 
-  it('should show loading state with spinner', () => {
+  it('should show loading state', () => {
     mockUseDevLogs.mockReturnValue({
       data: undefined,
       isLoading: true,
@@ -98,10 +98,7 @@ describe('DevLogsPage', () => {
 
     renderWithQuery(<DevLogsPage />);
 
-    expect(screen.getByText('로딩 중...')).toBeInTheDocument();
-    // Check for spinner (animate-spin class on SVG or div)
-    const spinner = document.querySelector('.animate-spin');
-    expect(spinner).toBeInTheDocument();
+    expect(screen.getByTestId('page-loading')).toBeInTheDocument();
   });
 
   it('should show error state', () => {
@@ -114,7 +111,8 @@ describe('DevLogsPage', () => {
 
     renderWithQuery(<DevLogsPage />);
 
-    expect(screen.getByText(/에러가 발생했습니다/i)).toBeInTheDocument();
+    expect(screen.getByTestId('page-error')).toBeInTheDocument();
+    expect(screen.getByText(/개발 일지를 불러올 수 없습니다/i)).toBeInTheDocument();
   });
 
   it('should show empty state when no logs exist', () => {
