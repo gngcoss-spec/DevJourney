@@ -17,6 +17,33 @@ export const queryKeys = {
     detail: (id: string) => ['dev-logs', id] as const,
     byDate: (serviceId: string, date: string) => ['dev-logs', serviceId, date] as const,
   },
+  decisions: {
+    all: ['decisions'] as const,
+    byService: (serviceId: string) => ['decisions', 'service', serviceId] as const,
+    detail: (id: string) => ['decisions', id] as const,
+  },
+  stages: {
+    all: ['stages'] as const,
+    byService: (serviceId: string) => ['stages', 'service', serviceId] as const,
+    detail: (id: string) => ['stages', id] as const,
+  },
+  documents: {
+    all: ['documents'] as const,
+    byService: (serviceId: string) => ['documents', 'service', serviceId] as const,
+    detail: (id: string) => ['documents', id] as const,
+  },
+  servers: {
+    all: ['servers'] as const,
+    detail: (id: string) => ['servers', id] as const,
+  },
+  team: {
+    all: ['team'] as const,
+    detail: (id: string) => ['team', id] as const,
+  },
+  activity: {
+    all: ['activity'] as const,
+    recent: ['activity', 'recent'] as const,
+  },
   dashboard: {
     stats: ['dashboard', 'stats'] as const,
     recentActivity: ['dashboard', 'recent-activity'] as const,

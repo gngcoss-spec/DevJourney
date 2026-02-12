@@ -14,6 +14,7 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
           queries: {
             staleTime: 5 * 60 * 1000, // 5분
             retry: 1,
+            refetchOnWindowFocus: false,
           },
         },
       })

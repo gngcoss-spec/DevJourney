@@ -9,7 +9,7 @@ import { NextResponse, type NextRequest } from 'next/server';
  * 보호된 라우트 패턴 목록.
  * 이 경로들은 인증된 사용자만 접근 가능합니다.
  */
-const PROTECTED_ROUTES = ['/', '/services'];
+const PROTECTED_ROUTES = ['/', '/services', '/servers', '/team', '/activity'];
 
 /**
  * 인증 전용 (auth-only) 라우트 패턴 목록.
@@ -76,13 +76,20 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // 세션 토큰 자동 갱신 - getUser()는 서버에서 토큰을 검증합니다.
-  // getSession()과 달리 getUser()는 매번 Supabase Auth 서버에 검증 요청을 보냅니다.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   const { pathname } = request.nextUrl;
+
+  // getSession()은 쿠키에서 JWT를 로컬로 검증합니다 (빠름, 네트워크 호출 없음).
+  // getUser()는 Supabase 서버에 매번 HTTP 요청을 보내므로 미들웨어에서는 사용하지 않습니다.
+  let user = null;
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    user = session?.user ?? null;
+  } catch {
+    // Supabase 연결 실패 시 미인증으로 처리
+    user = null;
+  }
 
   // 미인증 사용자가 보호된 라우트에 접근 시 /login으로 리다이렉트
   if (!user && isProtectedRoute(pathname)) {

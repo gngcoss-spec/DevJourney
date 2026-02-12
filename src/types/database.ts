@@ -9,6 +9,16 @@ export type WorkItemStatus = 'backlog' | 'ready' | 'in-progress' | 'review' | 'd
 export type AIProvider = 'chatgpt' | 'gemini' | 'claude' | 'other';
 export type CommentType = 'comment' | 'status_change' | 'system';
 
+export interface TechStack {
+  frontend?: string[];
+  backend?: string[];
+  ai_engine?: string[];
+  visualization?: string[];
+  security?: string[];
+  integration?: string[];
+  deployment?: string[];
+}
+
 // @TASK P2-R1-T1 - Service interface updated with new fields
 // @SPEC docs/planning/TASKS.md#services-table
 export interface Service {
@@ -108,3 +118,109 @@ export interface WorkItemComment {
 }
 
 export type CreateCommentInput = Pick<WorkItemComment, 'work_item_id' | 'author_name' | 'content'> & Partial<Pick<WorkItemComment, 'comment_type' | 'metadata'>>;
+
+// --- Decisions ---
+
+export interface Decision {
+  id: string;
+  service_id: string;
+  user_id: string;
+  title: string;
+  background: string | null;
+  options: Record<string, unknown>[];
+  selected_option: string | null;
+  reason: string | null;
+  impact: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type CreateDecisionInput = Pick<Decision, 'service_id' | 'title'> & Partial<Pick<Decision, 'background' | 'options' | 'selected_option' | 'reason' | 'impact'>>;
+
+export type UpdateDecisionInput = Partial<Omit<Decision, 'id' | 'user_id' | 'service_id' | 'created_at' | 'updated_at'>>;
+
+// --- Stages (Roadmap) ---
+
+export interface Stage {
+  id: string;
+  service_id: string;
+  user_id: string;
+  stage_name: ServiceStage;
+  start_date: string | null;
+  end_date: string | null;
+  summary: string | null;
+  deliverables: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export type CreateStageInput = Pick<Stage, 'service_id' | 'stage_name'> & Partial<Pick<Stage, 'start_date' | 'end_date' | 'summary' | 'deliverables'>>;
+
+export type UpdateStageInput = Partial<Omit<Stage, 'id' | 'user_id' | 'service_id' | 'created_at' | 'updated_at'>>;
+
+// --- Documents ---
+
+export type DocType = 'planning' | 'database' | 'api' | 'prompt' | 'erd' | 'architecture' | 'other';
+
+export interface Document {
+  id: string;
+  service_id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  doc_type: DocType;
+  file_url: string | null;
+  external_url: string | null;
+  version: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export type CreateDocumentInput = Pick<Document, 'service_id' | 'title'> & Partial<Pick<Document, 'description' | 'doc_type' | 'file_url' | 'external_url' | 'version'>>;
+
+export type UpdateDocumentInput = Partial<Omit<Document, 'id' | 'user_id' | 'service_id' | 'created_at' | 'updated_at'>>;
+
+// --- Servers ---
+
+export type ServerStatus = 'active' | 'maintenance' | 'offline';
+export type RiskLevel = 'low' | 'medium' | 'high';
+
+export interface Server {
+  id: string;
+  user_id: string;
+  name: string;
+  ip: string | null;
+  description: string | null;
+  purpose: string | null;
+  status: ServerStatus;
+  risk_level: RiskLevel;
+  last_activity_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export type CreateServerInput = Pick<Server, 'name'> & Partial<Pick<Server, 'ip' | 'description' | 'purpose' | 'status' | 'risk_level'>>;
+
+export type UpdateServerInput = Partial<Omit<Server, 'id' | 'user_id' | 'created_at' | 'updated_at'>>;
+
+// --- Team Members ---
+
+export type TeamRole = 'owner' | 'contributor' | 'viewer';
+export type MemberStatus = 'active' | 'invited' | 'inactive';
+
+export interface TeamMember {
+  id: string;
+  user_id: string;
+  invited_by: string | null;
+  display_name: string;
+  email: string | null;
+  role: TeamRole;
+  status: MemberStatus;
+  joined_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type CreateTeamMemberInput = Pick<TeamMember, 'display_name'> & Partial<Pick<TeamMember, 'email' | 'role' | 'status'>>;
+
+export type UpdateTeamMemberInput = Partial<Omit<TeamMember, 'id' | 'user_id' | 'invited_by' | 'created_at' | 'updated_at'>>;

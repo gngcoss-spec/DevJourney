@@ -3,6 +3,7 @@
 // @TEST src/__tests__/lib/queries/dev-logs.test.ts
 
 import { SupabaseClient } from '@supabase/supabase-js';
+import { getAuthUser } from './auth-helper';
 import type { DevLog, CreateDevLogInput, UpdateDevLogInput } from '@/types/database';
 
 /**
@@ -81,15 +82,18 @@ export async function getDevLogByDate(
 /**
  * Create a new dev log.
  * Requires `service_id`; other fields use DB defaults or are optional.
+ * Automatically injects user_id from the authenticated session (RLS requirement).
  * Returns the created dev log record.
  */
 export async function createDevLog(
   client: SupabaseClient,
   data: CreateDevLogInput
 ): Promise<DevLog> {
+  const user = await getAuthUser(client);
+
   const { data: created, error } = await client
     .from('dev_logs')
-    .insert(data)
+    .insert({ ...data, user_id: user.id })
     .select()
     .single();
 

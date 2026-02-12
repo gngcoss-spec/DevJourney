@@ -3,6 +3,7 @@
 // @TEST src/__tests__/lib/queries/ai-sessions.test.ts
 
 import { SupabaseClient } from '@supabase/supabase-js';
+import { getAuthUser } from './auth-helper';
 import type { AISession, CreateAISessionInput } from '@/types/database';
 
 /**
@@ -30,15 +31,18 @@ export async function getAISessions(
 /**
  * Create a new AI session.
  * Only `work_item_id` and `title` are required; other fields use DB defaults.
+ * Automatically injects user_id from the authenticated session (RLS requirement).
  * Returns the created AI session record.
  */
 export async function createAISession(
   client: SupabaseClient,
   data: CreateAISessionInput
 ): Promise<AISession> {
+  const user = await getAuthUser(client);
+
   const { data: created, error } = await client
     .from('ai_sessions')
-    .insert(data)
+    .insert({ ...data, user_id: user.id })
     .select()
     .single();
 

@@ -3,7 +3,20 @@
 // @TEST src/__tests__/lib/queries/services.test.ts
 
 import { SupabaseClient } from '@supabase/supabase-js';
-import type { Service, CreateServiceInput, UpdateServiceInput } from '@/types/database';
+import type { Service, CreateServiceInput, UpdateServiceInput, TechStack } from '@/types/database';
+import { techStackToArray } from '@/lib/utils/tech-stack';
+import { getAuthUser } from './auth-helper';
+
+/**
+ * If tech_stack is a TechStack object (from form), convert to string[] for DB.
+ * If it's already string[] (from DB), pass through.
+ */
+function normalizeTechStack(techStack: unknown): string[] | undefined {
+  if (!techStack) return undefined;
+  if (Array.isArray(techStack)) return techStack;
+  if (typeof techStack === 'object') return techStackToArray(techStack as TechStack);
+  return undefined;
+}
 
 /**
  * Fetch all services for the authenticated user.
@@ -52,15 +65,24 @@ export async function getServiceById(
 /**
  * Create a new service.
  * Only `name` is required; other fields use DB defaults.
+ * Automatically injects user_id from the authenticated session (RLS requirement).
  * Returns the created service record.
  */
 export async function createService(
   client: SupabaseClient,
   data: CreateServiceInput
 ): Promise<Service> {
+  const user = await getAuthUser(client);
+
+  const insertData = {
+    ...data,
+    user_id: user.id,
+    tech_stack: normalizeTechStack(data.tech_stack),
+  };
+
   const { data: created, error } = await client
     .from('services')
-    .insert(data)
+    .insert(insertData)
     .select()
     .single();
 
@@ -81,9 +103,14 @@ export async function updateService(
   id: string,
   data: UpdateServiceInput
 ): Promise<Service> {
+  const updateData = {
+    ...data,
+    ...(data.tech_stack !== undefined ? { tech_stack: normalizeTechStack(data.tech_stack) } : {}),
+  };
+
   const { data: updated, error } = await client
     .from('services')
-    .update(data)
+    .update(updateData)
     .eq('id', id)
     .select()
     .single();

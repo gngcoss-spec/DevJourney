@@ -3,6 +3,7 @@
 // @TEST src/__tests__/lib/queries/work-items.test.ts
 
 import { SupabaseClient } from '@supabase/supabase-js';
+import { getAuthUser } from './auth-helper';
 import type {
   WorkItem,
   CreateWorkItemInput,
@@ -85,15 +86,18 @@ export async function getWorkItemById(
 /**
  * Create a new work item.
  * Requires `service_id` and `title`; other fields use DB defaults.
+ * Automatically injects user_id from the authenticated session (RLS requirement).
  * Returns the created work item record.
  */
 export async function createWorkItem(
   client: SupabaseClient,
   data: CreateWorkItemInput
 ): Promise<WorkItem> {
+  const user = await getAuthUser(client);
+
   const { data: created, error } = await client
     .from('work_items')
-    .insert(data)
+    .insert({ ...data, user_id: user.id })
     .select()
     .single();
 

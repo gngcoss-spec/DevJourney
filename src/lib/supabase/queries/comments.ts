@@ -3,6 +3,7 @@
 // @TEST src/__tests__/lib/queries/comments.test.ts
 
 import { SupabaseClient } from '@supabase/supabase-js';
+import { getAuthUser } from './auth-helper';
 import type { WorkItemComment, CommentType } from '@/types/database';
 
 /**
@@ -42,16 +43,20 @@ export async function getComments(
 /**
  * Create a new comment on a work item.
  * Only `work_item_id`, `author_name`, and `content` are required.
+ * Automatically injects user_id from the authenticated session (RLS requirement).
  * Returns the created comment record.
  */
 export async function createComment(
   client: SupabaseClient,
   data: CreateCommentInput
 ): Promise<WorkItemComment> {
+  const user = await getAuthUser(client);
+
   const { data: created, error } = await client
     .from('work_item_comments')
     .insert({
       work_item_id: data.work_item_id,
+      user_id: user.id,
       author_name: data.author_name,
       content: data.content,
       comment_type: data.comment_type || 'comment',
@@ -70,6 +75,7 @@ export async function createComment(
 /**
  * Create a status change log comment.
  * Automatically records the transition between two statuses.
+ * Automatically injects user_id from the authenticated session (RLS requirement).
  * Returns the created comment record.
  */
 export async function createStatusChangeLog(
@@ -78,10 +84,13 @@ export async function createStatusChangeLog(
   fromStatus: string,
   toStatus: string
 ): Promise<WorkItemComment> {
+  const user = await getAuthUser(client);
+
   const { data: created, error } = await client
     .from('work_item_comments')
     .insert({
       work_item_id: workItemId,
+      user_id: user.id,
       author_name: 'System',
       content: `Status changed from ${fromStatus} to ${toStatus}`,
       comment_type: 'status_change',
