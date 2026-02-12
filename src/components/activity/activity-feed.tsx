@@ -25,10 +25,10 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
     <div className="space-y-6">
       {Array.from(grouped.entries()).map(([date, items]) => (
         <div key={date}>
-          <h3 className="text-xs font-medium text-slate-500 mb-2 sticky top-0 bg-slate-950 py-1">
+          <h3 className="text-xs font-medium text-[hsl(var(--text-quaternary))] mb-2 sticky top-0 bg-[hsl(var(--surface-ground))] py-1">
             {date}
           </h3>
-          <div className="border-l-2 border-slate-800 pl-4 space-y-1">
+          <div className="border-l-2 border-[hsl(var(--border-default))] pl-4 space-y-1">
             {items.map((activity) => (
               <ActivityItemComponent key={`${activity.type}-${activity.id}`} activity={activity} />
             ))}

@@ -2,6 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { X } from 'lucide-react';
 import { useCreateStage, useUpdateStage } from '@/lib/hooks/use-stages';
 import type { Stage, ServiceStage } from '@/types/database';
 import { Button } from '@/components/ui/button';
@@ -100,66 +101,42 @@ export function StageForm({ serviceId, stageName, onClose, existingStage }: Stag
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between border-b border-slate-700 pb-4">
-        <h2 className="text-xl font-semibold text-slate-50">
+      <div className="flex items-center justify-between border-b border-[hsl(var(--border-default))] pb-4">
+        <h2 className="text-subheading">
           {stageLabels[stageName]} 단계 {isEditMode ? '수정' : '등록'}
         </h2>
-        <button onClick={onClose} className="text-slate-400 hover:text-slate-300" aria-label="닫기">
-          ✕
-        </button>
+        <Button variant="ghost" size="icon-xs" onClick={onClose} aria-label="닫기">
+          <X className="size-4" />
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="start_date" className="text-sm font-medium text-slate-300">시작일</Label>
-            <Input
-              id="start_date"
-              type="date"
-              {...register('start_date')}
-              className="bg-slate-800 border-slate-700 text-slate-50"
-            />
+            <Label htmlFor="start_date">시작일</Label>
+            <Input id="start_date" type="date" {...register('start_date')} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="end_date" className="text-sm font-medium text-slate-300">종료일</Label>
-            <Input
-              id="end_date"
-              type="date"
-              {...register('end_date')}
-              className="bg-slate-800 border-slate-700 text-slate-50"
-            />
+            <Label htmlFor="end_date">종료일</Label>
+            <Input id="end_date" type="date" {...register('end_date')} />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="summary" className="text-sm font-medium text-slate-300">요약</Label>
-          <Textarea
-            id="summary"
-            {...register('summary')}
-            rows={3}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-            placeholder="이 단계의 요약을 입력하세요"
-          />
+          <Label htmlFor="summary">요약</Label>
+          <Textarea id="summary" {...register('summary')} rows={3} placeholder="이 단계의 요약을 입력하세요" />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="deliverables_text" className="text-sm font-medium text-slate-300">
-            산출물 (한 줄에 하나씩)
-          </Label>
-          <Textarea
-            id="deliverables_text"
-            {...register('deliverables_text')}
-            rows={3}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-            placeholder="PRD&#10;ERD&#10;API Spec"
-          />
+          <Label htmlFor="deliverables_text">산출물 (한 줄에 하나씩)</Label>
+          <Textarea id="deliverables_text" {...register('deliverables_text')} rows={3} placeholder="PRD&#10;ERD&#10;API Spec" />
         </div>
 
         <div className="flex justify-end gap-3 pt-4">
-          <Button type="button" onClick={onClose} variant="ghost" className="bg-slate-700 hover:bg-slate-600 text-slate-300">
+          <Button type="button" onClick={onClose} variant="outline">
             취소
           </Button>
-          <Button type="submit" disabled={isPending} className="bg-blue-600 hover:bg-blue-500 text-white">
+          <Button type="submit" disabled={isPending}>
             {isEditMode ? '수정' : '저장'}
           </Button>
         </div>

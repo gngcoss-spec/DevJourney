@@ -1,11 +1,8 @@
-// @TASK P2-S1-T1 - Service card list for dashboard
-// @SPEC docs/planning/TASKS.md#dashboard-ui
-
 'use client';
 
 import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BentoGrid, BentoCard } from '@/components/ui/bento-grid';
+import { StatusBadge } from '@/components/common/status-badge';
 import { Progress } from '@/components/ui/progress';
 import type { Service } from '@/types/database';
 
@@ -19,16 +16,12 @@ function isServiceStalled(service: Service): boolean {
   return lastActivity < sevenDaysAgo;
 }
 
-function getStatusColor(status: string): string {
+function getStatusVariant(status: string): 'success' | 'warning' | 'danger' | 'neutral' {
   switch (status) {
-    case 'active':
-      return 'bg-green-500/10 text-green-500 hover:bg-green-500/20';
-    case 'stalled':
-      return 'bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20';
-    case 'paused':
-      return 'bg-red-500/10 text-red-500 hover:bg-red-500/20';
-    default:
-      return 'bg-slate-500/10 text-slate-500 hover:bg-slate-500/20';
+    case 'active': return 'success';
+    case 'stalled': return 'warning';
+    case 'paused': return 'danger';
+    default: return 'neutral';
   }
 }
 
@@ -47,27 +40,26 @@ function formatDate(dateString: string): string {
 
 export function ServiceCardList({ services }: ServiceCardListProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <BentoGrid columns={3}>
       {services.map((service) => {
         const isStalled = isServiceStalled(service);
         const displayStatus = isStalled ? 'stalled' : service.status;
 
         return (
           <Link key={service.id} href={`/services/${service.id}`}>
-            <Card className="bg-slate-900 border-slate-800 hover:border-slate-700 transition-colors h-full">
-              <CardHeader>
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-lg text-slate-50">{service.name}</CardTitle>
-                  <Badge className={getStatusColor(displayStatus)}>
-                    {displayStatus}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
+            <BentoCard interactive glow="blue" className="h-full">
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <h3 className="text-lg font-semibold text-[hsl(var(--text-primary))]">{service.name}</h3>
+                <StatusBadge variant={getStatusVariant(displayStatus)}>
+                  {displayStatus}
+                </StatusBadge>
+              </div>
+
+              <div className="space-y-3">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-slate-400">진행률</span>
-                    <span className="text-sm font-semibold text-slate-50">
+                    <span className="text-caption">진행률</span>
+                    <span className="text-sm font-semibold text-[hsl(var(--text-primary))]">
                       {service.progress}%
                     </span>
                   </div>
@@ -75,31 +67,31 @@ export function ServiceCardList({ services }: ServiceCardListProps) {
                 </div>
 
                 <div className="space-y-1">
-                  <div className="text-sm text-slate-400">
-                    현재 단계: <span className="text-slate-300">{service.current_stage}</span>
+                  <div className="text-body">
+                    현재 단계: <span className="text-[hsl(var(--text-primary))]">{service.current_stage}</span>
                   </div>
-                  <div className="text-sm text-slate-400">
-                    마지막 활동: <span className="text-slate-300">{formatDate(service.last_activity_at)}</span>
+                  <div className="text-body">
+                    마지막 활동: <span className="text-[hsl(var(--text-primary))]">{formatDate(service.last_activity_at)}</span>
                   </div>
                 </div>
 
                 {service.next_action && (
-                  <div className="pt-2 border-t border-slate-800">
-                    <p className="text-xs text-slate-400">다음 액션</p>
-                    <p className="text-sm text-slate-200 mt-1">{service.next_action}</p>
+                  <div className="pt-2 border-t border-[hsl(var(--border-default))]">
+                    <p className="text-caption">다음 액션</p>
+                    <p className="text-sm text-[hsl(var(--text-secondary))] mt-1">{service.next_action}</p>
                   </div>
                 )}
 
                 {isStalled && (
-                  <Badge className="bg-yellow-500/10 text-yellow-500 mt-2">
-                    ⚠️ 7일 이상 활동 없음
-                  </Badge>
+                  <StatusBadge variant="warning" className="mt-2">
+                    7일 이상 활동 없음
+                  </StatusBadge>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </BentoCard>
           </Link>
         );
       })}
-    </div>
+    </BentoGrid>
   );
 }

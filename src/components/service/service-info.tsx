@@ -1,12 +1,8 @@
-// @TASK P2-S4-T1 - Service Info Component
-// @SPEC docs/planning/TASKS.md#service-overview
-// @TEST src/__tests__/pages/service-overview.test.tsx
-
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { BentoGrid, BentoCard, BentoCardHeader, BentoCardTitle } from '@/components/ui/bento-grid';
 import type { Service } from '@/types/database';
 import { arrayToTechStack } from '@/lib/utils/tech-stack';
 
@@ -27,106 +23,104 @@ interface ServiceInfoProps {
 export function ServiceInfo({ service }: ServiceInfoProps) {
   return (
     <div className="space-y-6">
-      {/* Overview Card */}
-      <Card className="bg-slate-900 border-slate-800">
-        <CardHeader>
-          <CardTitle className="text-white">Overview</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Description */}
-          {service.description && (
-            <div>
-              <h3 className="text-sm font-medium text-slate-400 mb-1">Description</h3>
-              <p className="text-white">{service.description}</p>
-            </div>
-          )}
-
-          {/* Goal */}
-          {service.goal && (
-            <div>
-              <h3 className="text-sm font-medium text-slate-400 mb-1">Goal</h3>
-              <p className="text-white">{service.goal}</p>
-            </div>
-          )}
-
-          {/* Target Users */}
-          {service.target_users && (
-            <div>
-              <h3 className="text-sm font-medium text-slate-400 mb-1">Target Users</h3>
-              <p className="text-white">{service.target_users}</p>
-            </div>
-          )}
-
-          {/* Tech Stack */}
-          {service.tech_stack && service.tech_stack.length > 0 && (() => {
-            const categorized = arrayToTechStack(service.tech_stack);
-            return (
+      <BentoGrid columns={2}>
+        {/* Description + Goal */}
+        <BentoCard>
+          <BentoCardHeader>
+            <BentoCardTitle className="text-subheading">Overview</BentoCardTitle>
+          </BentoCardHeader>
+          <div className="space-y-4">
+            {service.description && (
               <div>
-                <h3 className="text-sm font-medium text-slate-400 mb-2">Tech Stack</h3>
-                <div className="space-y-2">
-                  {TECH_STACK_LABELS.map(({ key, label }) => {
-                    const items = categorized[key];
-                    if (!items || items.length === 0) return null;
-                    return (
-                      <div key={key}>
-                        <span className="text-xs text-slate-500 mr-2">{label}</span>
-                        <div className="inline-flex flex-wrap gap-1.5">
-                          {items.map((tech) => (
-                            <Badge
-                              key={tech}
-                              variant="outline"
-                              className="bg-slate-800/50 text-slate-300 border-slate-700"
-                            >
-                              {tech}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
+                <h3 className="text-caption mb-1">Description</h3>
+                <p className="text-body">{service.description}</p>
+              </div>
+            )}
+            {service.goal && (
+              <div>
+                <h3 className="text-caption mb-1">Goal</h3>
+                <p className="text-body">{service.goal}</p>
+              </div>
+            )}
+            {service.target_users && (
+              <div>
+                <h3 className="text-caption mb-1">Target Users</h3>
+                <p className="text-body">{service.target_users}</p>
+              </div>
+            )}
+            {service.ai_role && (
+              <div>
+                <h3 className="text-caption mb-1">AI Role</h3>
+                <p className="text-body">{service.ai_role}</p>
+              </div>
+            )}
+          </div>
+        </BentoCard>
+
+        {/* Progress + Next Action + Tech Stack */}
+        <BentoCard>
+          <div className="space-y-4">
+            {/* Progress */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-caption">Progress</h3>
+                <span className="text-sm font-medium text-[hsl(var(--text-primary))]">{service.progress}%</span>
+              </div>
+              <Progress value={service.progress} aria-valuenow={service.progress} />
+            </div>
+
+            {/* Next Action */}
+            {service.next_action && (
+              <div>
+                <h3 className="text-caption mb-1">Next Action</h3>
+                <div className="bg-[hsl(var(--status-info-bg))] border border-[hsl(var(--status-info-border))] rounded-[var(--radius-lg)] p-3">
+                  <p className="text-sm font-medium text-[hsl(var(--text-primary))]">{service.next_action}</p>
                 </div>
               </div>
-            );
-          })()}
+            )}
 
-          {/* AI Role */}
-          {service.ai_role && (
-            <div>
-              <h3 className="text-sm font-medium text-slate-400 mb-1">AI Role</h3>
-              <p className="text-white">{service.ai_role}</p>
-            </div>
-          )}
-
-          {/* Progress */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-slate-400">Progress</h3>
-              <span className="text-sm font-medium text-white">{service.progress}%</span>
-            </div>
-            <Progress value={service.progress} aria-valuenow={service.progress} />
+            {/* Tech Stack */}
+            {service.tech_stack && service.tech_stack.length > 0 && (() => {
+              const categorized = arrayToTechStack(service.tech_stack);
+              return (
+                <div>
+                  <h3 className="text-caption mb-2">Tech Stack</h3>
+                  <div className="space-y-2">
+                    {TECH_STACK_LABELS.map(({ key, label }) => {
+                      const items = categorized[key];
+                      if (!items || items.length === 0) return null;
+                      return (
+                        <div key={key}>
+                          <span className="text-xs text-[hsl(var(--text-quaternary))] mr-2">{label}</span>
+                          <div className="inline-flex flex-wrap gap-1.5">
+                            {items.map((tech) => (
+                              <Badge
+                                key={tech}
+                                variant="outline"
+                                className="bg-[hsl(var(--surface-overlay))] text-[hsl(var(--text-secondary))] border-[hsl(var(--border-default))]"
+                              >
+                                {tech}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
-
-          {/* Next Action */}
-          {service.next_action && (
-            <div className="pt-2">
-              <h3 className="text-sm font-medium text-slate-400 mb-1">Next Action</h3>
-              <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
-                <p className="text-white font-medium">{service.next_action}</p>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+        </BentoCard>
+      </BentoGrid>
 
       {/* Recent Decisions Placeholder */}
-      <Card className="bg-slate-900 border-slate-800">
-        <CardHeader>
-          <CardTitle className="text-white">Recent Decisions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-slate-400 text-sm">Phase 3에서 구현 예정</p>
-        </CardContent>
-      </Card>
+      <BentoCard>
+        <BentoCardHeader>
+          <BentoCardTitle className="text-subheading">Recent Decisions</BentoCardTitle>
+        </BentoCardHeader>
+        <p className="text-caption">Phase 3에서 구현 예정</p>
+      </BentoCard>
     </div>
   );
 }

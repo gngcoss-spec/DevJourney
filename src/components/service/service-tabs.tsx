@@ -34,7 +34,7 @@ export function ServiceTabs({ serviceId }: ServiceTabsProps) {
   const basePath = `/services/${serviceId}`;
 
   return (
-    <nav className="border-b border-slate-800 overflow-x-auto">
+    <nav className="border-b border-[hsl(var(--border-default))] overflow-x-auto">
       <div className="flex space-x-6">
         {tabs.map((tab) => {
           const href = `${basePath}${tab.path}`;
@@ -51,11 +51,11 @@ export function ServiceTabs({ serviceId }: ServiceTabsProps) {
               className={cn(
                 'flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap',
                 isActive
-                  ? 'border-blue-500 text-white'
-                  : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                  ? 'border-[hsl(var(--primary))] text-[hsl(var(--text-primary))]'
+                  : 'border-transparent text-[hsl(var(--text-tertiary))] hover:text-[hsl(var(--text-secondary))] hover:border-[hsl(var(--border-hover))]'
               )}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="size-4" />
               {tab.label}
             </Link>
           );

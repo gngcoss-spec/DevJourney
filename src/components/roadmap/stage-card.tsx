@@ -2,6 +2,8 @@
 
 import { Pencil } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { StatusBadge } from '@/components/common/status-badge';
+import { Button } from '@/components/ui/button';
 import type { Stage, ServiceStage } from '@/types/database';
 import { cn } from '@/lib/utils';
 
@@ -34,69 +36,66 @@ function getStageStatus(stageName: ServiceStage, currentStage: ServiceStage): 'c
 }
 
 const statusStyles = {
-  completed: 'border-green-500/50 bg-green-500/5',
-  current: 'border-blue-500 bg-blue-500/10 ring-1 ring-blue-500/30',
-  upcoming: 'border-slate-700 bg-slate-900/30',
+  completed: 'border-[hsl(var(--status-success-border))] bg-[hsl(var(--status-success-bg))]',
+  current: 'border-[hsl(var(--primary))] bg-[hsl(var(--status-info-bg))] ring-1 ring-[hsl(var(--status-info-border))]',
+  upcoming: 'border-[hsl(var(--border-default))] bg-[hsl(var(--surface-ground))]',
 };
 
 const dotStyles = {
-  completed: 'bg-green-500',
-  current: 'bg-blue-500 animate-pulse',
-  upcoming: 'bg-slate-600',
+  completed: 'bg-[hsl(var(--status-success-text))]',
+  current: 'bg-[hsl(var(--primary))] animate-pulse',
+  upcoming: 'bg-[hsl(var(--text-quaternary))]',
 };
 
 export function StageCard({ stage, stageName, currentStage, onEdit }: StageCardProps) {
   const status = getStageStatus(stageName, currentStage);
 
   return (
-    <div className={cn('border rounded-lg p-4 min-w-[200px] relative', statusStyles[status])}>
+    <div className={cn('border rounded-[var(--radius-lg)] p-4 min-w-[200px] relative', statusStyles[status])}>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className={cn('w-3 h-3 rounded-full', dotStyles[status])} />
           <h3 className={cn(
             'text-sm font-semibold',
-            status === 'upcoming' ? 'text-slate-500' : 'text-slate-200'
+            status === 'upcoming' ? 'text-[hsl(var(--text-quaternary))]' : 'text-[hsl(var(--text-secondary))]'
           )}>
             {stageLabels[stageName]}
           </h3>
         </div>
         <div className="flex items-center gap-2">
           {status === 'completed' && (
-            <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/30 text-xs">
-              완료
-            </Badge>
+            <StatusBadge variant="success" className="text-xs">완료</StatusBadge>
           )}
           {status === 'current' && (
-            <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/30 text-xs">
-              진행 중
-            </Badge>
+            <StatusBadge variant="info" className="text-xs">진행 중</StatusBadge>
           )}
-          <button
+          <Button
+            variant="ghost"
+            size="icon-xs"
             onClick={() => onEdit(stageName, stage || undefined)}
-            className="p-1 text-slate-500 hover:text-slate-300 transition-colors"
             aria-label={`${stageLabels[stageName]} 편집`}
           >
-            <Pencil size={12} />
-          </button>
+            <Pencil className="size-3" />
+          </Button>
         </div>
       </div>
 
       {stage && (
         <div className="space-y-2 mt-3">
           {(stage.start_date || stage.end_date) && (
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[hsl(var(--text-quaternary))]">
               {stage.start_date && <span>{stage.start_date}</span>}
               {stage.start_date && stage.end_date && <span> ~ </span>}
               {stage.end_date && <span>{stage.end_date}</span>}
             </p>
           )}
           {stage.summary && (
-            <p className="text-sm text-slate-400">{stage.summary}</p>
+            <p className="text-sm text-[hsl(var(--text-tertiary))]">{stage.summary}</p>
           )}
           {stage.deliverables && stage.deliverables.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-1">
               {stage.deliverables.map((d, idx) => (
-                <Badge key={idx} variant="outline" className="text-xs text-slate-400 border-slate-700">
+                <Badge key={idx} variant="outline" className="text-xs text-[hsl(var(--text-tertiary))] border-[hsl(var(--border-default))]">
                   {d}
                 </Badge>
               ))}
@@ -106,7 +105,7 @@ export function StageCard({ stage, stageName, currentStage, onEdit }: StageCardP
       )}
 
       {!stage && (
-        <p className="text-xs text-slate-600 mt-2">아직 기록이 없습니다</p>
+        <p className="text-xs text-[hsl(var(--text-quaternary))] mt-2">아직 기록이 없습니다</p>
       )}
     </div>
   );

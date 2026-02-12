@@ -13,9 +13,9 @@ export default function DashboardLayout({
 }) {
   return (
     <QueryProvider>
-      <div className="flex min-h-screen bg-slate-950">
+      <div className="flex min-h-screen bg-[hsl(var(--surface-ground))]">
         <SidebarNavigation />
-        <main className="flex-1 p-8 md:ml-0">
+        <main className="flex-1 p-6 md:p-8 md:ml-0">
           {children}
         </main>
       </div>

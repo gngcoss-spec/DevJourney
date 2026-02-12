@@ -1,7 +1,3 @@
-// @TASK P4-S1-T1 - Dev Log Card Component with accordion
-// @SPEC docs/planning/TASKS.md#dev-logs-timeline-ui
-// @TEST src/__tests__/pages/dev-logs.test.tsx
-
 import type { DevLog } from '@/types/database';
 
 interface DevLogCardProps {
@@ -28,15 +24,15 @@ export function DevLogCard({ devLog, isExpanded, onToggle }: DevLogCardProps) {
           onToggle();
         }
       }}
-      className="bg-slate-900 border border-slate-800 rounded-lg p-4 hover:border-slate-700 transition-colors cursor-pointer"
+      className="bento-glass-hover p-4 cursor-pointer"
     >
       {/* Header: Date */}
       <div className="flex items-center justify-between mb-3">
-        <time className="text-sm text-slate-500 font-medium">
+        <time className="text-caption font-medium">
           {devLog.log_date}
         </time>
         <svg
-          className={`w-5 h-5 text-slate-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+          className={`size-5 text-[hsl(var(--text-tertiary))] transition-transform ${isExpanded ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -50,16 +46,16 @@ export function DevLogCard({ devLog, isExpanded, onToggle }: DevLogCardProps) {
         <div className="space-y-2">
           {devLog.done && (
             <div>
-              <span className="text-xs text-slate-400 mr-2">🟢 오늘 한 것</span>
-              <p className="text-sm text-slate-200 mt-1">
+              <span className="text-caption mr-2">오늘 한 것</span>
+              <p className="text-sm text-[hsl(var(--text-secondary))] mt-1">
                 {truncateText(devLog.done, 80)}
               </p>
             </div>
           )}
           {devLog.next_action && (
             <div>
-              <span className="text-xs text-slate-400 mr-2">➡️ 다음에 할 것</span>
-              <p className="text-sm text-slate-200 mt-1">
+              <span className="text-caption mr-2">다음에 할 것</span>
+              <p className="text-sm text-[hsl(var(--text-secondary))] mt-1">
                 {truncateText(devLog.next_action, 60)}
               </p>
             </div>
@@ -72,10 +68,10 @@ export function DevLogCard({ devLog, isExpanded, onToggle }: DevLogCardProps) {
         <div className="space-y-4">
           {devLog.done && (
             <div>
-              <h4 className="text-sm font-medium text-green-400 mb-1">
-                🟢 오늘 한 것
+              <h4 className="text-sm font-medium text-[hsl(var(--status-success-text))] mb-1">
+                오늘 한 것
               </h4>
-              <p className="text-sm text-slate-200 whitespace-pre-wrap">
+              <p className="text-sm text-[hsl(var(--text-secondary))] whitespace-pre-wrap">
                 {devLog.done}
               </p>
             </div>
@@ -83,10 +79,10 @@ export function DevLogCard({ devLog, isExpanded, onToggle }: DevLogCardProps) {
 
           {devLog.decided && (
             <div>
-              <h4 className="text-sm font-medium text-blue-400 mb-1">
-                ✅ 확정한 것
+              <h4 className="text-sm font-medium text-[hsl(var(--status-info-text))] mb-1">
+                확정한 것
               </h4>
-              <p className="text-sm text-slate-200 whitespace-pre-wrap">
+              <p className="text-sm text-[hsl(var(--text-secondary))] whitespace-pre-wrap">
                 {devLog.decided}
               </p>
             </div>
@@ -94,10 +90,10 @@ export function DevLogCard({ devLog, isExpanded, onToggle }: DevLogCardProps) {
 
           {devLog.deferred && (
             <div>
-              <h4 className="text-sm font-medium text-yellow-400 mb-1">
-                ⏸️ 보류한 것
+              <h4 className="text-sm font-medium text-[hsl(var(--status-warning-text))] mb-1">
+                보류한 것
               </h4>
-              <p className="text-sm text-slate-200 whitespace-pre-wrap">
+              <p className="text-sm text-[hsl(var(--text-secondary))] whitespace-pre-wrap">
                 {devLog.deferred}
               </p>
             </div>
@@ -105,10 +101,10 @@ export function DevLogCard({ devLog, isExpanded, onToggle }: DevLogCardProps) {
 
           {devLog.next_action && (
             <div>
-              <h4 className="text-sm font-medium text-purple-400 mb-1">
-                ➡️ 다음에 할 것
+              <h4 className="text-sm font-medium text-[hsl(var(--status-purple-text))] mb-1">
+                다음에 할 것
               </h4>
-              <p className="text-sm text-slate-200 whitespace-pre-wrap">
+              <p className="text-sm text-[hsl(var(--text-secondary))] whitespace-pre-wrap">
                 {devLog.next_action}
               </p>
             </div>

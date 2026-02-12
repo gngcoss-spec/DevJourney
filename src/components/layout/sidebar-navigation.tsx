@@ -35,10 +35,10 @@ export default function SidebarNavigation() {
       {/* Mobile: 햄버거 메뉴 버튼 */}
       <button
         onClick={toggle}
-        className="fixed top-4 left-4 z-50 md:hidden p-2 rounded-lg bg-slate-800 text-slate-50 hover:bg-slate-700"
+        className="fixed top-4 left-4 z-50 md:hidden p-2 rounded-[var(--radius-md)] bg-[hsl(var(--surface-raised))] text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--surface-overlay))]"
         aria-label="Toggle sidebar"
       >
-        {isOpen ? <X size={24} /> : <Menu size={24} />}
+        {isOpen ? <X className="size-5" /> : <Menu className="size-5" />}
       </button>
 
       {/* Mobile: 오버레이 배경 */}
@@ -57,7 +57,7 @@ export default function SidebarNavigation() {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-0 left-0 h-full bg-slate-900 border-r border-slate-800 z-40 transition-all duration-300',
+          'fixed top-0 left-0 h-full bg-[hsl(var(--surface-ground))] border-r border-[hsl(var(--border-default))] z-40 transition-all duration-300',
           // Desktop: 항상 표시
           'md:static md:w-64',
           // Tablet: 접힘 가능
@@ -69,15 +69,16 @@ export default function SidebarNavigation() {
         <div className="flex flex-col h-full p-4">
           {/* 로고 */}
           <div className="mb-8 mt-12 md:mt-0">
-            <h2 className="text-lg font-semibold text-slate-50">DevJourney</h2>
-            <p className="text-xs text-slate-400 mt-1">개발 여정 관리</p>
+            <h2 className="text-lg font-semibold text-[hsl(var(--text-primary))]">DevJourney</h2>
+            <p className="text-xs text-[hsl(var(--text-quaternary))] mt-1">개발 여정 관리</p>
           </div>
 
           {/* 메뉴 항목 */}
-          <nav className="flex-1 space-y-2">
+          <nav className="flex-1 space-y-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href;
+              const isActive = pathname === item.href ||
+                (item.href !== '/' && pathname.startsWith(item.href));
 
               return (
                 <Link
@@ -85,14 +86,14 @@ export default function SidebarNavigation() {
                   href={item.href}
                   onClick={close}
                   className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors',
+                    'flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-md)] transition-colors text-sm',
                     isActive
-                      ? 'bg-blue-500 text-white'
-                      : 'text-slate-400 hover:bg-slate-800 hover:text-slate-50'
+                      ? 'bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))] font-medium'
+                      : 'text-[hsl(var(--text-tertiary))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--text-secondary))]'
                   )}
                 >
-                  <Icon size={20} />
-                  <span className="font-medium">{item.name}</span>
+                  <Icon className="size-5" />
+                  <span>{item.name}</span>
                 </Link>
               );
             })}
@@ -101,10 +102,10 @@ export default function SidebarNavigation() {
           {/* 로그아웃 버튼 */}
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-50 transition-colors w-full"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-md)] text-[hsl(var(--text-tertiary))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--text-secondary))] transition-colors w-full text-sm"
           >
-            <LogOut size={20} />
-            <span className="font-medium">Logout</span>
+            <LogOut className="size-5" />
+            <span>Logout</span>
           </button>
         </div>
       </aside>

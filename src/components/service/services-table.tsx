@@ -1,33 +1,26 @@
-// @TASK P2-S2-T1 - Services Table Component
-// @SPEC docs/planning/02-trd.md#services-목록-화면
-// @TEST src/__tests__/pages/services-list.test.tsx
-
 'use client';
 
 import { memo } from 'react';
 import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
+import { StatusBadge } from '@/components/common/status-badge';
 import type { Service, ServiceStatus } from '@/types/database';
 
 interface ServicesTableProps {
   services: Service[];
 }
 
-// 상태별 뱃지 스타일 매핑 (WCAG AA 준수 색상 대비)
-const statusStyles: Record<ServiceStatus, string> = {
-  active: 'bg-green-500/20 text-green-500 border-green-500/50',
-  stalled: 'bg-yellow-500/20 text-yellow-500 border-yellow-500/50',
-  paused: 'bg-red-500/20 text-red-500 border-red-500/50',
-} as const;
+const statusVariants: Record<ServiceStatus, 'success' | 'warning' | 'danger'> = {
+  active: 'success',
+  stalled: 'warning',
+  paused: 'danger',
+};
 
-// 상태 한글 레이블 (접근성 개선)
 const statusLabels: Record<ServiceStatus, string> = {
   active: '진행 중',
   stalled: '지연됨',
   paused: '일시중지',
 } as const;
 
-// 날짜 포맷 함수
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   const now = new Date();
@@ -42,12 +35,11 @@ function formatDate(dateString: string): string {
   return `${Math.floor(days / 365)}년 전`;
 }
 
-// 진행률 바 컴포넌트 (성능 최적화를 위한 메모이제이션)
 const ProgressBar = memo(({ progress }: { progress: number }) => {
   return (
     <div className="flex items-center gap-2">
       <div
-        className="flex-1 bg-slate-800 rounded-full h-2 max-w-[100px]"
+        className="flex-1 bg-[hsl(var(--surface-raised))] rounded-full h-2 max-w-[100px]"
         role="progressbar"
         aria-valuenow={progress}
         aria-valuemin={0}
@@ -55,11 +47,11 @@ const ProgressBar = memo(({ progress }: { progress: number }) => {
         aria-label={`진행률 ${progress}%`}
       >
         <div
-          className="bg-blue-500 h-2 rounded-full transition-all"
+          className="bg-[hsl(var(--primary))] h-2 rounded-full transition-all"
           style={{ width: `${progress}%` }}
         />
       </div>
-      <span className="text-sm text-slate-400 min-w-[3ch]">{progress}%</span>
+      <span className="text-sm text-[hsl(var(--text-tertiary))] min-w-[3ch]">{progress}%</span>
     </div>
   );
 });
@@ -68,93 +60,56 @@ ProgressBar.displayName = 'ProgressBar';
 
 export function ServicesTable({ services }: ServicesTableProps) {
   return (
-    <div className="rounded-lg border border-slate-800 overflow-hidden">
+    <div className="rounded-[var(--radius-lg)] border border-[hsl(var(--border-default))] overflow-hidden">
       <table className="w-full" aria-label="서비스 목록">
         <caption className="sr-only">
           총 {services.length}개의 서비스
         </caption>
         <thead>
-          <tr className="border-b border-slate-800 bg-slate-900">
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
-            >
-              서비스명
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
-            >
-              상태
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
-            >
-              현재 단계
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
-            >
-              진행률
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
-            >
-              다음 액션
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
-            >
-              마지막 활동
-            </th>
+          <tr className="border-b border-[hsl(var(--border-default))] bg-[hsl(var(--surface-raised))]">
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">서비스명</th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">상태</th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">현재 단계</th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">진행률</th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">다음 액션</th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">마지막 활동</th>
           </tr>
         </thead>
-        <tbody className="bg-slate-950 divide-y divide-slate-800">
+        <tbody className="bg-[hsl(var(--surface-ground))] divide-y divide-[hsl(var(--border-default))]">
           {services.map((service) => (
-            <tr
-              key={service.id}
-              className="hover:bg-slate-900/50 transition-colors"
-            >
+            <tr key={service.id} className="hover:bg-[hsl(var(--surface-raised))] transition-colors">
               <td className="px-6 py-4">
                 <Link
                   href={`/services/${service.id}`}
-                  className="text-slate-200 font-medium hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"
+                  className="text-[hsl(var(--text-secondary))] font-medium hover:text-[hsl(var(--text-primary))] transition-colors focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))] focus:ring-offset-2 focus:ring-offset-[hsl(var(--surface-ground))] rounded"
                 >
                   {service.name}
                 </Link>
                 {service.description && (
-                  <p className="text-sm text-slate-400 mt-1">{service.description}</p>
+                  <p className="text-sm text-[hsl(var(--text-tertiary))] mt-1">{service.description}</p>
                 )}
               </td>
               <td className="px-6 py-4">
-                <Badge
-                  variant="outline"
-                  className={statusStyles[service.status]}
+                <StatusBadge
+                  variant={statusVariants[service.status]}
                   aria-label={`상태: ${statusLabels[service.status]}`}
                 >
                   {service.status}
-                </Badge>
+                </StatusBadge>
               </td>
               <td className="px-6 py-4">
-                <span className="text-slate-300">{service.current_stage}</span>
+                <span className="text-[hsl(var(--text-secondary))]">{service.current_stage}</span>
               </td>
               <td className="px-6 py-4">
                 <ProgressBar progress={service.progress} />
               </td>
               <td className="px-6 py-4">
-                <span className="text-sm text-slate-300">
+                <span className="text-sm text-[hsl(var(--text-secondary))]">
                   {service.next_action || '-'}
                 </span>
               </td>
               <td className="px-6 py-4">
-                <time
-                  dateTime={service.last_activity_at}
-                  className="text-sm text-slate-400"
-                >
+                <time dateTime={service.last_activity_at} className="text-sm text-[hsl(var(--text-tertiary))]">
                   {formatDate(service.last_activity_at)}
                 </time>
               </td>

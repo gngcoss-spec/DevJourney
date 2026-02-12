@@ -76,7 +76,7 @@ describe('TeamPage', () => {
     } as any);
 
     renderWithQuery(<TeamPage />);
-    expect(screen.getByText('로딩 중...')).toBeInTheDocument();
+    expect(screen.getByTestId('page-loading')).toBeInTheDocument();
   });
 
   it('should show error state', () => {

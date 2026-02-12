@@ -51,7 +51,7 @@ describe('SidebarNavigation', () => {
     render(<SidebarNavigation />);
 
     const dashboardLink = screen.getByText('Dashboard').closest('a');
-    expect(dashboardLink).toHaveClass('bg-blue-500');
+    expect(dashboardLink).toHaveClass('font-medium');
   });
 
   it('모바일에서 토글 버튼이 동작한다', () => {

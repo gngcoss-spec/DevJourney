@@ -6,6 +6,7 @@
 
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { X } from 'lucide-react';
 import { useCreateDevLog, useUpdateDevLog } from '@/lib/hooks/use-dev-logs';
 import type { DevLog } from '@/types/database';
 import { Button } from '@/components/ui/button';
@@ -126,110 +127,58 @@ export function DevLogForm({ serviceId, onClose, existingLog }: DevLogFormProps)
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-700 pb-4">
-        <h2 className="text-xl font-semibold text-slate-50">개발 일지 작성</h2>
-        <button
-          onClick={onClose}
-          className="text-slate-400 hover:text-slate-300"
-          aria-label="닫기"
-        >
-          ✕
-        </button>
+      <div className="flex items-center justify-between border-b border-[hsl(var(--border-default))] pb-4">
+        <h2 className="text-subheading">개발 일지 작성</h2>
+        <Button variant="ghost" size="icon-xs" onClick={onClose} aria-label="닫기">
+          <X className="size-4" />
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Date Field */}
         <div className="space-y-2">
-          <Label htmlFor="log_date" className="text-sm font-medium text-slate-300">
-            날짜
-          </Label>
-          <Input
-            id="log_date"
-            type="date"
-            {...register('log_date')}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-          />
+          <Label htmlFor="log_date">날짜</Label>
+          <Input id="log_date" type="date" {...register('log_date')} />
           {errors.log_date && (
-            <p className="text-sm text-red-400">{errors.log_date.message}</p>
+            <p className="text-sm text-[hsl(var(--status-danger-text))]">{errors.log_date.message}</p>
           )}
         </div>
 
         {/* Done Field */}
         <div className="space-y-2">
-          <Label htmlFor="done" className="text-sm font-medium text-slate-300">
-            오늘 한 것
-          </Label>
-          <Textarea
-            id="done"
-            {...register('done')}
-            rows={3}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-            placeholder="오늘 완료한 작업을 입력하세요"
-          />
+          <Label htmlFor="done">오늘 한 것</Label>
+          <Textarea id="done" {...register('done')} rows={3} placeholder="오늘 완료한 작업을 입력하세요" />
         </div>
 
         {/* Decided Field */}
         <div className="space-y-2">
-          <Label htmlFor="decided" className="text-sm font-medium text-slate-300">
-            확정한 것
-          </Label>
-          <Textarea
-            id="decided"
-            {...register('decided')}
-            rows={3}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-            placeholder="결정된 사항을 입력하세요"
-          />
+          <Label htmlFor="decided">확정한 것</Label>
+          <Textarea id="decided" {...register('decided')} rows={3} placeholder="결정된 사항을 입력하세요" />
         </div>
 
         {/* Deferred Field */}
         <div className="space-y-2">
-          <Label htmlFor="deferred" className="text-sm font-medium text-slate-300">
-            보류한 것
-          </Label>
-          <Textarea
-            id="deferred"
-            {...register('deferred')}
-            rows={3}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-            placeholder="보류된 사항을 입력하세요"
-          />
+          <Label htmlFor="deferred">보류한 것</Label>
+          <Textarea id="deferred" {...register('deferred')} rows={3} placeholder="보류된 사항을 입력하세요" />
         </div>
 
         {/* Next Action Field */}
         <div className="space-y-2">
-          <Label htmlFor="next_action" className="text-sm font-medium text-slate-300">
-            다음에 할 것
-          </Label>
-          <Textarea
-            id="next_action"
-            {...register('next_action')}
-            rows={3}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-            placeholder="다음 단계를 입력하세요"
-          />
+          <Label htmlFor="next_action">다음에 할 것</Label>
+          <Textarea id="next_action" {...register('next_action')} rows={3} placeholder="다음 단계를 입력하세요" />
         </div>
 
         {/* Validation Error */}
         {errors.done && (
-          <p className="text-sm text-red-400">{errors.done.message}</p>
+          <p className="text-sm text-[hsl(var(--status-danger-text))]">{errors.done.message}</p>
         )}
 
         {/* Action Buttons */}
         <div className="flex justify-end gap-3 pt-4">
-          <Button
-            type="button"
-            onClick={onClose}
-            variant="ghost"
-            className="bg-slate-700 hover:bg-slate-600 text-slate-300"
-          >
+          <Button type="button" onClick={onClose} variant="outline">
             취소
           </Button>
-          <Button
-            type="submit"
-            disabled={isPending}
-            className="bg-blue-600 hover:bg-blue-500 text-white"
-          >
+          <Button type="submit" disabled={isPending}>
             {isEditMode ? '수정' : '저장'}
           </Button>
         </div>

@@ -2,6 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { X } from 'lucide-react';
 import { useCreateTeamMember, useUpdateTeamMember } from '@/lib/hooks/use-team';
 import type { TeamMember, TeamRole } from '@/types/database';
 import { Button } from '@/components/ui/button';
@@ -87,44 +88,33 @@ export function InviteForm({ onClose, existingMember }: InviteFormProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between border-b border-slate-700 pb-4">
-        <h2 className="text-xl font-semibold text-slate-50">
+      <div className="flex items-center justify-between border-b border-[hsl(var(--border-default))] pb-4">
+        <h2 className="text-subheading">
           {isEditMode ? '멤버 수정' : '멤버 초대'}
         </h2>
-        <button onClick={onClose} className="text-slate-400 hover:text-slate-300" aria-label="닫기">
-          ✕
-        </button>
+        <Button variant="ghost" size="icon-xs" onClick={onClose} aria-label="닫기">
+          <X className="size-4" />
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="display_name" className="text-sm font-medium text-slate-300">이름 *</Label>
-          <Input
-            id="display_name"
-            {...register('display_name')}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-            placeholder="멤버 이름"
-          />
-          {errors.display_name && <p className="text-sm text-red-400">{errors.display_name.message}</p>}
+          <Label htmlFor="display_name">이름 *</Label>
+          <Input id="display_name" {...register('display_name')} placeholder="멤버 이름" />
+          {errors.display_name && <p className="text-sm text-[hsl(var(--status-danger-text))]">{errors.display_name.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm font-medium text-slate-300">이메일</Label>
-          <Input
-            id="email"
-            type="email"
-            {...register('email')}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-            placeholder="member@example.com"
-          />
+          <Label htmlFor="email">이메일</Label>
+          <Input id="email" type="email" {...register('email')} placeholder="member@example.com" />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="role" className="text-sm font-medium text-slate-300">역할</Label>
+          <Label htmlFor="role">역할</Label>
           <select
             id="role"
             {...register('role')}
-            className="w-full rounded-md bg-slate-800 border border-slate-700 text-slate-50 px-3 py-2 text-sm"
+            className="w-full h-9 rounded-md border border-[hsl(var(--input))] bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-[hsl(var(--ring))] focus-visible:ring-[hsl(var(--ring)/0.5)] focus-visible:ring-[3px]"
           >
             <option value="viewer">Viewer</option>
             <option value="contributor">Contributor</option>
@@ -133,10 +123,10 @@ export function InviteForm({ onClose, existingMember }: InviteFormProps) {
         </div>
 
         <div className="flex justify-end gap-3 pt-4">
-          <Button type="button" onClick={onClose} variant="ghost" className="bg-slate-700 hover:bg-slate-600 text-slate-300">
+          <Button type="button" onClick={onClose} variant="outline">
             취소
           </Button>
-          <Button type="submit" disabled={isPending} className="bg-blue-600 hover:bg-blue-500 text-white">
+          <Button type="submit" disabled={isPending}>
             {isEditMode ? '수정' : '초대'}
           </Button>
         </div>

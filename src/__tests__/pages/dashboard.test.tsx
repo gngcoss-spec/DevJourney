@@ -116,19 +116,19 @@ describe('DashboardPage', () => {
     renderWithProviders(<DashboardPage />);
 
     // 전체 서비스 수: 3
-    const totalCard = screen.getByText(/전체 서비스/i).closest('div[data-slot="card"]');
+    const totalCard = screen.getByText(/전체 서비스/i).closest('div[data-testid="bento-card"]');
     expect(totalCard).toHaveTextContent('3');
 
     // 진행중: 1 (active이고 7일 이내 활동)
-    const activeCard = screen.getByText(/진행중/i).closest('div[data-slot="card"]');
+    const activeCard = screen.getByText(/진행중/i).closest('div[data-testid="bento-card"]');
     expect(activeCard).toHaveTextContent('1');
 
     // 정체: 1 (7일 이상 활동 없음)
-    const stalledCard = screen.getByText(/정체/i).closest('div[data-slot="card"]');
+    const stalledCard = screen.getByText(/정체/i).closest('div[data-testid="bento-card"]');
     expect(stalledCard).toHaveTextContent('1');
 
     // 중단: 1
-    const pausedCard = screen.getByText(/중단/i).closest('div[data-slot="card"]');
+    const pausedCard = screen.getByText(/중단/i).closest('div[data-testid="bento-card"]');
     expect(pausedCard).toHaveTextContent('1');
   });
 

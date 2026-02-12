@@ -27,14 +27,14 @@ export function WorkItemsFilter({
     <div className="flex items-center gap-3">
       {/* 상태 필터 */}
       <div className="flex items-center gap-2">
-        <label htmlFor="status-filter" className="text-sm text-slate-400">
+        <label htmlFor="status-filter" className="text-sm text-[hsl(var(--text-tertiary))]">
           상태:
         </label>
         <select
           id="status-filter"
           value={statusFilter}
           onChange={(e) => onStatusChange(e.target.value as WorkItemStatus | 'all')}
-          className="bg-slate-900 border border-slate-800 text-white text-sm rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="h-8 rounded-md border border-[hsl(var(--input))] bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-[hsl(var(--ring))] focus-visible:ring-[hsl(var(--ring)/0.5)] focus-visible:ring-[3px]"
         >
           <option value="all">전체</option>
           <option value="backlog">backlog</option>
@@ -47,14 +47,14 @@ export function WorkItemsFilter({
 
       {/* 유형 필터 */}
       <div className="flex items-center gap-2">
-        <label htmlFor="type-filter" className="text-sm text-slate-400">
+        <label htmlFor="type-filter" className="text-sm text-[hsl(var(--text-tertiary))]">
           유형:
         </label>
         <select
           id="type-filter"
           value={typeFilter}
           onChange={(e) => onTypeChange(e.target.value as WorkItemType | 'all')}
-          className="bg-slate-900 border border-slate-800 text-white text-sm rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="h-8 rounded-md border border-[hsl(var(--input))] bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-[hsl(var(--ring))] focus-visible:ring-[hsl(var(--ring)/0.5)] focus-visible:ring-[3px]"
         >
           <option value="all">전체</option>
           <option value="feature">feature</option>
@@ -67,14 +67,14 @@ export function WorkItemsFilter({
 
       {/* 우선순위 필터 */}
       <div className="flex items-center gap-2">
-        <label htmlFor="priority-filter" className="text-sm text-slate-400">
+        <label htmlFor="priority-filter" className="text-sm text-[hsl(var(--text-tertiary))]">
           우선순위:
         </label>
         <select
           id="priority-filter"
           value={priorityFilter}
           onChange={(e) => onPriorityChange(e.target.value as WorkItemPriority | 'all')}
-          className="bg-slate-900 border border-slate-800 text-white text-sm rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="h-8 rounded-md border border-[hsl(var(--input))] bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-[hsl(var(--ring))] focus-visible:ring-[hsl(var(--ring)/0.5)] focus-visible:ring-[3px]"
         >
           <option value="all">전체</option>
           <option value="low">low</option>

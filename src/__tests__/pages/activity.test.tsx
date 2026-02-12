@@ -63,7 +63,7 @@ describe('ActivityPage', () => {
     } as any);
 
     renderWithQuery(<ActivityPage />);
-    expect(screen.getByText('로딩 중...')).toBeInTheDocument();
+    expect(screen.getByTestId('page-loading')).toBeInTheDocument();
   });
 
   it('should show error state', () => {

@@ -2,6 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { X } from 'lucide-react';
 import { useCreateDecision, useUpdateDecision } from '@/lib/hooks/use-decisions';
 import type { Decision } from '@/types/database';
 import { Button } from '@/components/ui/button';
@@ -116,88 +117,52 @@ export function DecisionForm({ serviceId, onClose, existingDecision }: DecisionF
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between border-b border-slate-700 pb-4">
-        <h2 className="text-xl font-semibold text-slate-50">
+      <div className="flex items-center justify-between border-b border-[hsl(var(--border-default))] pb-4">
+        <h2 className="text-subheading">
           {isEditMode ? '의사결정 수정' : '새 의사결정'}
         </h2>
-        <button onClick={onClose} className="text-slate-400 hover:text-slate-300" aria-label="닫기">
-          ✕
-        </button>
+        <Button variant="ghost" size="icon-xs" onClick={onClose} aria-label="닫기">
+          <X className="size-4" />
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="title" className="text-sm font-medium text-slate-300">제목 *</Label>
-          <Input
-            id="title"
-            {...register('title')}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-            placeholder="의사결정 제목"
-          />
-          {errors.title && <p className="text-sm text-red-400">{errors.title.message}</p>}
+          <Label htmlFor="title">제목 *</Label>
+          <Input id="title" {...register('title')} placeholder="의사결정 제목" />
+          {errors.title && <p className="text-sm text-[hsl(var(--status-danger-text))]">{errors.title.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="background" className="text-sm font-medium text-slate-300">배경</Label>
-          <Textarea
-            id="background"
-            {...register('background')}
-            rows={2}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-            placeholder="결정의 배경을 설명하세요"
-          />
+          <Label htmlFor="background">배경</Label>
+          <Textarea id="background" {...register('background')} rows={2} placeholder="결정의 배경을 설명하세요" />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="options_text" className="text-sm font-medium text-slate-300">
-            검토 옵션 (한 줄에 하나씩)
-          </Label>
-          <Textarea
-            id="options_text"
-            {...register('options_text')}
-            rows={3}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-            placeholder="React&#10;Vue&#10;Angular"
-          />
+          <Label htmlFor="options_text">검토 옵션 (한 줄에 하나씩)</Label>
+          <Textarea id="options_text" {...register('options_text')} rows={3} placeholder="React&#10;Vue&#10;Angular" />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="selected_option" className="text-sm font-medium text-slate-300">선택된 옵션</Label>
-          <Input
-            id="selected_option"
-            {...register('selected_option')}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-            placeholder="최종 선택한 옵션"
-          />
+          <Label htmlFor="selected_option">선택된 옵션</Label>
+          <Input id="selected_option" {...register('selected_option')} placeholder="최종 선택한 옵션" />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="reason" className="text-sm font-medium text-slate-300">선택 이유</Label>
-          <Textarea
-            id="reason"
-            {...register('reason')}
-            rows={2}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-            placeholder="이 옵션을 선택한 이유"
-          />
+          <Label htmlFor="reason">선택 이유</Label>
+          <Textarea id="reason" {...register('reason')} rows={2} placeholder="이 옵션을 선택한 이유" />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="impact" className="text-sm font-medium text-slate-300">영향</Label>
-          <Textarea
-            id="impact"
-            {...register('impact')}
-            rows={2}
-            className="bg-slate-800 border-slate-700 text-slate-50"
-            placeholder="이 결정의 영향"
-          />
+          <Label htmlFor="impact">영향</Label>
+          <Textarea id="impact" {...register('impact')} rows={2} placeholder="이 결정의 영향" />
         </div>
 
         <div className="flex justify-end gap-3 pt-4">
-          <Button type="button" onClick={onClose} variant="ghost" className="bg-slate-700 hover:bg-slate-600 text-slate-300">
+          <Button type="button" onClick={onClose} variant="outline">
             취소
           </Button>
-          <Button type="submit" disabled={isPending} className="bg-blue-600 hover:bg-blue-500 text-white">
+          <Button type="submit" disabled={isPending}>
             {isEditMode ? '수정' : '저장'}
           </Button>
         </div>

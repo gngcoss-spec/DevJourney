@@ -1,6 +1,7 @@
 'use client';
 
 import { CheckSquare, GitBranch, FileText, File } from 'lucide-react';
+import { IconWrapper } from '@/components/common/icon-wrapper';
 import type { ActivityItem } from '@/lib/supabase/queries/activity';
 
 interface ActivityItemProps {
@@ -21,11 +22,11 @@ const typeLabels = {
   document: '문서',
 };
 
-const typeColors = {
-  work_item: 'text-blue-400 bg-blue-500/10',
-  decision: 'text-purple-400 bg-purple-500/10',
-  dev_log: 'text-green-400 bg-green-500/10',
-  document: 'text-orange-400 bg-orange-500/10',
+const typeColors: Record<string, 'blue' | 'purple' | 'green' | 'orange'> = {
+  work_item: 'blue',
+  decision: 'purple',
+  dev_log: 'green',
+  document: 'orange',
 };
 
 function formatTime(dateString: string): string {
@@ -48,14 +49,12 @@ export function ActivityItemComponent({ activity }: ActivityItemProps) {
 
   return (
     <div className="flex items-start gap-3 py-3">
-      <div className={`p-1.5 rounded-lg flex-shrink-0 ${typeColors[activity.type]}`}>
-        <Icon size={14} />
-      </div>
+      <IconWrapper icon={Icon} color={typeColors[activity.type]} size="sm" />
       <div className="min-w-0 flex-1">
-        <p className="text-sm text-slate-300 truncate">{activity.title}</p>
+        <p className="text-sm text-[hsl(var(--text-secondary))] truncate">{activity.title}</p>
         <div className="flex items-center gap-2 mt-0.5">
-          <span className="text-xs text-slate-500">{typeLabels[activity.type]}</span>
-          <span className="text-xs text-slate-600">{formatTime(activity.created_at)}</span>
+          <span className="text-caption">{typeLabels[activity.type]}</span>
+          <span className="text-xs text-[hsl(var(--text-quaternary))]">{formatTime(activity.created_at)}</span>
         </div>
       </div>
     </div>
