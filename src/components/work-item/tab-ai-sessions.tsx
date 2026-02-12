@@ -1,14 +1,9 @@
-// @TASK P3-S3-T1 - Work Item Modal - AI Sessions Tab
-// @SPEC docs/planning/TASKS.md#work-item-modal-ai-sessions
-// @TEST src/__tests__/components/work-item-modal.test.tsx
-
 'use client';
 
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, ExternalLink, Trash2 } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
-import { getAISessions, createAISession, deleteAISession } from '@/lib/supabase/queries/ai-sessions';
+import { Plus, ExternalLink, Trash2, Bot, Sparkles, Brain, Wrench } from 'lucide-react';
+import { useAISessions, useCreateAISession, useDeleteAISession } from '@/lib/hooks/use-ai-sessions';
+import { IconWrapper } from '@/components/common/icon-wrapper';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -27,11 +22,19 @@ export interface TabAISessionsProps {
 }
 
 const PROVIDER_OPTIONS = [
-  { value: 'chatgpt', label: 'ChatGPT', icon: '🤖' },
-  { value: 'gemini', label: 'Gemini', icon: '💎' },
-  { value: 'claude', label: 'Claude', icon: '🧠' },
-  { value: 'other', label: 'Other', icon: '🔧' },
-] as const;
+  { value: 'chatgpt' as const, label: 'ChatGPT', icon: Bot, color: 'green' as const },
+  { value: 'gemini' as const, label: 'Gemini', icon: Sparkles, color: 'blue' as const },
+  { value: 'claude' as const, label: 'Claude', icon: Brain, color: 'purple' as const },
+  { value: 'other' as const, label: 'Other', icon: Wrench, color: 'slate' as const },
+];
+
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
 
 export function TabAISessions({ workItemId }: TabAISessionsProps) {
   const [isAdding, setIsAdding] = useState(false);
@@ -40,56 +43,43 @@ export function TabAISessions({ workItemId }: TabAISessionsProps) {
     session_url: '',
     provider: 'chatgpt' as AIProvider,
     summary: '',
+    key_decisions: '',
   });
 
-  const supabase = createClient();
-  const queryClient = useQueryClient();
+  const { data: sessions, isLoading } = useAISessions(workItemId);
+  const createMutation = useCreateAISession(workItemId);
+  const deleteMutation = useDeleteAISession(workItemId);
 
-  const { data: sessions, isLoading } = useQuery({
-    queryKey: ['ai-sessions', workItemId],
-    queryFn: () => getAISessions(supabase, workItemId),
-    enabled: !!workItemId,
-  });
-
-  const createMutation = useMutation({
-    mutationFn: () =>
-      createAISession(supabase, {
+  const handleAdd = () => {
+    if (!newSession.title) return;
+    createMutation.mutate(
+      {
         work_item_id: workItemId,
         title: newSession.title,
         session_url: newSession.session_url || undefined,
         provider: newSession.provider,
         summary: newSession.summary || undefined,
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ai-sessions', workItemId] });
-      setIsAdding(false);
-      setNewSession({
-        title: '',
-        session_url: '',
-        provider: 'chatgpt',
-        summary: '',
-      });
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (sessionId: string) => deleteAISession(supabase, sessionId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ai-sessions', workItemId] });
-    },
-  });
-
-  const handleAdd = () => {
-    if (!newSession.title) {
-      return;
-    }
-    createMutation.mutate();
+        key_decisions: newSession.key_decisions || undefined,
+      },
+      {
+        onSuccess: () => {
+          setIsAdding(false);
+          setNewSession({
+            title: '',
+            session_url: '',
+            provider: 'chatgpt',
+            summary: '',
+            key_decisions: '',
+          });
+        },
+      },
+    );
   };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <p className="text-slate-400">로딩 중...</p>
+        <p className="text-[hsl(var(--text-quaternary))]">로딩 중...</p>
       </div>
     );
   }
@@ -104,20 +94,23 @@ export function TabAISessions({ workItemId }: TabAISessionsProps) {
             return (
               <div
                 key={session.id}
-                className="p-3 bg-slate-800 rounded-lg border border-slate-700 space-y-2"
+                className="bento-glass-hover p-3 space-y-2"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-xl">{providerOption?.icon}</span>
-                    <h4 className="font-medium text-slate-100">{session.title}</h4>
+                    {providerOption && (
+                      <IconWrapper icon={providerOption.icon} color={providerOption.color} size="sm" />
+                    )}
+                    <h4 className="font-medium text-[hsl(var(--text-secondary))]">{session.title}</h4>
                   </div>
                   <Button
                     variant="ghost"
-                    size="icon-sm"
+                    size="icon-xs"
                     onClick={() => deleteMutation.mutate(session.id)}
                     aria-label="삭제"
+                    className="hover:text-[hsl(var(--status-danger-text))]"
                   >
-                    <Trash2 className="h-4 w-4 text-red-400" />
+                    <Trash2 className="size-3.5" />
                   </Button>
                 </div>
 
@@ -126,16 +119,27 @@ export function TabAISessions({ workItemId }: TabAISessionsProps) {
                     href={session.session_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                    className="flex items-center gap-1 text-sm text-[hsl(var(--status-info-text))] hover:underline transition-colors"
                   >
-                    <ExternalLink className="h-3 w-3" />
+                    <ExternalLink className="size-3" />
                     {session.session_url}
                   </a>
                 )}
 
                 {session.summary && (
-                  <p className="text-sm text-slate-300">{session.summary}</p>
+                  <p className="text-sm text-[hsl(var(--text-tertiary))]">{session.summary}</p>
                 )}
+
+                {session.key_decisions && (
+                  <p className="text-sm text-[hsl(var(--text-quaternary))]">
+                    <span className="font-medium text-[hsl(var(--text-tertiary))]">핵심 결정:</span>{' '}
+                    {session.key_decisions}
+                  </p>
+                )}
+
+                <p className="text-xs text-[hsl(var(--text-quaternary))]">
+                  {formatDate(session.created_at)}
+                </p>
               </div>
             );
           })}
@@ -145,16 +149,16 @@ export function TabAISessions({ workItemId }: TabAISessionsProps) {
       {/* Empty State */}
       {sessions && sessions.length === 0 && !isAdding && (
         <div className="text-center py-8">
-          <p className="text-slate-400 mb-4">AI 세션이 없습니다</p>
+          <p className="text-[hsl(var(--text-quaternary))] mb-4">AI 세션이 없습니다</p>
         </div>
       )}
 
       {/* Add Form */}
       {isAdding && (
-        <div className="space-y-4 p-4 bg-slate-800 rounded-lg border border-slate-700">
+        <div className="bento-glass p-4 space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="session-title" className="text-sm font-medium text-slate-100">
-              제목 <span className="text-red-500">*</span>
+            <Label htmlFor="session-title">
+              제목 <span className="text-[hsl(var(--status-danger-text))]">*</span>
             </Label>
             <Input
               id="session-title"
@@ -165,9 +169,7 @@ export function TabAISessions({ workItemId }: TabAISessionsProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="session-url" className="text-sm font-medium text-slate-100">
-              URL
-            </Label>
+            <Label htmlFor="session-url">URL</Label>
             <Input
               id="session-url"
               type="url"
@@ -178,9 +180,7 @@ export function TabAISessions({ workItemId }: TabAISessionsProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="session-provider" className="text-sm font-medium text-slate-100">
-              제공자
-            </Label>
+            <Label htmlFor="session-provider">제공자</Label>
             <Select
               value={newSession.provider}
               onValueChange={(value) =>
@@ -193,7 +193,7 @@ export function TabAISessions({ workItemId }: TabAISessionsProps) {
               <SelectContent>
                 {PROVIDER_OPTIONS.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
-                    {option.icon} {option.label}
+                    {option.label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -201,9 +201,7 @@ export function TabAISessions({ workItemId }: TabAISessionsProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="session-summary" className="text-sm font-medium text-slate-100">
-              요약
-            </Label>
+            <Label htmlFor="session-summary">요약</Label>
             <Textarea
               id="session-summary"
               value={newSession.summary}
@@ -213,11 +211,22 @@ export function TabAISessions({ workItemId }: TabAISessionsProps) {
             />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="session-key-decisions">핵심 결정</Label>
+            <Textarea
+              id="session-key-decisions"
+              value={newSession.key_decisions}
+              onChange={(e) => setNewSession({ ...newSession, key_decisions: e.target.value })}
+              placeholder="이 세션에서 내린 핵심 결정 사항"
+              rows={2}
+            />
+          </div>
+
           <div className="flex gap-2">
             <Button onClick={handleAdd} disabled={!newSession.title || createMutation.isPending}>
               {createMutation.isPending ? '추가 중...' : '추가'}
             </Button>
-            <Button variant="ghost" onClick={() => setIsAdding(false)}>
+            <Button variant="outline" onClick={() => setIsAdding(false)}>
               취소
             </Button>
           </div>
