@@ -83,6 +83,7 @@ export interface ServiceFormValues {
   current_server?: string;
   tech_stack?: TechStack;
   ai_role?: string;
+  generateWBS?: boolean;
 }
 
 export interface ServiceFormProps {
@@ -129,6 +130,7 @@ export function ServiceForm({
   isLoading = false,
 }: ServiceFormProps) {
   const [categoryInputs, setCategoryInputs] = useState<Record<string, string>>({});
+  const [generateWBS, setGenerateWBS] = useState(mode === 'create');
 
   const {
     register,
@@ -182,7 +184,7 @@ export function ServiceForm({
   };
 
   const onFormSubmit = (data: ServiceFormData) => {
-    onSubmit(data as ServiceFormValues);
+    onSubmit({ ...data, generateWBS } as ServiceFormValues);
   };
 
   return (
@@ -335,6 +337,29 @@ export function ServiceForm({
           rows={3}
         />
       </div>
+
+      {/* WBS 자동 생성 옵션 (생성 모드에서만 표시) */}
+      {mode === 'create' && (
+        <div className="bento-glass p-4 space-y-2">
+          <label htmlFor="generate-wbs" className="flex items-start gap-3 cursor-pointer">
+            <input
+              id="generate-wbs"
+              type="checkbox"
+              checked={generateWBS}
+              onChange={(e) => setGenerateWBS(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-border accent-[hsl(var(--primary))]"
+            />
+            <div>
+              <span className="text-sm font-medium text-[hsl(var(--text-primary))]">
+                WBS 자동 생성
+              </span>
+              <p className="text-xs text-[hsl(var(--text-tertiary))] mt-0.5">
+                7단계 로드맵(Stages), 작업 아이템(Work Items), 의사결정(Decisions), 문서(Documents)를 자동 생성합니다.
+              </p>
+            </div>
+          </label>
+        </div>
+      )}
 
       {/* 제출 버튼 */}
       <div className="flex justify-end gap-3 pt-4">
