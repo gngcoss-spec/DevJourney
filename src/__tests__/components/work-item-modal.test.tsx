@@ -31,6 +31,12 @@ vi.mock('@/lib/supabase/queries/comments', () => ({
   createStatusChangeLog: vi.fn(),
 }));
 
+vi.mock('@/lib/hooks/use-comments', () => ({
+  useComments: vi.fn(() => ({ data: [], isLoading: false })),
+  useCreateComment: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
+  useCreateStatusChangeLog: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
+}));
+
 const mockWorkItem: WorkItem = {
   id: 'work-1',
   service_id: 'service-1',

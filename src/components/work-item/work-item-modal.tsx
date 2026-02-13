@@ -13,8 +13,7 @@ import { TabAISessions } from './tab-ai-sessions';
 import { TabActivityLog } from './tab-activity-log';
 import type { WorkItem, WorkItemStatus } from '@/types/database';
 import { useCreateWorkItem, useUpdateWorkItem } from '@/lib/hooks/use-work-items';
-import { createClient } from '@/lib/supabase/client';
-import { createStatusChangeLog } from '@/lib/supabase/queries/comments';
+import { useCreateStatusChangeLog } from '@/lib/hooks/use-comments';
 import type { CreateWorkItemInput, UpdateWorkItemInput } from '@/types/database';
 
 export interface WorkItemModalProps {
@@ -44,6 +43,7 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultSta
   const isEditMode = !!workItem;
   const createMutation = useCreateWorkItem();
   const updateMutation = useUpdateWorkItem();
+  const statusChangeMutation = useCreateStatusChangeLog(workItem?.id ?? '');
 
   if (!isOpen) {
     return null;
@@ -69,8 +69,10 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultSta
     if (isEditMode && workItem) {
       // 상태 변경 시 활동 로그 자동 기록
       if (formData.status && formData.status !== workItem.status) {
-        const supabase = createClient();
-        createStatusChangeLog(supabase, workItem.id, workItem.status, formData.status as string).catch(() => {});
+        statusChangeMutation.mutate({
+          fromStatus: workItem.status,
+          toStatus: formData.status as string,
+        });
       }
       updateMutation.mutate({
         id: workItem.id,
@@ -107,10 +109,10 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultSta
         }
       }}
     >
-      <div className="w-[640px] max-h-[80vh] bg-slate-900 rounded-lg shadow-xl overflow-hidden flex flex-col">
+      <div className="w-[640px] max-h-[80vh] bg-background rounded-lg shadow-xl overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-700">
-          <h2 id="modal-title" className="text-lg font-semibold text-slate-100">
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 id="modal-title" className="text-lg font-semibold text-[hsl(var(--text-primary))]">
             {isEditMode ? '작업 아이템 수정' : '작업 아이템 생성'}
           </h2>
           <Button
@@ -126,7 +128,7 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultSta
         {/* Tabs */}
         <div
           role="tablist"
-          className="flex border-b border-slate-700 bg-slate-900/50"
+          className="flex border-b border-border bg-[hsl(var(--surface))]"
         >
           {tabs.map((tab) => (
             <button
@@ -141,8 +143,8 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultSta
                 flex-1 px-4 py-3 text-sm font-medium transition-colors
                 ${
                   activeTab === tab.id
-                    ? 'text-slate-100 border-b-2 border-blue-500'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'text-[hsl(var(--text-primary))] border-b-2 border-[hsl(var(--primary))]'
+                    : 'text-[hsl(var(--text-quaternary))] hover:text-[hsl(var(--text-secondary))]'
                 }
                 ${tab.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
               `}
@@ -157,8 +159,8 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultSta
           {activeTab === 'basic' && (
             <>
               {validationError && (
-                <div className="mb-4 p-3 bg-red-900/20 border border-red-700/50 rounded-md">
-                  <p className="text-sm text-red-400">{validationError}</p>
+                <div className="mb-4 p-3 bg-[hsl(var(--status-danger-bg))] border border-[hsl(var(--status-danger-text))]/30 rounded-md">
+                  <p className="text-sm text-[hsl(var(--status-danger-text))]">{validationError}</p>
                 </div>
               )}
               <TabBasicInfo
@@ -183,9 +185,9 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultSta
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-4 border-t border-slate-700">
+        <div className="flex items-center justify-end gap-3 p-4 border-t border-border">
           <Button
-            variant="ghost"
+            variant="outline"
             onClick={onClose}
           >
             취소
@@ -199,7 +201,7 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultSta
             </Button>
           )}
           {isEditMode && (
-            <span className="text-sm text-slate-400">
+            <span className="text-sm text-[hsl(var(--text-quaternary))]">
               {updateMutation.isPending ? '저장 중...' : '자동 저장됨'}
             </span>
           )}

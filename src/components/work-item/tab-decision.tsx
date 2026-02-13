@@ -45,7 +45,7 @@ export function TabDecision({ formData, onChange }: TabDecisionProps) {
     <div className="space-y-4">
       {/* Problem */}
       <div className="space-y-2">
-        <Label htmlFor="problem" className="text-sm font-medium text-slate-100">
+        <Label htmlFor="problem">
           Problem (왜 필요한가?)
         </Label>
         <Textarea
@@ -53,13 +53,12 @@ export function TabDecision({ formData, onChange }: TabDecisionProps) {
           {...register('problem')}
           placeholder="해결하고자 하는 문제를 설명하세요"
           rows={4}
-          className="bg-slate-800 text-slate-100"
         />
       </div>
 
       {/* 고려한 선택지 */}
       <div className="space-y-2">
-        <Label htmlFor="options_considered" className="text-sm font-medium text-slate-100">
+        <Label htmlFor="options_considered">
           고려한 선택지
         </Label>
         <Textarea
@@ -67,13 +66,12 @@ export function TabDecision({ formData, onChange }: TabDecisionProps) {
           {...register('options_considered')}
           placeholder="검토한 여러 선택지를 나열하세요 (예: Option A, Option B...)"
           rows={4}
-          className="bg-slate-800 text-slate-100"
         />
       </div>
 
       {/* 최종 결정 이유 */}
       <div className="space-y-2">
-        <Label htmlFor="decision_reason" className="text-sm font-medium text-slate-100">
+        <Label htmlFor="decision_reason">
           최종 결정 이유
         </Label>
         <Textarea
@@ -81,13 +79,12 @@ export function TabDecision({ formData, onChange }: TabDecisionProps) {
           {...register('decision_reason')}
           placeholder="왜 이 선택지를 선택했는지 설명하세요"
           rows={4}
-          className="bg-slate-800 text-slate-100"
         />
       </div>
 
       {/* 결과 */}
       <div className="space-y-2">
-        <Label htmlFor="result" className="text-sm font-medium text-slate-100">
+        <Label htmlFor="result">
           결과
         </Label>
         <Textarea
@@ -95,7 +92,6 @@ export function TabDecision({ formData, onChange }: TabDecisionProps) {
           {...register('result')}
           placeholder="결정의 결과를 기록하세요"
           rows={4}
-          className="bg-slate-800 text-slate-100"
         />
       </div>
     </div>

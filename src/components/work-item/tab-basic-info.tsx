@@ -111,23 +111,23 @@ export function TabBasicInfo({ formData, onChange, isEditMode }: TabBasicInfoPro
     <div className="space-y-4">
       {/* 제목 - 필수 */}
       <div className="space-y-2">
-        <Label htmlFor="title" className="text-sm font-medium text-slate-100">
-          제목 <span className="text-red-500">*</span>
+        <Label htmlFor="title">
+          제목 <span className="text-[hsl(var(--status-danger-text))]">*</span>
         </Label>
         <Input
           id="title"
           {...register('title')}
           placeholder="작업 아이템 제목을 입력하세요"
-          className={errors.title ? 'border-red-500' : ''}
+          className={errors.title ? 'border-[hsl(var(--status-danger-text))]' : ''}
         />
         {errors.title && (
-          <p className="text-sm text-red-500">{errors.title.message}</p>
+          <p className="text-sm text-[hsl(var(--status-danger-text))]">{errors.title.message}</p>
         )}
       </div>
 
       {/* 설명 */}
       <div className="space-y-2">
-        <Label htmlFor="description" className="text-sm font-medium text-slate-100">
+        <Label htmlFor="description">
           설명
         </Label>
         <Textarea
@@ -140,7 +140,7 @@ export function TabBasicInfo({ formData, onChange, isEditMode }: TabBasicInfoPro
 
       {/* 유형 */}
       <div className="space-y-2">
-        <Label htmlFor="type" className="text-sm font-medium text-slate-100">
+        <Label htmlFor="type">
           유형
         </Label>
         <Controller
@@ -165,7 +165,7 @@ export function TabBasicInfo({ formData, onChange, isEditMode }: TabBasicInfoPro
 
       {/* 우선순위 */}
       <div className="space-y-2">
-        <Label htmlFor="priority" className="text-sm font-medium text-slate-100">
+        <Label htmlFor="priority">
           우선순위
         </Label>
         <Controller
@@ -190,7 +190,7 @@ export function TabBasicInfo({ formData, onChange, isEditMode }: TabBasicInfoPro
 
       {/* 상태 */}
       <div className="space-y-2">
-        <Label htmlFor="status" className="text-sm font-medium text-slate-100">
+        <Label htmlFor="status">
           상태
         </Label>
         <Controller
@@ -215,7 +215,7 @@ export function TabBasicInfo({ formData, onChange, isEditMode }: TabBasicInfoPro
 
       {/* 담당자 */}
       <div className="space-y-2">
-        <Label htmlFor="assignee_name" className="text-sm font-medium text-slate-100">
+        <Label htmlFor="assignee_name">
           담당자
         </Label>
         <Input
