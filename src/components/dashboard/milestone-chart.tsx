@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { BentoCard, BentoCardHeader, BentoCardTitle } from '@/components/ui/bento-grid';
 import type { Service } from '@/types/database';
@@ -38,10 +39,19 @@ interface MilestoneChartProps {
 }
 
 export function MilestoneChart({ services }: MilestoneChartProps) {
+  const router = useRouter();
+
   const chartData = services.map((service) => ({
+    id: service.id,
     name: service.name.length > 15 ? service.name.substring(0, 15) + '...' : service.name,
     progress: service.progress,
   }));
+
+  const handleBarClick = (data: { id: string }) => {
+    if (data?.id) {
+      router.push(`/services/${data.id}`);
+    }
+  };
 
   return (
     <BentoCard colSpan="full">
@@ -71,7 +81,13 @@ export function MilestoneChart({ services }: MilestoneChartProps) {
               }}
               cursor={{ fill: 'hsl(215, 20%, 22%)' }}
             />
-            <Bar dataKey="progress" fill="hsl(217, 91%, 60%)" radius={[8, 8, 0, 0]} />
+            <Bar
+              dataKey="progress"
+              fill="hsl(217, 91%, 60%)"
+              radius={[8, 8, 0, 0]}
+              className="cursor-pointer"
+              onClick={handleBarClick}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

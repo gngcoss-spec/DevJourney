@@ -74,7 +74,7 @@ export default function SidebarNavigation() {
           </div>
 
           {/* 메뉴 항목 */}
-          <nav className="flex-1 space-y-1">
+          <nav className="space-y-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href ||
@@ -99,14 +99,16 @@ export default function SidebarNavigation() {
             })}
           </nav>
 
-          {/* 로그아웃 버튼 */}
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-md)] text-[hsl(var(--text-tertiary))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--text-secondary))] transition-colors w-full text-sm"
-          >
-            <LogOut className="size-5" />
-            <span>Logout</span>
-          </button>
+          {/* 로그아웃 — 사이드바 최하단 고정 */}
+          <div className="mt-auto border-t border-[hsl(var(--border-default))] pt-4">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-md)] text-[hsl(var(--status-danger-text))]/70 hover:bg-[hsl(var(--status-danger-bg))] hover:text-[hsl(var(--status-danger-text))] transition-colors w-full text-sm"
+            >
+              <LogOut className="size-4" />
+              <span>Logout</span>
+            </button>
+          </div>
         </div>
       </aside>
     </>

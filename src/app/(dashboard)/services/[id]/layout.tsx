@@ -18,7 +18,7 @@ export default function ServiceDetailLayout({
 
   if (isLoading) {
     return (
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="space-y-6">
         <PageLoading />
       </div>
     );
@@ -26,7 +26,7 @@ export default function ServiceDetailLayout({
 
   if (error || !service) {
     return (
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="space-y-6">
         <PageError
           message="서비스를 불러오는 중 오류가 발생했습니다"
           onRetry={() => refetch()}
@@ -36,7 +36,7 @@ export default function ServiceDetailLayout({
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
+    <div className="space-y-6">
       <ServiceHeader service={service} />
       <ServiceTabs serviceId={service.id} />
       {children}

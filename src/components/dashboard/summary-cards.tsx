@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Activity, Pause, TrendingUp, AlertTriangle } from 'lucide-react';
 import { BentoGrid, BentoCard, BentoCardHeader, BentoCardTitle, BentoCardValue } from '@/components/ui/bento-grid';
 import { IconWrapper } from '@/components/common/icon-wrapper';
@@ -24,22 +25,24 @@ export function SummaryCards({ services }: SummaryCardsProps) {
   const pausedServices = services.filter((s) => s.status === 'paused').length;
 
   const stats = [
-    { title: '전체 서비스', value: totalServices, icon: TrendingUp, color: 'blue' as const },
-    { title: '진행중', value: activeServices, icon: Activity, color: 'green' as const },
-    { title: '정체', value: stalledServices, icon: AlertTriangle, color: 'yellow' as const },
-    { title: '중단', value: pausedServices, icon: Pause, color: 'red' as const },
+    { title: '전체 서비스', value: totalServices, icon: TrendingUp, color: 'blue' as const, href: '/services' },
+    { title: '진행중', value: activeServices, icon: Activity, color: 'green' as const, href: '/services?status=active' },
+    { title: '정체', value: stalledServices, icon: AlertTriangle, color: 'yellow' as const, href: '/services?status=stalled' },
+    { title: '중단', value: pausedServices, icon: Pause, color: 'red' as const, href: '/services?status=paused' },
   ];
 
   return (
     <BentoGrid columns={4}>
       {stats.map((stat) => (
-        <BentoCard key={stat.title}>
-          <BentoCardHeader>
-            <BentoCardTitle>{stat.title}</BentoCardTitle>
-            <IconWrapper icon={stat.icon} color={stat.color} size="md" />
-          </BentoCardHeader>
-          <BentoCardValue>{stat.value}</BentoCardValue>
-        </BentoCard>
+        <Link key={stat.title} href={stat.href}>
+          <BentoCard interactive glow={stat.color} className="h-full">
+            <BentoCardHeader>
+              <BentoCardTitle>{stat.title}</BentoCardTitle>
+              <IconWrapper icon={stat.icon} color={stat.color} size="md" />
+            </BentoCardHeader>
+            <BentoCardValue>{stat.value}</BentoCardValue>
+          </BentoCard>
+        </Link>
       ))}
     </BentoGrid>
   );

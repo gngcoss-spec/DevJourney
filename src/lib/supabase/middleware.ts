@@ -78,17 +78,25 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // getSession()은 쿠키에서 JWT를 로컬로 검증합니다 (빠름, 네트워크 호출 없음).
-  // getUser()는 Supabase 서버에 매번 HTTP 요청을 보내므로 미들웨어에서는 사용하지 않습니다.
+  // Supabase 인증 쿠키 존재 여부 확인
+  const hasAuthCookies = request.cookies.getAll().some((c) => c.name.startsWith('sb-'));
+
+  // 개발 환경에서 인증 쿠키가 없으면 (로그인한 적 없음) 인증 체크를 건너뜁니다.
+  // UI 개발에 집중할 수 있도록 하며, 데이터 쿼리는 빈 상태/에러로 표시됩니다.
+  if (process.env.NODE_ENV === 'development' && !hasAuthCookies) {
+    return supabaseResponse;
+  }
+
+  // getUser()는 Supabase 서버에 토큰을 검증하고, 만료 시 자동으로 갱신합니다.
   let user = null;
   try {
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    user = session?.user ?? null;
+      data: { user: authUser },
+    } = await supabase.auth.getUser();
+    user = authUser;
   } catch {
-    // Supabase 연결 실패 시 미인증으로 처리
-    user = null;
+    // Supabase 연결 실패 시 — 요청을 차단하지 않고 통과시킵니다.
+    return supabaseResponse;
   }
 
   // 미인증 사용자가 보호된 라우트에 접근 시 /login으로 리다이렉트

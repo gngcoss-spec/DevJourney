@@ -2,25 +2,56 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useServices } from '@/lib/hooks/use-services';
 import { ServicesTable } from '@/components/service/services-table';
 import { PageHeader } from '@/components/common/page-header';
+import { FilterPills } from '@/components/common/filter-pills';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+const statusOptions = [
+  { value: 'all' as const, label: '전체' },
+  { value: 'active' as const, label: '진행중' },
+  { value: 'stalled' as const, label: '정체' },
+  { value: 'paused' as const, label: '중단' },
+];
+
+function isServiceStalled(service: { last_activity_at: string }): boolean {
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const lastActivity = new Date(service.last_activity_at);
+  return lastActivity < sevenDaysAgo;
+}
+
 export default function ServicesPage() {
+  const searchParams = useSearchParams();
+  const initialStatus = searchParams.get('status') || 'all';
   const { data: services, isLoading, isError } = useServices();
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState(initialStatus);
 
   const filteredServices = useMemo(() => {
     if (!services) return [];
-    if (!searchQuery.trim()) return services;
 
-    const query = searchQuery.toLowerCase();
-    return services.filter((service) =>
-      service.name.toLowerCase().includes(query)
-    );
-  }, [services, searchQuery]);
+    let result = services;
+
+    if (statusFilter !== 'all') {
+      result = result.filter((service) => {
+        if (statusFilter === 'stalled') return isServiceStalled(service);
+        if (statusFilter === 'active') return service.status === 'active' && !isServiceStalled(service);
+        return service.status === statusFilter;
+      });
+    }
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter((service) =>
+        service.name.toLowerCase().includes(query)
+      );
+    }
+
+    return result;
+  }, [services, searchQuery, statusFilter]);
 
   if (isLoading) {
     return (
@@ -68,13 +99,20 @@ export default function ServicesPage() {
         </Button>
       </PageHeader>
 
-      <div className="max-w-md">
-        <Input
-          type="text"
-          placeholder="서비스 검색..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <FilterPills
+          options={statusOptions}
+          value={statusFilter}
+          onChange={setStatusFilter}
         />
+        <div className="max-w-md flex-1">
+          <Input
+            type="text"
+            placeholder="서비스 검색..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
 
       {filteredServices.length === 0 && searchQuery && (
