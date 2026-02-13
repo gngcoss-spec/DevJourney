@@ -1,6 +1,6 @@
 'use client';
 
-import { Pencil } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { StatusBadge } from '@/components/common/status-badge';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ interface StageCardProps {
   stageName: ServiceStage;
   currentStage: ServiceStage;
   onEdit: (stageName: ServiceStage, existing?: Stage) => void;
+  onDelete?: (stageName: ServiceStage) => void;
 }
 
 const STAGE_ORDER: ServiceStage[] = ['idea', 'planning', 'design', 'development', 'testing', 'launch', 'enhancement'];
@@ -47,7 +48,7 @@ const dotStyles = {
   upcoming: 'bg-[hsl(var(--text-quaternary))]',
 };
 
-export function StageCard({ stage, stageName, currentStage, onEdit }: StageCardProps) {
+export function StageCard({ stage, stageName, currentStage, onEdit, onDelete }: StageCardProps) {
   const status = getStageStatus(stageName, currentStage);
 
   return (
@@ -77,6 +78,17 @@ export function StageCard({ stage, stageName, currentStage, onEdit }: StageCardP
           >
             <Pencil className="size-3" />
           </Button>
+          {stage && onDelete && (
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={() => onDelete(stageName)}
+              aria-label={`${stageLabels[stageName]} 삭제`}
+              className="text-[hsl(var(--status-danger-text))]"
+            >
+              <Trash2 className="size-3" />
+            </Button>
+          )}
         </div>
       </div>
 

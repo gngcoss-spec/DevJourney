@@ -7,9 +7,10 @@ interface RoadmapTimelineProps {
   stages: Stage[];
   currentStage: ServiceStage;
   onEditStage: (stageName: ServiceStage, existing?: Stage) => void;
+  onDeleteStage?: (stageName: ServiceStage) => void;
 }
 
-export function RoadmapTimeline({ stages, currentStage, onEditStage }: RoadmapTimelineProps) {
+export function RoadmapTimeline({ stages, currentStage, onEditStage, onDeleteStage }: RoadmapTimelineProps) {
   const stageMap = new Map<ServiceStage, Stage>();
   stages.forEach((s) => stageMap.set(s.stage_name, s));
 
@@ -26,6 +27,7 @@ export function RoadmapTimeline({ stages, currentStage, onEditStage }: RoadmapTi
                 stageName={stageName}
                 currentStage={currentStage}
                 onEdit={onEditStage}
+                onDelete={onDeleteStage}
               />
             </div>
           ))}
@@ -41,6 +43,7 @@ export function RoadmapTimeline({ stages, currentStage, onEditStage }: RoadmapTi
             stageName={stageName}
             currentStage={currentStage}
             onEdit={onEditStage}
+            onDelete={onDeleteStage}
           />
         ))}
       </div>

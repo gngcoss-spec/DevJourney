@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useStages } from '@/lib/hooks/use-stages';
+import { useStages, useDeleteStage } from '@/lib/hooks/use-stages';
 import { useService } from '@/lib/hooks/use-services';
 import { RoadmapTimeline } from '@/components/roadmap/roadmap-timeline';
 import { StageForm } from '@/components/roadmap/stage-form';
@@ -20,6 +20,7 @@ export default function RoadmapPage() {
 
   const { data: stages, isLoading: stagesLoading, isError: stagesError, error: stagesErrorObj, refetch } = useStages(serviceId);
   const { data: service } = useService(serviceId);
+  const deleteStageMutation = useDeleteStage(serviceId);
 
   const handleEditStage = (stageName: ServiceStage, existing?: Stage) => {
     setEditingStageName(stageName);
@@ -30,6 +31,14 @@ export default function RoadmapPage() {
   const handleClose = () => {
     setIsFormOpen(false);
     setEditingStage(undefined);
+  };
+
+  const handleDeleteStage = (stageName: ServiceStage) => {
+    const stageToDelete = stages?.find((s) => s.stage_name === stageName);
+    if (!stageToDelete) return;
+    if (window.confirm(`'${stageName}' 스테이지를 삭제하시겠습니까?`)) {
+      deleteStageMutation.mutate(stageToDelete.id);
+    }
   };
 
   if (stagesLoading) {
@@ -66,6 +75,7 @@ export default function RoadmapPage() {
         stages={stages || []}
         currentStage={currentStage}
         onEditStage={handleEditStage}
+        onDeleteStage={handleDeleteStage}
       />
     </div>
   );
