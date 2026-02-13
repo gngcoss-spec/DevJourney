@@ -13,6 +13,7 @@ import type { WorkItem } from '@/types/database';
 vi.mock('@/lib/hooks/use-work-items', () => ({
   useCreateWorkItem: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
   useUpdateWorkItem: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
+  useDeleteWorkItem: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
 }));
 
 vi.mock('@/lib/supabase/client', () => ({
@@ -293,5 +294,32 @@ describe('WorkItemModal', () => {
 
     const activityTabEdit = screen.getByRole('tab', { name: /활동로그/i });
     expect(activityTabEdit).not.toHaveAttribute('aria-disabled', 'true');
+  });
+
+  // Test 13: Delete button shown in edit mode
+  it('should show delete button in edit mode', () => {
+    renderWithClient(
+      <WorkItemModal
+        isOpen={true}
+        onClose={vi.fn()}
+        workItem={mockWorkItem}
+        serviceId="service-1"
+      />
+    );
+
+    expect(screen.getByRole('button', { name: /삭제/i })).toBeInTheDocument();
+  });
+
+  // Test 14: Delete button not shown in create mode
+  it('should not show delete button in create mode', () => {
+    renderWithClient(
+      <WorkItemModal
+        isOpen={true}
+        onClose={vi.fn()}
+        serviceId="service-1"
+      />
+    );
+
+    expect(screen.queryByRole('button', { name: /삭제/i })).not.toBeInTheDocument();
   });
 });

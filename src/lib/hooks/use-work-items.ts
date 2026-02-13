@@ -13,6 +13,7 @@ import {
   createWorkItem as createWorkItemQuery,
   updateWorkItem as updateWorkItemQuery,
   updateWorkItemPosition,
+  deleteWorkItem as deleteWorkItemQuery,
 } from '@/lib/supabase/queries/work-items';
 import type {
   CreateWorkItemInput,
@@ -154,6 +155,24 @@ export function useMoveWorkItem(serviceId: string) {
     },
     onSettled: () => {
       // Always refetch after error or success to sync with server
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.workItems.all(serviceId),
+      });
+    },
+  });
+}
+
+/**
+ * Delete a work item.
+ * Invalidates work items query for the related service on success.
+ */
+export function useDeleteWorkItem(serviceId: string) {
+  const client = createClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteWorkItemQuery(client, id),
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.workItems.all(serviceId),
       });

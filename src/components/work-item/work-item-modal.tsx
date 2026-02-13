@@ -12,7 +12,7 @@ import { TabDecision } from './tab-decision';
 import { TabAISessions } from './tab-ai-sessions';
 import { TabActivityLog } from './tab-activity-log';
 import type { WorkItem, WorkItemStatus } from '@/types/database';
-import { useCreateWorkItem, useUpdateWorkItem } from '@/lib/hooks/use-work-items';
+import { useCreateWorkItem, useUpdateWorkItem, useDeleteWorkItem } from '@/lib/hooks/use-work-items';
 import { useCreateStatusChangeLog } from '@/lib/hooks/use-comments';
 import type { CreateWorkItemInput, UpdateWorkItemInput } from '@/types/database';
 
@@ -43,6 +43,7 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultSta
   const isEditMode = !!workItem;
   const createMutation = useCreateWorkItem();
   const updateMutation = useUpdateWorkItem();
+  const deleteMutation = useDeleteWorkItem(serviceId);
   const statusChangeMutation = useCreateStatusChangeLog(workItem?.id ?? '');
 
   if (!isOpen) {
@@ -185,26 +186,46 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultSta
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-4 border-t border-border">
-          <Button
-            variant="outline"
-            onClick={onClose}
-          >
-            취소
-          </Button>
-          {!isEditMode && (
+        <div className="flex items-center justify-between p-4 border-t border-border">
+          <div>
+            {isEditMode && workItem && (
+              <Button
+                variant="ghost"
+                className="text-[hsl(var(--status-danger-text))]"
+                onClick={() => {
+                  if (window.confirm('이 작업 아이템을 삭제하시겠습니까?')) {
+                    deleteMutation.mutate(workItem.id, {
+                      onSuccess: () => onClose(),
+                    });
+                  }
+                }}
+                disabled={deleteMutation.isPending}
+              >
+                {deleteMutation.isPending ? '삭제 중...' : '삭제'}
+              </Button>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
             <Button
-              onClick={handleSave}
-              disabled={createMutation.isPending}
+              variant="outline"
+              onClick={onClose}
             >
-              {createMutation.isPending ? '저장 중...' : '저장'}
+              취소
             </Button>
-          )}
-          {isEditMode && (
-            <span className="text-sm text-[hsl(var(--text-quaternary))]">
-              {updateMutation.isPending ? '저장 중...' : '자동 저장됨'}
-            </span>
-          )}
+            {!isEditMode && (
+              <Button
+                onClick={handleSave}
+                disabled={createMutation.isPending}
+              >
+                {createMutation.isPending ? '저장 중...' : '저장'}
+              </Button>
+            )}
+            {isEditMode && (
+              <span className="text-sm text-[hsl(var(--text-quaternary))]">
+                {updateMutation.isPending ? '저장 중...' : '자동 저장됨'}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>

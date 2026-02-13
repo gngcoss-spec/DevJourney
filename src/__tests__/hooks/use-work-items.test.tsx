@@ -12,6 +12,7 @@ import {
   useCreateWorkItem,
   useUpdateWorkItem,
   useMoveWorkItem,
+  useDeleteWorkItem,
 } from '@/lib/hooks/use-work-items';
 import type { WorkItem } from '@/types/database';
 
@@ -22,6 +23,7 @@ vi.mock('@/lib/supabase/queries/work-items', () => ({
   createWorkItem: vi.fn(),
   updateWorkItem: vi.fn(),
   updateWorkItemPosition: vi.fn(),
+  deleteWorkItem: vi.fn(),
 }));
 
 vi.mock('@/lib/supabase/client', () => ({
@@ -35,6 +37,7 @@ import {
   createWorkItem,
   updateWorkItem,
   updateWorkItemPosition,
+  deleteWorkItem,
 } from '@/lib/supabase/queries/work-items';
 
 describe('use-work-items hooks', () => {
@@ -463,6 +466,41 @@ describe('use-work-items hooks', () => {
       const cachedData = queryClient.getQueryData<WorkItem[]>(['work-items', 'service-1']);
       expect(cachedData).toEqual(initialWorkItems);
       expect(result.current.error).toEqual(new Error('Position update failed'));
+    });
+  });
+
+  describe('useDeleteWorkItem', () => {
+    it('should delete work item and invalidate queries', async () => {
+      vi.mocked(deleteWorkItem).mockResolvedValueOnce(undefined);
+
+      const { result } = renderHook(() => useDeleteWorkItem('service-1'), {
+        wrapper: createWrapper(),
+      });
+
+      const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+
+      result.current.mutate('wi-1');
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      expect(deleteWorkItem).toHaveBeenCalledWith(expect.anything(), 'wi-1');
+      expect(invalidateSpy).toHaveBeenCalledWith({
+        queryKey: ['work-items', 'service-1'],
+      });
+    });
+
+    it('should handle delete error', async () => {
+      vi.mocked(deleteWorkItem).mockRejectedValueOnce(new Error('Delete failed'));
+
+      const { result } = renderHook(() => useDeleteWorkItem('service-1'), {
+        wrapper: createWrapper(),
+      });
+
+      result.current.mutate('wi-1');
+
+      await waitFor(() => expect(result.current.isError).toBe(true));
+
+      expect(result.current.error).toEqual(new Error('Delete failed'));
     });
   });
 });
