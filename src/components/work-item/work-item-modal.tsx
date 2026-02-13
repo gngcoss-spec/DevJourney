@@ -36,6 +36,9 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultSta
       priority: 'medium',
       status: defaultStatus || 'backlog',
       assignee_name: '',
+      due_date: '',
+      labels: [],
+      assignee_id: '',
     }
   );
   const [validationError, setValidationError] = useState<string | null>(null);

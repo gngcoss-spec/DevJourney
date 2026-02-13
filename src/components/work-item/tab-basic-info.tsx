@@ -6,7 +6,8 @@
 
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -18,6 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { CreateWorkItemInput, UpdateWorkItemInput } from '@/types/database';
+import { useTeamMembers } from '@/lib/hooks/use-team';
 
 // Zod schema for work item basic info
 const basicInfoSchema = z.object({
@@ -27,6 +29,9 @@ const basicInfoSchema = z.object({
   priority: z.enum(['low', 'medium', 'high', 'urgent']),
   status: z.enum(['backlog', 'ready', 'in-progress', 'review', 'done']),
   assignee_name: z.string().optional(),
+  due_date: z.string().optional(),
+  labels: z.array(z.string()).optional(),
+  assignee_id: z.string().optional(),
 });
 
 type BasicInfoFormData = z.infer<typeof basicInfoSchema>;
@@ -94,8 +99,15 @@ export function TabBasicInfo({ formData, onChange, isEditMode }: TabBasicInfoPro
       priority: (formData.priority as BasicInfoFormData['priority']) || 'medium',
       status: (formData.status as BasicInfoFormData['status']) || 'backlog',
       assignee_name: formData.assignee_name || '',
+      due_date: (formData as Record<string, unknown>).due_date as string || '',
+      labels: ((formData as Record<string, unknown>).labels as string[]) || [],
+      assignee_id: (formData as Record<string, unknown>).assignee_id as string || '',
     },
   });
+
+  const { data: teamMembers } = useTeamMembers();
+  const [labelInput, setLabelInput] = useState('');
+  const labelsValue = watch('labels') || [];
 
   // Watch form changes and propagate to parent
   useEffect(() => {
@@ -215,13 +227,92 @@ export function TabBasicInfo({ formData, onChange, isEditMode }: TabBasicInfoPro
 
       {/* 담당자 */}
       <div className="space-y-2">
-        <Label htmlFor="assignee_name">
+        <Label htmlFor="assignee_id">
           담당자
         </Label>
+        <Controller
+          name="assignee_id"
+          control={control}
+          render={({ field }) => (
+            <Select
+              onValueChange={(value) => {
+                field.onChange(value === '__none__' ? '' : value);
+                const member = teamMembers?.find((m) => m.id === value);
+                setValue('assignee_name', member ? member.display_name : '');
+                onChange('assignee_name', member ? member.display_name : '');
+              }}
+              defaultValue={field.value || '__none__'}
+            >
+              <SelectTrigger id="assignee_id">
+                <SelectValue placeholder="담당자를 선택하세요" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">미지정</SelectItem>
+                {teamMembers?.map((member) => (
+                  <SelectItem key={member.id} value={member.id}>
+                    {member.display_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+        <input type="hidden" {...register('assignee_name')} />
+      </div>
+
+      {/* 마감일 */}
+      <div className="space-y-2">
+        <Label htmlFor="due_date">
+          마감일
+        </Label>
         <Input
-          id="assignee_name"
-          {...register('assignee_name')}
-          placeholder="담당자명을 입력하세요"
+          id="due_date"
+          type="date"
+          {...register('due_date')}
+        />
+      </div>
+
+      {/* 라벨 */}
+      <div className="space-y-2">
+        <Label htmlFor="labels">
+          라벨
+        </Label>
+        <div className="flex flex-wrap gap-1.5 mb-2">
+          {labelsValue.map((label, index) => (
+            <span
+              key={index}
+              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-[hsl(var(--surface-raised))] text-[hsl(var(--text-tertiary))] border border-[hsl(var(--border-default))]"
+            >
+              {label}
+              <button
+                type="button"
+                onClick={() => {
+                  const next = labelsValue.filter((_, i) => i !== index);
+                  setValue('labels', next);
+                  onChange('labels', next);
+                }}
+                className="hover:text-[hsl(var(--status-danger-text))]"
+                aria-label={`라벨 ${label} 제거`}
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </span>
+          ))}
+        </div>
+        <Input
+          id="labels"
+          value={labelInput}
+          onChange={(e) => setLabelInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && labelInput.trim()) {
+              e.preventDefault();
+              const next = [...labelsValue, labelInput.trim()];
+              setValue('labels', next);
+              onChange('labels', next);
+              setLabelInput('');
+            }
+          }}
+          placeholder="라벨을 입력하고 Enter를 누르세요"
         />
       </div>
     </div>

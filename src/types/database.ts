@@ -60,12 +60,15 @@ export interface WorkItem {
   decision_reason: string | null;
   result: string | null;
   assignee_name: string | null;
+  due_date: string | null;
+  labels: string[];
+  assignee_id: string | null;
   sort_order: number;
   created_at: string;
   updated_at: string;
 }
 
-export type CreateWorkItemInput = Pick<WorkItem, 'service_id' | 'title'> & Partial<Pick<WorkItem, 'description' | 'type' | 'priority' | 'status' | 'problem' | 'options_considered' | 'decision_reason' | 'result' | 'assignee_name' | 'sort_order'>>;
+export type CreateWorkItemInput = Pick<WorkItem, 'service_id' | 'title'> & Partial<Pick<WorkItem, 'description' | 'type' | 'priority' | 'status' | 'problem' | 'options_considered' | 'decision_reason' | 'result' | 'assignee_name' | 'sort_order' | 'due_date' | 'labels' | 'assignee_id'>>;
 
 export type UpdateWorkItemInput = Partial<Omit<WorkItem, 'id' | 'user_id' | 'service_id' | 'created_at' | 'updated_at'>>;
 

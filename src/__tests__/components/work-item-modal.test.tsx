@@ -38,6 +38,10 @@ vi.mock('@/lib/hooks/use-comments', () => ({
   useCreateStatusChangeLog: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
 }));
 
+vi.mock('@/lib/hooks/use-team', () => ({
+  useTeamMembers: vi.fn(() => ({ data: [], isLoading: false })),
+}));
+
 const mockWorkItem: WorkItem = {
   id: 'work-1',
   service_id: 'service-1',
@@ -52,6 +56,9 @@ const mockWorkItem: WorkItem = {
   decision_reason: 'Option A is better',
   result: 'Successfully implemented',
   assignee_name: 'John Doe',
+  due_date: null,
+  labels: [],
+  assignee_id: null,
   sort_order: 1,
   created_at: '2024-01-01T00:00:00Z',
   updated_at: '2024-01-01T00:00:00Z',

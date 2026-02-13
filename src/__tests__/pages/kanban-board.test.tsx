@@ -29,6 +29,10 @@ vi.mock('@/lib/supabase/queries/comments', () => ({
   createStatusChangeLog: vi.fn(),
 }));
 
+vi.mock('@/lib/hooks/use-team', () => ({
+  useTeamMembers: vi.fn(() => ({ data: [], isLoading: false })),
+}));
+
 // Import after mocks
 import * as useWorkItemsHook from '@/lib/hooks/use-work-items';
 import KanbanBoardPage from '@/app/(dashboard)/services/[id]/board/page';
@@ -47,6 +51,9 @@ const createMockWorkItem = (overrides: Partial<WorkItem> = {}): WorkItem => ({
   decision_reason: null,
   result: null,
   assignee_name: null,
+  due_date: null,
+  labels: [],
+  assignee_id: null,
   sort_order: 0,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),

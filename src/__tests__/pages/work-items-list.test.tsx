@@ -37,6 +37,10 @@ vi.mock('@/lib/supabase/queries/comments', () => ({
   createStatusChangeLog: vi.fn(),
 }));
 
+vi.mock('@/lib/hooks/use-team', () => ({
+  useTeamMembers: vi.fn(() => ({ data: [], isLoading: false })),
+}));
+
 // Test wrapper with TanStack Query
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -66,6 +70,9 @@ const mockWorkItems: WorkItem[] = [
     decision_reason: null,
     result: null,
     assignee_name: 'Claude',
+    due_date: null,
+    labels: [],
+    assignee_id: null,
     sort_order: 1,
     created_at: '2026-02-10T12:00:00Z',
     updated_at: '2026-02-10T12:00:00Z',
@@ -84,6 +91,9 @@ const mockWorkItems: WorkItem[] = [
     decision_reason: null,
     result: null,
     assignee_name: null,
+    due_date: null,
+    labels: [],
+    assignee_id: null,
     sort_order: 2,
     created_at: '2026-02-09T10:00:00Z',
     updated_at: '2026-02-09T10:00:00Z',
@@ -102,6 +112,9 @@ const mockWorkItems: WorkItem[] = [
     decision_reason: null,
     result: null,
     assignee_name: null,
+    due_date: null,
+    labels: [],
+    assignee_id: null,
     sort_order: 3,
     created_at: '2026-02-08T08:00:00Z',
     updated_at: '2026-02-08T08:00:00Z',
@@ -120,6 +133,9 @@ const mockWorkItems: WorkItem[] = [
     decision_reason: null,
     result: '배포 자동화 완료',
     assignee_name: 'DevOps',
+    due_date: null,
+    labels: [],
+    assignee_id: null,
     sort_order: 4,
     created_at: '2026-02-07T09:00:00Z',
     updated_at: '2026-02-11T14:00:00Z',
@@ -138,6 +154,9 @@ const mockWorkItems: WorkItem[] = [
     decision_reason: null,
     result: null,
     assignee_name: null,
+    due_date: null,
+    labels: [],
+    assignee_id: null,
     sort_order: 5,
     created_at: '2026-02-06T11:00:00Z',
     updated_at: '2026-02-06T11:00:00Z',

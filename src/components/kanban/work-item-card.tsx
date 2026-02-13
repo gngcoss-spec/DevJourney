@@ -27,6 +27,34 @@ const priorityDotStyles = {
   low: 'bg-[hsl(var(--text-quaternary))]',
 };
 
+function DueDateBadge({ dueDate }: { dueDate: string }) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const due = new Date(dueDate + 'T00:00:00');
+  const diffDays = Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  const formatted = `${String(due.getMonth() + 1).padStart(2, '0')}/${String(due.getDate()).padStart(2, '0')}`;
+
+  if (diffDays < 0) {
+    return (
+      <span className="text-xs text-[hsl(var(--status-danger-text))] line-through">
+        {formatted}
+      </span>
+    );
+  }
+  if (diffDays <= 3) {
+    return (
+      <span className="text-xs text-[hsl(var(--status-danger-text))]">
+        {formatted}
+      </span>
+    );
+  }
+  return (
+    <span className="text-xs text-[hsl(var(--text-quaternary))]">
+      {formatted}
+    </span>
+  );
+}
+
 export function WorkItemCard({ workItem, onCardClick }: WorkItemCardProps) {
   const handleClick = () => {
     if (onCardClick) {
@@ -58,8 +86,8 @@ export function WorkItemCard({ workItem, onCardClick }: WorkItemCardProps) {
         </h3>
       </div>
 
-      {/* Type Badge */}
-      <div className="flex items-center gap-2">
+      {/* Type Badge + Due Date */}
+      <div className="flex items-center gap-2 flex-wrap">
         <span
           className={cn(
             'inline-flex items-center px-2 py-0.5 text-xs font-medium rounded border',
@@ -68,7 +96,41 @@ export function WorkItemCard({ workItem, onCardClick }: WorkItemCardProps) {
         >
           {workItem.type}
         </span>
+        {workItem.due_date && (
+          <DueDateBadge dueDate={workItem.due_date} />
+        )}
       </div>
+
+      {/* Labels */}
+      {workItem.labels && workItem.labels.length > 0 && (
+        <div className="flex items-center gap-1 mt-2 flex-wrap">
+          {workItem.labels.slice(0, 2).map((label, i) => (
+            <span
+              key={i}
+              className="text-xs px-1.5 py-0.5 rounded bg-[hsl(var(--surface-raised))] text-[hsl(var(--text-tertiary))]"
+            >
+              {label}
+            </span>
+          ))}
+          {workItem.labels.length > 2 && (
+            <span className="text-xs text-[hsl(var(--text-quaternary))]">
+              +{workItem.labels.length - 2}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Assignee */}
+      {workItem.assignee_name && (
+        <div className="flex justify-end mt-2">
+          <div
+            className="w-6 h-6 rounded-full bg-[hsl(var(--status-info-bg))] text-[hsl(var(--status-info-text))] text-xs flex items-center justify-center"
+            title={workItem.assignee_name}
+          >
+            {workItem.assignee_name.charAt(0).toUpperCase()}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
