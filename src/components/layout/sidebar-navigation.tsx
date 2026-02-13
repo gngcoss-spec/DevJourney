@@ -58,8 +58,8 @@ export default function SidebarNavigation() {
       <aside
         className={cn(
           'fixed top-0 left-0 h-full bg-[hsl(var(--surface-ground))] border-r border-[hsl(var(--border-default))] z-40 transition-all duration-300',
-          // Desktop: 항상 표시
-          'md:static md:w-64',
+          // Desktop: sticky로 뷰포트 높이 고정
+          'md:sticky md:top-0 md:h-screen md:w-64',
           // Tablet: 접힘 가능
           'sm:fixed sm:w-64',
           // Mobile: 오버레이
