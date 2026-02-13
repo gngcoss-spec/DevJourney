@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { Suspense, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useServices } from '@/lib/hooks/use-services';
@@ -23,7 +23,7 @@ function isServiceStalled(service: { last_activity_at: string }): boolean {
   return lastActivity < sevenDaysAgo;
 }
 
-export default function ServicesPage() {
+function ServicesContent() {
   const searchParams = useSearchParams();
   const initialStatus = searchParams.get('status') || 'all';
   const { data: services, isLoading, isError } = useServices();
@@ -128,5 +128,17 @@ export default function ServicesPage() {
         <ServicesTable services={filteredServices} />
       )}
     </div>
+  );
+}
+
+export default function ServicesPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <p className="text-[hsl(var(--text-tertiary))]">로딩 중...</p>
+      </div>
+    }>
+      <ServicesContent />
+    </Suspense>
   );
 }

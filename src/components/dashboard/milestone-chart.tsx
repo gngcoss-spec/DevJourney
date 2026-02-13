@@ -47,7 +47,7 @@ export function MilestoneChart({ services }: MilestoneChartProps) {
     progress: service.progress,
   }));
 
-  const handleBarClick = (data: { id: string }) => {
+  const handleBarClick = (data: { id?: string }) => {
     if (data?.id) {
       router.push(`/services/${data.id}`);
     }

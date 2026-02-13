@@ -14,6 +14,7 @@ vi.mock('@/lib/hooks/use-work-items', () => ({
   useMoveWorkItem: vi.fn(() => ({ mutate: vi.fn() })),
   useCreateWorkItem: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
   useUpdateWorkItem: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
+  useDeleteWorkItem: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
 }));
 
 vi.mock('next/navigation', () => ({

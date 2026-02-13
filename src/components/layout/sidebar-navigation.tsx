@@ -78,12 +78,12 @@ export default function SidebarNavigation() {
           {/* 검색 버튼 */}
           <button
             onClick={() => searchStore.open()}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-md)] text-[hsl(var(--text-tertiary))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--text-secondary))] transition-colors w-full text-sm mb-4"
+            className="flex items-center gap-2 px-3 py-2 rounded-[var(--radius-md)] border border-[hsl(var(--border-default))] bg-[hsl(var(--surface-raised))]/50 text-[hsl(var(--text-quaternary))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--text-tertiary))] hover:border-[hsl(var(--border-hover))] transition-all w-full text-sm mb-4"
           >
-            <Search className="size-5" />
-            <span>Search</span>
-            <kbd className="ml-auto hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-medium text-[hsl(var(--text-quaternary))] bg-[hsl(var(--surface-raised))] rounded border border-[hsl(var(--border-default))]">
-              Ctrl+K
+            <Search className="size-4" />
+            <span className="flex-1 text-left">검색...</span>
+            <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium text-[hsl(var(--text-quaternary))] bg-[hsl(var(--surface-ground))] rounded border border-[hsl(var(--border-default))]">
+              ⌘K
             </kbd>
           </button>
 
