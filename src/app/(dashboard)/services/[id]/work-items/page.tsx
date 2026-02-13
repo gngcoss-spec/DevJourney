@@ -62,7 +62,7 @@ export default function WorkItemsPage() {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-50">Work Items</h1>
+          <h1 className="text-2xl font-bold text-[hsl(var(--text-primary))]">Work Items</h1>
           <Button onClick={() => handleCreateNew()}>
             새 Work Item
           </Button>
@@ -82,7 +82,7 @@ export default function WorkItemsPage() {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-50">Work Items</h1>
+          <h1 className="text-2xl font-bold text-[hsl(var(--text-primary))]">Work Items</h1>
           <Button onClick={() => handleCreateNew()}>
             새 Work Item
           </Button>
@@ -107,7 +107,7 @@ export default function WorkItemsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-50">Work Items</h1>
+        <h1 className="text-2xl font-bold text-[hsl(var(--text-primary))]">Work Items</h1>
         <Button onClick={() => handleCreateNew()}>
           새 Work Item
         </Button>
@@ -124,8 +124,8 @@ export default function WorkItemsPage() {
 
       {filteredWorkItems.length === 0 && (
         <div className="flex flex-col items-center justify-center min-h-[30vh] text-center">
-          <p className="text-slate-400 text-lg">필터 조건에 맞는 Work Item이 없습니다</p>
-          <p className="text-slate-500 text-sm mt-2">
+          <p className="text-[hsl(var(--text-tertiary))] text-lg">필터 조건에 맞는 Work Item이 없습니다</p>
+          <p className="text-[hsl(var(--text-quaternary))] text-sm mt-2">
             다른 필터 조건을 선택해 보세요
           </p>
         </div>

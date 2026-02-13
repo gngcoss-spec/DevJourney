@@ -18,7 +18,7 @@ export function RoadmapTimeline({ stages, currentStage, onEditStage, onDeleteSta
     <div className="space-y-6">
       {/* Horizontal connector line (desktop) */}
       <div className="hidden md:block relative">
-        <div className="absolute top-6 left-0 right-0 h-0.5 bg-slate-700" />
+        <div className="absolute top-6 left-0 right-0 h-0.5 bg-[hsl(var(--border-default))]" />
         <div className="flex gap-4 overflow-x-auto pb-4">
           {STAGE_ORDER.map((stageName) => (
             <div key={stageName} className="relative flex-shrink-0">

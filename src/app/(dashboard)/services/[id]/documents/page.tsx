@@ -54,7 +54,7 @@ export default function DocumentsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-50">문서</h1>
+        <h1 className="text-2xl font-bold text-[hsl(var(--text-primary))]">문서</h1>
         <Button onClick={() => setIsFormOpen(true)}>
           새 문서
         </Button>
@@ -67,7 +67,7 @@ export default function DocumentsPage() {
           className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
             filterType === 'all'
               ? 'bg-blue-500/20 text-blue-400'
-              : 'bg-slate-800 text-slate-400 hover:text-slate-300'
+              : 'bg-[hsl(var(--surface-elevated))] text-[hsl(var(--text-tertiary))] hover:text-[hsl(var(--text-secondary))]'
           }`}
         >
           전체
@@ -79,7 +79,7 @@ export default function DocumentsPage() {
             className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
               filterType === type
                 ? 'bg-blue-500/20 text-blue-400'
-                : 'bg-slate-800 text-slate-400 hover:text-slate-300'
+                : 'bg-[hsl(var(--surface-elevated))] text-[hsl(var(--text-tertiary))] hover:text-[hsl(var(--text-secondary))]'
             }`}
           >
             {type}

@@ -21,10 +21,10 @@ export function PageEmpty({
   return (
     <div data-testid="page-empty" className="flex items-center justify-center min-h-[40vh]">
       <div className="text-center space-y-3">
-        <Icon className="h-16 w-16 text-slate-600 mx-auto" />
-        <p className="text-slate-400 text-lg">{message}</p>
+        <Icon className="h-16 w-16 text-[hsl(var(--text-quaternary))] mx-auto" />
+        <p className="text-[hsl(var(--text-tertiary))] text-lg">{message}</p>
         {description && (
-          <p className="text-sm text-slate-500">{description}</p>
+          <p className="text-sm text-[hsl(var(--text-quaternary))]">{description}</p>
         )}
         {actionLabel && onAction && (
           <Button onClick={onAction} className="mt-2">

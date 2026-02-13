@@ -21,7 +21,7 @@ interface KanbanColumnProps {
 }
 
 const statusDotStyles: Record<WorkItemStatus, string> = {
-  backlog: 'bg-slate-500',
+  backlog: 'bg-[hsl(var(--text-quaternary))]',
   ready: 'bg-blue-500',
   'in-progress': 'bg-yellow-500',
   review: 'bg-purple-500',
@@ -49,19 +49,19 @@ export function KanbanColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        'flex flex-col min-w-[280px] max-w-[280px] bg-slate-900 rounded-lg border border-slate-800',
-        isOver && 'border-blue-500 bg-slate-800/50'
+        'flex flex-col min-w-[280px] max-w-[280px] bg-[hsl(var(--surface-raised))] rounded-lg border border-[hsl(var(--border-default))]',
+        isOver && 'border-blue-500 bg-[hsl(var(--surface-elevated))]/50'
       )}
     >
       {/* Column Header */}
-      <div className="flex items-center justify-between p-4 border-b border-slate-800">
+      <div className="flex items-center justify-between p-4 border-b border-[hsl(var(--border-default))]">
         <div className="flex items-center gap-2">
           <div
             className={cn('w-2 h-2 rounded-full', statusDotStyles[status])}
             aria-hidden="true"
           />
-          <h2 className="text-sm font-semibold text-slate-100">{title}</h2>
-          <span className="text-xs text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">
+          <h2 className="text-sm font-semibold text-[hsl(var(--text-primary))]">{title}</h2>
+          <span className="text-xs text-[hsl(var(--text-tertiary))] bg-[hsl(var(--surface-elevated))] px-1.5 py-0.5 rounded">
             {items.length}
           </span>
         </div>

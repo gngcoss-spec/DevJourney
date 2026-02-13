@@ -24,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko" className="dark">
-      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased bg-slate-950 text-slate-50`}>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[hsl(var(--surface-ground))] text-[hsl(var(--text-primary))]`}>
         {children}
       </body>
     </html>

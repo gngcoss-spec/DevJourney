@@ -56,58 +56,58 @@ function formatDate(dateString: string): string {
 
 export const WorkItemsTable = memo(({ workItems, onRowClick }: WorkItemsTableProps) => {
   return (
-    <div className="rounded-lg border border-slate-800 overflow-hidden">
+    <div className="rounded-lg border border-[hsl(var(--border-default))] overflow-hidden">
       <table className="w-full" aria-label="Work Items 목록">
         <caption className="sr-only">
           총 {workItems.length}개의 Work Item
         </caption>
         <thead>
-          <tr className="border-b border-slate-800 bg-slate-900">
+          <tr className="border-b border-[hsl(var(--border-default))] bg-[hsl(var(--surface-raised))]">
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
+              className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
             >
               제목
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
+              className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
             >
               유형
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
+              className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
             >
               우선순위
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
+              className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
             >
               상태
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
+              className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
             >
               생성일
             </th>
           </tr>
         </thead>
-        <tbody className="bg-slate-950 divide-y divide-slate-800">
+        <tbody className="bg-[hsl(var(--surface-ground))] divide-y divide-[hsl(var(--border-default))]">
           {workItems.map((workItem) => (
             <tr
               key={workItem.id}
               onClick={() => onRowClick?.(workItem.id)}
-              className={onRowClick ? 'hover:bg-slate-900/50 cursor-pointer transition-colors' : 'hover:bg-slate-900/50 transition-colors'}
+              className={onRowClick ? 'hover:bg-[hsl(var(--surface-raised))]/50 cursor-pointer transition-colors' : 'hover:bg-[hsl(var(--surface-raised))]/50 transition-colors'}
             >
               <td className="px-6 py-4">
-                <div className="text-slate-200 font-medium">
+                <div className="text-[hsl(var(--text-secondary))] font-medium">
                   {workItem.title}
                 </div>
                 {workItem.description && (
-                  <p className="text-sm text-slate-400 mt-1">{workItem.description}</p>
+                  <p className="text-sm text-[hsl(var(--text-tertiary))] mt-1">{workItem.description}</p>
                 )}
               </td>
               <td className="px-6 py-4">
@@ -140,7 +140,7 @@ export const WorkItemsTable = memo(({ workItems, onRowClick }: WorkItemsTablePro
               <td className="px-6 py-4">
                 <time
                   dateTime={workItem.created_at}
-                  className="text-sm text-slate-400"
+                  className="text-sm text-[hsl(var(--text-tertiary))]"
                 >
                   {formatDate(workItem.created_at)}
                 </time>

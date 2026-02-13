@@ -7,12 +7,12 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950">
+    <main className="flex min-h-screen items-center justify-center bg-[hsl(var(--surface-ground))]">
       <div className="w-full max-w-md px-4">
         {/* 로고 */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-slate-50">DevJourney</h1>
-          <p className="text-sm text-slate-400 mt-2">개발 여정 관리 플랫폼</p>
+          <h1 className="text-3xl font-bold text-[hsl(var(--text-primary))]">DevJourney</h1>
+          <p className="text-sm text-[hsl(var(--text-tertiary))] mt-2">개발 여정 관리 플랫폼</p>
         </div>
 
         {children}

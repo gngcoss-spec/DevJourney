@@ -20,7 +20,7 @@ const colorStyles: Record<IconColor, string> = {
   purple: 'bg-[hsl(var(--status-purple-bg))] text-[hsl(var(--status-purple-text))]',
   cyan: 'bg-cyan-500/10 text-cyan-400',
   orange: 'bg-orange-500/10 text-orange-400',
-  slate: 'bg-slate-500/10 text-slate-400',
+  slate: 'bg-[hsl(var(--surface-elevated))] text-[hsl(var(--text-tertiary))]',
 };
 
 const sizeConfig: Record<IconSize, { container: string; icon: string }> = {

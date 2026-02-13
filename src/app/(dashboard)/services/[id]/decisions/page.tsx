@@ -47,7 +47,7 @@ export default function DecisionsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-slate-50">의사결정</h1>
+        <h1 className="text-2xl font-bold text-[hsl(var(--text-primary))]">의사결정</h1>
         <Button onClick={() => setIsFormOpen(true)}>
           새 의사결정
         </Button>

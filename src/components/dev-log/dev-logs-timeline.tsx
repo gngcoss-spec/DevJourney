@@ -25,11 +25,11 @@ export function DevLogsTimeline({ devLogs }: DevLogsTimelineProps) {
         <div key={log.id} className="relative">
           {/* Timeline line */}
           {index < devLogs.length - 1 && (
-            <div className="absolute left-0 top-12 bottom-0 w-px bg-slate-700 ml-2" />
+            <div className="absolute left-0 top-12 bottom-0 w-px bg-[hsl(var(--border-default))] ml-2" />
           )}
 
           {/* Timeline dot */}
-          <div className="absolute left-0 top-6 w-4 h-4 rounded-full bg-slate-700 border-2 border-slate-900" />
+          <div className="absolute left-0 top-6 w-4 h-4 rounded-full bg-[hsl(var(--border-default))] border-2 border-[hsl(var(--surface-raised))]" />
 
           {/* Card */}
           <div className="ml-8">

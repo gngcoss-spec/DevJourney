@@ -31,7 +31,7 @@ export default function DevLogsPage() {
     return (
       <div>
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold text-slate-50">개발 일지</h1>
+          <h1 className="text-2xl font-bold text-[hsl(var(--text-primary))]">개발 일지</h1>
           <Button onClick={() => setIsFormOpen(true)}>
             새 로그 작성
           </Button>
@@ -56,7 +56,7 @@ export default function DevLogsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-slate-50">개발 일지</h1>
+        <h1 className="text-2xl font-bold text-[hsl(var(--text-primary))]">개발 일지</h1>
         <Button onClick={() => setIsFormOpen(true)}>
           새 로그 작성
         </Button>

@@ -8,6 +8,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { ServiceForm, type ServiceFormValues } from '@/components/service/service-form';
 import { useService, useUpdateService } from '@/lib/hooks/use-services';
 import { arrayToTechStack } from '@/lib/utils/tech-stack';
+import { PageLoading } from '@/components/common/page-loading';
+import { PageError } from '@/components/common/page-error';
 
 export default function ServiceEditPage() {
   const router = useRouter();
@@ -30,9 +32,7 @@ export default function ServiceEditPage() {
   if (isLoadingService) {
     return (
       <div className="container max-w-2xl mx-auto py-8">
-        <div className="flex items-center justify-center min-h-[50vh]">
-          <p className="text-slate-400">서비스 정보 로딩 중...</p>
-        </div>
+        <PageLoading />
       </div>
     );
   }
@@ -40,9 +40,7 @@ export default function ServiceEditPage() {
   if (!service) {
     return (
       <div className="container max-w-2xl mx-auto py-8">
-        <div className="flex items-center justify-center min-h-[50vh]">
-          <p className="text-slate-400">서비스를 찾을 수 없습니다.</p>
-        </div>
+        <PageError message="서비스를 찾을 수 없습니다." />
       </div>
     );
   }
@@ -51,12 +49,12 @@ export default function ServiceEditPage() {
     <div className="container max-w-2xl mx-auto py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-2">서비스 편집</h1>
-        <p className="text-slate-400">
+        <p className="text-[hsl(var(--text-tertiary))]">
           {service.name}의 정보를 수정합니다.
         </p>
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-6">
+      <div className="bg-[hsl(var(--surface-raised))] border border-[hsl(var(--border-default))] rounded-lg p-6">
         <ServiceForm
           mode="edit"
           defaultValues={{

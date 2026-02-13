@@ -287,7 +287,7 @@ export function ServiceForm({
         <div className="space-y-3">
           {TECH_STACK_CATEGORIES.map(({ key, label, placeholder }) => (
             <div key={key} className="space-y-1.5">
-              <Label htmlFor={`tech_stack_${key}`} className="text-xs text-slate-400">
+              <Label htmlFor={`tech_stack_${key}`} className="text-xs text-[hsl(var(--text-tertiary))]">
                 {label}
               </Label>
               <Input
@@ -305,7 +305,7 @@ export function ServiceForm({
                   {(techStack[key] || []).map((tag, index) => (
                     <div
                       key={index}
-                      className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-700 text-slate-100 rounded-full text-xs"
+                      className="inline-flex items-center gap-1 px-2 py-0.5 bg-[hsl(var(--border-default))] text-[hsl(var(--text-primary))] rounded-full text-xs"
                     >
                       <span>{tag}</span>
                       <button

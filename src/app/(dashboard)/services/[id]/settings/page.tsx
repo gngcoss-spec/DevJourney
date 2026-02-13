@@ -43,9 +43,9 @@ export default function ServiceSettingsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-50 mb-8">서비스 설정</h1>
+      <h1 className="text-2xl font-bold text-[hsl(var(--text-primary))] mb-8">서비스 설정</h1>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-6 mb-8">
+      <div className="bg-[hsl(var(--surface-raised))] border border-[hsl(var(--border-default))] rounded-lg p-6 mb-8">
         <ServiceForm
           mode="edit"
           defaultValues={{
@@ -66,7 +66,7 @@ export default function ServiceSettingsPage() {
       {/* Danger Zone */}
       <div className="border border-red-500/30 rounded-lg p-6">
         <h2 className="text-lg font-semibold text-red-400 mb-2">위험 영역</h2>
-        <p className="text-sm text-slate-400 mb-4">
+        <p className="text-sm text-[hsl(var(--text-tertiary))] mb-4">
           이 서비스를 삭제하면 모든 관련 데이터(작업, 로그, 의사결정 등)가 함께 삭제됩니다.
         </p>
 
@@ -92,7 +92,7 @@ export default function ServiceSettingsPage() {
               type="button"
               onClick={() => setShowDeleteConfirm(false)}
               variant="ghost"
-              className="text-slate-400"
+              className="text-[hsl(var(--text-tertiary))]"
             >
               취소
             </Button>

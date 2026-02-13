@@ -62,7 +62,7 @@ export function LoginForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* 이메일 입력 */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-slate-200 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-[hsl(var(--text-secondary))] mb-2">
               이메일
             </label>
             <Input
@@ -79,7 +79,7 @@ export function LoginForm() {
 
           {/* 비밀번호 입력 */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-200 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-[hsl(var(--text-secondary))] mb-2">
               비밀번호
             </label>
             <Input
@@ -113,7 +113,7 @@ export function LoginForm() {
         </form>
       </CardContent>
       <CardFooter className="justify-center">
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-[hsl(var(--text-tertiary))]">
           계정이 없으신가요?{' '}
           <Link href="/signup" className="text-blue-500 hover:underline">
             회원가입

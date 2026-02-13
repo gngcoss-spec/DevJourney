@@ -26,7 +26,7 @@ export default function KanbanBoardPage() {
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
-            className="min-w-[280px] max-w-[280px] bg-slate-800 rounded-lg h-[600px]"
+            className="min-w-[280px] max-w-[280px] bg-[hsl(var(--surface-elevated))] rounded-lg h-[600px]"
           />
         ))}
       </div>
@@ -68,7 +68,7 @@ export default function KanbanBoardPage() {
     <div className="space-y-4">
       {isEmpty && (
         <div className="mb-4 text-center">
-          <p className="text-slate-400 text-sm">
+          <p className="text-[hsl(var(--text-tertiary))] text-sm">
             작업 항목이 없습니다. &quot;+&quot; 버튼으로 새로운 작업 항목을 추가해보세요.
           </p>
         </div>

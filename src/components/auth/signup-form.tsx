@@ -76,7 +76,7 @@ export function SignupForm() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="bg-slate-900 border-slate-800">
+        <Card className="bg-[hsl(var(--surface-raised))] border-[hsl(var(--border-default))]">
           <CardHeader className="text-center">
             <motion.div
               initial={{ scale: 0 }}
@@ -86,8 +86,8 @@ export function SignupForm() {
             >
               <CheckCircle2 className="w-16 h-16 text-green-500" />
             </motion.div>
-            <CardTitle className="text-slate-50">이메일 인증이 필요합니다</CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardTitle className="text-[hsl(var(--text-primary))]">이메일 인증이 필요합니다</CardTitle>
+            <CardDescription className="text-[hsl(var(--text-tertiary))]">
               회원가입이 성공적으로 완료되었습니다.
               <br />
               이메일로 전송된 인증 링크를 클릭하여 계정을 활성화하세요.
@@ -112,10 +112,10 @@ export function SignupForm() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="bg-slate-900 border-slate-800">
+      <Card className="bg-[hsl(var(--surface-raised))] border-[hsl(var(--border-default))]">
         <CardHeader>
-          <CardTitle className="text-slate-50">회원가입</CardTitle>
-          <CardDescription className="text-slate-400">
+          <CardTitle className="text-[hsl(var(--text-primary))]">회원가입</CardTitle>
+          <CardDescription className="text-[hsl(var(--text-tertiary))]">
             이메일로 새 계정을 만드세요
           </CardDescription>
         </CardHeader>
@@ -123,14 +123,14 @@ export function SignupForm() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* 이메일 필드 */}
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-slate-300">
+              <label htmlFor="email" className="text-sm font-medium text-[hsl(var(--text-secondary))]">
                 이메일
               </label>
               <Input
                 id="email"
                 type="email"
                 placeholder="name@example.com"
-                className="bg-slate-800 border-slate-700 text-slate-50 placeholder:text-slate-500"
+                className="bg-[hsl(var(--surface-elevated))] border-[hsl(var(--border-hover))] text-[hsl(var(--text-primary))] placeholder:text-[hsl(var(--text-quaternary))]"
                 aria-invalid={!!errors.email}
                 aria-describedby={errors.email ? 'email-error' : undefined}
                 {...register('email')}
@@ -144,14 +144,14 @@ export function SignupForm() {
 
             {/* 비밀번호 필드 */}
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-slate-300">
+              <label htmlFor="password" className="text-sm font-medium text-[hsl(var(--text-secondary))]">
                 비밀번호
               </label>
               <Input
                 id="password"
                 type="password"
                 placeholder="6자 이상 입력하세요"
-                className="bg-slate-800 border-slate-700 text-slate-50 placeholder:text-slate-500"
+                className="bg-[hsl(var(--surface-elevated))] border-[hsl(var(--border-hover))] text-[hsl(var(--text-primary))] placeholder:text-[hsl(var(--text-quaternary))]"
                 aria-invalid={!!errors.password}
                 aria-describedby={errors.password ? 'password-error' : undefined}
                 {...register('password')}
@@ -165,14 +165,14 @@ export function SignupForm() {
 
             {/* 비밀번호 확인 필드 */}
             <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-sm font-medium text-slate-300">
+              <label htmlFor="confirmPassword" className="text-sm font-medium text-[hsl(var(--text-secondary))]">
                 비밀번호 확인
               </label>
               <Input
                 id="confirmPassword"
                 type="password"
                 placeholder="비밀번호를 다시 입력하세요"
-                className="bg-slate-800 border-slate-700 text-slate-50 placeholder:text-slate-500"
+                className="bg-[hsl(var(--surface-elevated))] border-[hsl(var(--border-hover))] text-[hsl(var(--text-primary))] placeholder:text-[hsl(var(--text-quaternary))]"
                 aria-invalid={!!errors.confirmPassword}
                 aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
                 {...register('confirmPassword')}
@@ -209,9 +209,9 @@ export function SignupForm() {
             </Button>
 
             {/* 로그인 링크 */}
-            <div className="text-center text-sm text-slate-400">
+            <div className="text-center text-sm text-[hsl(var(--text-tertiary))]">
               이미 계정이 있으신가요?{' '}
-              <Link href="/login" className="text-slate-300 hover:text-slate-50 underline">
+              <Link href="/login" className="text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--text-primary))] underline">
                 로그인
               </Link>
             </div>

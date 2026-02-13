@@ -24,7 +24,7 @@ const priorityDotStyles = {
   urgent: 'bg-red-500',
   high: 'bg-orange-500',
   medium: 'bg-yellow-500',
-  low: 'bg-slate-500',
+  low: 'bg-[hsl(var(--text-quaternary))]',
 };
 
 export function WorkItemCard({ workItem, onCardClick }: WorkItemCardProps) {
@@ -38,8 +38,8 @@ export function WorkItemCard({ workItem, onCardClick }: WorkItemCardProps) {
     <div
       onClick={handleClick}
       className={cn(
-        'bg-slate-800 border border-slate-700 rounded-lg p-4 cursor-pointer transition-all',
-        'hover:border-slate-600 hover:shadow-lg',
+        'bg-[hsl(var(--surface-elevated))] border border-[hsl(var(--border-default))] rounded-lg p-4 cursor-pointer transition-all',
+        'hover:border-[hsl(var(--border-hover))] hover:shadow-lg',
         onCardClick && 'cursor-pointer'
       )}
     >
@@ -53,7 +53,7 @@ export function WorkItemCard({ workItem, onCardClick }: WorkItemCardProps) {
           )}
           aria-label={`Priority: ${workItem.priority}`}
         />
-        <h3 className="text-sm font-medium text-slate-100 leading-snug">
+        <h3 className="text-sm font-medium text-[hsl(var(--text-primary))] leading-snug">
           {workItem.title}
         </h3>
       </div>
