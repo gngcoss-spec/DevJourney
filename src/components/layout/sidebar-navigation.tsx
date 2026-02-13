@@ -3,11 +3,12 @@
 
 'use client';
 
-import { Home, Layers, Server, Users, Clock, LogOut, Menu, X } from 'lucide-react';
+import { Home, Layers, Server, Users, Clock, LogOut, Menu, X, Search } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSidebarStore } from '@/stores/sidebar-store';
+import { useSearchStore } from '@/stores/search-store';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 
@@ -23,6 +24,7 @@ export default function SidebarNavigation() {
   const pathname = usePathname();
   const router = useRouter();
   const { isOpen, toggle, close } = useSidebarStore();
+  const searchStore = useSearchStore();
   const supabase = createClient();
 
   const handleLogout = async () => {
@@ -72,6 +74,18 @@ export default function SidebarNavigation() {
             <h2 className="text-lg font-semibold text-[hsl(var(--text-primary))]">DevJourney</h2>
             <p className="text-xs text-[hsl(var(--text-quaternary))] mt-1">개발 여정 관리</p>
           </div>
+
+          {/* 검색 버튼 */}
+          <button
+            onClick={() => searchStore.open()}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-md)] text-[hsl(var(--text-tertiary))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--text-secondary))] transition-colors w-full text-sm mb-4"
+          >
+            <Search className="size-5" />
+            <span>Search</span>
+            <kbd className="ml-auto hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-medium text-[hsl(var(--text-quaternary))] bg-[hsl(var(--surface-raised))] rounded border border-[hsl(var(--border-default))]">
+              Ctrl+K
+            </kbd>
+          </button>
 
           {/* 메뉴 항목 */}
           <nav className="space-y-1">

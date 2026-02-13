@@ -3,6 +3,7 @@
 
 import SidebarNavigation from '@/components/layout/sidebar-navigation';
 import { QueryProvider } from '@/components/providers/query-provider';
+import { SearchDialog } from '@/components/global-search';
 
 export default function DashboardLayout({
   children,
@@ -11,6 +12,7 @@ export default function DashboardLayout({
 }) {
   return (
     <QueryProvider>
+      <SearchDialog />
       <div className="flex min-h-screen bg-[hsl(var(--surface-ground))]">
         <SidebarNavigation />
         <main className="flex-1 p-6 md:p-8 md:ml-0">

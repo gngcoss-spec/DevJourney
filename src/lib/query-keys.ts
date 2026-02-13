@@ -48,4 +48,7 @@ export const queryKeys = {
     stats: ['dashboard', 'stats'] as const,
     recentActivity: ['dashboard', 'recent-activity'] as const,
   },
+  globalSearch: {
+    query: (q: string) => ['global-search', q] as const,
+  },
 };
