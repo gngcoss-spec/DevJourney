@@ -56,101 +56,140 @@ function formatDate(dateString: string): string {
 
 export const WorkItemsTable = memo(({ workItems, onRowClick }: WorkItemsTableProps) => {
   return (
-    <div className="rounded-lg border border-[hsl(var(--border-default))] overflow-hidden">
-      <table className="w-full" aria-label="Work Items 목록">
-        <caption className="sr-only">
-          총 {workItems.length}개의 Work Item
-        </caption>
-        <thead>
-          <tr className="border-b border-[hsl(var(--border-default))] bg-[hsl(var(--surface-raised))]">
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
-            >
-              제목
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
-            >
-              유형
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
-            >
-              우선순위
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
-            >
-              상태
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
-            >
-              생성일
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-[hsl(var(--surface-ground))] divide-y divide-[hsl(var(--border-default))]">
-          {workItems.map((workItem) => (
-            <tr
-              key={workItem.id}
-              onClick={() => onRowClick?.(workItem.id)}
-              className={onRowClick ? 'hover:bg-[hsl(var(--surface-raised))]/50 cursor-pointer transition-colors' : 'hover:bg-[hsl(var(--surface-raised))]/50 transition-colors'}
-            >
-              <td className={`px-6 py-4 ${workItem.parent_id ? 'pl-12' : ''}`}>
-                <div className="text-[hsl(var(--text-secondary))] font-medium">
-                  {workItem.parent_id && <span className="text-[hsl(var(--text-quaternary))] mr-1">↳</span>}
-                  {workItem.title}
-                </div>
-                {workItem.description && (
-                  <p className="text-sm text-[hsl(var(--text-tertiary))] mt-1">{workItem.description}</p>
-                )}
-              </td>
-              <td className="px-6 py-4">
-                <Badge
-                  variant="outline"
-                  className={typeStyles[workItem.type]}
-                  aria-label={`유형: ${workItem.type}`}
-                >
-                  {workItem.type}
-                </Badge>
-              </td>
-              <td className="px-6 py-4">
-                <Badge
-                  variant="outline"
-                  className={priorityStyles[workItem.priority]}
-                  aria-label={`우선순위: ${workItem.priority}`}
-                >
-                  {workItem.priority}
-                </Badge>
-              </td>
-              <td className="px-6 py-4">
-                <Badge
-                  variant="outline"
-                  className={statusStyles[workItem.status]}
-                  aria-label={`상태: ${workItem.status}`}
-                >
-                  {workItem.status}
-                </Badge>
-              </td>
-              <td className="px-6 py-4">
-                <time
-                  dateTime={workItem.created_at}
-                  className="text-sm text-[hsl(var(--text-tertiary))]"
-                >
-                  {formatDate(workItem.created_at)}
-                </time>
-              </td>
+    <>
+      {/* Desktop Table */}
+      <div className="hidden md:block rounded-lg border border-[hsl(var(--border-default))] overflow-hidden">
+        <table className="w-full" aria-label="Work Items 목록">
+          <caption className="sr-only">
+            총 {workItems.length}개의 Work Item
+          </caption>
+          <thead>
+            <tr className="border-b border-[hsl(var(--border-default))] bg-[hsl(var(--surface-raised))]">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
+              >
+                제목
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
+              >
+                유형
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
+              >
+                우선순위
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
+              >
+                상태
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider"
+              >
+                생성일
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody className="bg-[hsl(var(--surface-ground))] divide-y divide-[hsl(var(--border-default))]">
+            {workItems.map((workItem) => (
+              <tr
+                key={workItem.id}
+                onClick={() => onRowClick?.(workItem.id)}
+                className={onRowClick ? 'hover:bg-[hsl(var(--surface-raised))]/50 cursor-pointer transition-colors' : 'hover:bg-[hsl(var(--surface-raised))]/50 transition-colors'}
+              >
+                <td className={`px-6 py-4 ${workItem.parent_id ? 'pl-12' : ''}`}>
+                  <div className="text-[hsl(var(--text-secondary))] font-medium">
+                    {workItem.parent_id && <span className="text-[hsl(var(--text-quaternary))] mr-1">↳</span>}
+                    {workItem.title}
+                  </div>
+                  {workItem.description && (
+                    <p className="text-sm text-[hsl(var(--text-tertiary))] mt-1">{workItem.description}</p>
+                  )}
+                </td>
+                <td className="px-6 py-4">
+                  <Badge
+                    variant="outline"
+                    className={typeStyles[workItem.type]}
+                    aria-label={`유형: ${workItem.type}`}
+                  >
+                    {workItem.type}
+                  </Badge>
+                </td>
+                <td className="px-6 py-4">
+                  <Badge
+                    variant="outline"
+                    className={priorityStyles[workItem.priority]}
+                    aria-label={`우선순위: ${workItem.priority}`}
+                  >
+                    {workItem.priority}
+                  </Badge>
+                </td>
+                <td className="px-6 py-4">
+                  <Badge
+                    variant="outline"
+                    className={statusStyles[workItem.status]}
+                    aria-label={`상태: ${workItem.status}`}
+                  >
+                    {workItem.status}
+                  </Badge>
+                </td>
+                <td className="px-6 py-4">
+                  <time
+                    dateTime={workItem.created_at}
+                    className="text-sm text-[hsl(var(--text-tertiary))]"
+                  >
+                    {formatDate(workItem.created_at)}
+                  </time>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Card List */}
+      <div className="md:hidden space-y-3" role="list" aria-label="Work Items 목록">
+        {workItems.map((workItem) => (
+          <div
+            key={workItem.id}
+            role="listitem"
+            onClick={() => onRowClick?.(workItem.id)}
+            className={`rounded-lg border border-[hsl(var(--border-default))] bg-[hsl(var(--surface-ground))] p-4 ${workItem.parent_id ? 'ml-6' : ''} ${onRowClick ? 'cursor-pointer active:bg-[hsl(var(--surface-raised))]/50' : ''} transition-colors`}
+          >
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <div className="text-[hsl(var(--text-secondary))] font-medium min-w-0">
+                {workItem.parent_id && <span className="text-[hsl(var(--text-quaternary))] mr-1">↳</span>}
+                {workItem.title}
+              </div>
+              <time
+                dateTime={workItem.created_at}
+                className="text-xs text-[hsl(var(--text-tertiary))] shrink-0"
+              >
+                {formatDate(workItem.created_at)}
+              </time>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              <Badge variant="outline" className={typeStyles[workItem.type]}>
+                {workItem.type}
+              </Badge>
+              <Badge variant="outline" className={priorityStyles[workItem.priority]}>
+                {workItem.priority}
+              </Badge>
+              <Badge variant="outline" className={statusStyles[workItem.status]}>
+                {workItem.status}
+              </Badge>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 });
 

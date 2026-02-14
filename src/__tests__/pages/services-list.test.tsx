@@ -152,20 +152,20 @@ describe('ServicesPage', () => {
 
       render(<ServicesPage />, { wrapper: createWrapper() });
 
-      // 서비스명 확인
-      expect(screen.getByText('DevJourney')).toBeInTheDocument();
-      expect(screen.getByText('E-commerce Platform')).toBeInTheDocument();
-      expect(screen.getByText('Mobile App')).toBeInTheDocument();
+      // 서비스명 확인 (desktop table + mobile card = 2 each)
+      expect(screen.getAllByText('DevJourney').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('E-commerce Platform').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('Mobile App').length).toBeGreaterThanOrEqual(1);
 
       // 상태 뱃지 확인 (active, stalled, paused)
-      expect(screen.getByText('active')).toBeInTheDocument();
-      expect(screen.getByText('stalled')).toBeInTheDocument();
-      expect(screen.getByText('paused')).toBeInTheDocument();
+      expect(screen.getAllByText('active').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('stalled').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('paused').length).toBeGreaterThanOrEqual(1);
 
       // 단계 확인
-      expect(screen.getByText('development')).toBeInTheDocument();
-      expect(screen.getByText('planning')).toBeInTheDocument();
-      expect(screen.getByText('idea')).toBeInTheDocument();
+      expect(screen.getAllByText('development').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('planning').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('idea').length).toBeGreaterThanOrEqual(1);
     });
 
     it('다음 액션 컬럼 표시', () => {
@@ -208,10 +208,10 @@ describe('ServicesPage', () => {
 
       render(<ServicesPage />, { wrapper: createWrapper() });
 
-      // 진행률 숫자 확인 (45%, 20%, 10%)
-      expect(screen.getByText(/45%/)).toBeInTheDocument();
-      expect(screen.getByText(/20%/)).toBeInTheDocument();
-      expect(screen.getByText(/10%/)).toBeInTheDocument();
+      // 진행률 숫자 확인 (desktop + mobile = 2 each)
+      expect(screen.getAllByText(/45%/).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText(/20%/).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText(/10%/).length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -247,7 +247,7 @@ describe('ServicesPage', () => {
       await user.type(searchInput, 'DevJourney');
 
       await waitFor(() => {
-        expect(screen.getByText('DevJourney')).toBeInTheDocument();
+        expect(screen.getAllByText('DevJourney').length).toBeGreaterThanOrEqual(1);
         expect(screen.queryByText('E-commerce Platform')).not.toBeInTheDocument();
         expect(screen.queryByText('Mobile App')).not.toBeInTheDocument();
       });
@@ -286,8 +286,8 @@ describe('ServicesPage', () => {
 
       render(<ServicesPage />, { wrapper: createWrapper() });
 
-      const activeBadge = screen.getByText('active');
-      expect(activeBadge).toBeInTheDocument();
+      const activeBadges = screen.getAllByText('active');
+      expect(activeBadges.length).toBeGreaterThanOrEqual(1);
     });
 
     it('stalled 뱃지는 노란색', () => {
@@ -300,8 +300,8 @@ describe('ServicesPage', () => {
 
       render(<ServicesPage />, { wrapper: createWrapper() });
 
-      const stalledBadge = screen.getByText('stalled');
-      expect(stalledBadge).toBeInTheDocument();
+      const stalledBadges = screen.getAllByText('stalled');
+      expect(stalledBadges.length).toBeGreaterThanOrEqual(1);
     });
 
     it('paused 뱃지는 빨간색', () => {
@@ -314,8 +314,8 @@ describe('ServicesPage', () => {
 
       render(<ServicesPage />, { wrapper: createWrapper() });
 
-      const pausedBadge = screen.getByText('paused');
-      expect(pausedBadge).toBeInTheDocument();
+      const pausedBadges = screen.getAllByText('paused');
+      expect(pausedBadges.length).toBeGreaterThanOrEqual(1);
     });
   });
 });

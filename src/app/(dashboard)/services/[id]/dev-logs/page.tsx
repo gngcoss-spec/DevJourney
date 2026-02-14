@@ -30,7 +30,7 @@ export default function DevLogsPage() {
   if (!devLogs || devLogs.length === 0) {
     return (
       <div>
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
           <h1 className="text-2xl font-bold text-[hsl(var(--text-primary))]">개발 일지</h1>
           <Button onClick={() => setIsFormOpen(true)}>
             새 로그 작성
@@ -55,7 +55,7 @@ export default function DevLogsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
         <h1 className="text-2xl font-bold text-[hsl(var(--text-primary))]">개발 일지</h1>
         <Button onClick={() => setIsFormOpen(true)}>
           새 로그 작성

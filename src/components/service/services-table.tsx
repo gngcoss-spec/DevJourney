@@ -60,63 +60,106 @@ ProgressBar.displayName = 'ProgressBar';
 
 export function ServicesTable({ services }: ServicesTableProps) {
   return (
-    <div className="rounded-[var(--radius-lg)] border border-[hsl(var(--border-default))] overflow-hidden">
-      <table className="w-full" aria-label="서비스 목록">
-        <caption className="sr-only">
-          총 {services.length}개의 서비스
-        </caption>
-        <thead>
-          <tr className="border-b border-[hsl(var(--border-default))] bg-[hsl(var(--surface-raised))]">
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">서비스명</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">상태</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">현재 단계</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">진행률</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">다음 액션</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">마지막 활동</th>
-          </tr>
-        </thead>
-        <tbody className="bg-[hsl(var(--surface-ground))] divide-y divide-[hsl(var(--border-default))]">
-          {services.map((service) => (
-            <tr key={service.id} className="hover:bg-[hsl(var(--surface-raised))] transition-colors">
-              <td className="px-6 py-4">
-                <Link
-                  href={`/services/${service.id}`}
-                  className="text-[hsl(var(--text-secondary))] font-medium hover:text-[hsl(var(--text-primary))] transition-colors focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))] focus:ring-offset-2 focus:ring-offset-[hsl(var(--surface-ground))] rounded"
-                >
-                  {service.name}
-                </Link>
-                {service.description && (
-                  <p className="text-sm text-[hsl(var(--text-tertiary))] mt-1">{service.description}</p>
-                )}
-              </td>
-              <td className="px-6 py-4">
+    <>
+      {/* Desktop Table */}
+      <div className="hidden md:block rounded-[var(--radius-lg)] border border-[hsl(var(--border-default))] overflow-hidden">
+        <table className="w-full" aria-label="서비스 목록">
+          <caption className="sr-only">
+            총 {services.length}개의 서비스
+          </caption>
+          <thead>
+            <tr className="border-b border-[hsl(var(--border-default))] bg-[hsl(var(--surface-raised))]">
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">서비스명</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">상태</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">현재 단계</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">진행률</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">다음 액션</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--text-tertiary))] uppercase tracking-wider">마지막 활동</th>
+            </tr>
+          </thead>
+          <tbody className="bg-[hsl(var(--surface-ground))] divide-y divide-[hsl(var(--border-default))]">
+            {services.map((service) => (
+              <tr key={service.id} className="hover:bg-[hsl(var(--surface-raised))] transition-colors">
+                <td className="px-6 py-4">
+                  <Link
+                    href={`/services/${service.id}`}
+                    className="text-[hsl(var(--text-secondary))] font-medium hover:text-[hsl(var(--text-primary))] transition-colors focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))] focus:ring-offset-2 focus:ring-offset-[hsl(var(--surface-ground))] rounded"
+                  >
+                    {service.name}
+                  </Link>
+                  {service.description && (
+                    <p className="text-sm text-[hsl(var(--text-tertiary))] mt-1">{service.description}</p>
+                  )}
+                </td>
+                <td className="px-6 py-4">
+                  <StatusBadge
+                    variant={statusVariants[service.status]}
+                    aria-label={`상태: ${statusLabels[service.status]}`}
+                  >
+                    {service.status}
+                  </StatusBadge>
+                </td>
+                <td className="px-6 py-4">
+                  <span className="text-[hsl(var(--text-secondary))]">{service.current_stage}</span>
+                </td>
+                <td className="px-6 py-4">
+                  <ProgressBar progress={service.progress} />
+                </td>
+                <td className="px-6 py-4">
+                  <span className="text-sm text-[hsl(var(--text-secondary))]">
+                    {service.next_action || '-'}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <time dateTime={service.last_activity_at} className="text-sm text-[hsl(var(--text-tertiary))]">
+                    {formatDate(service.last_activity_at)}
+                  </time>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Card List */}
+      <div className="md:hidden space-y-3" role="list" aria-label="서비스 목록">
+        {services.map((service) => (
+          <Link
+            key={service.id}
+            href={`/services/${service.id}`}
+            className="block"
+          >
+            <div
+              role="listitem"
+              className="rounded-lg border border-[hsl(var(--border-default))] bg-[hsl(var(--surface-ground))] p-4 active:bg-[hsl(var(--surface-raised))]/50 transition-colors"
+            >
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <div className="min-w-0">
+                  <div className="text-[hsl(var(--text-secondary))] font-medium">{service.name}</div>
+                  {service.description && (
+                    <p className="text-sm text-[hsl(var(--text-tertiary))] mt-0.5 line-clamp-1">{service.description}</p>
+                  )}
+                </div>
                 <StatusBadge
                   variant={statusVariants[service.status]}
                   aria-label={`상태: ${statusLabels[service.status]}`}
                 >
                   {service.status}
                 </StatusBadge>
-              </td>
-              <td className="px-6 py-4">
-                <span className="text-[hsl(var(--text-secondary))]">{service.current_stage}</span>
-              </td>
-              <td className="px-6 py-4">
+              </div>
+              <div className="flex items-center justify-between gap-3 mt-3">
+                <span className="text-xs text-[hsl(var(--text-tertiary))]">{service.current_stage}</span>
                 <ProgressBar progress={service.progress} />
-              </td>
-              <td className="px-6 py-4">
-                <span className="text-sm text-[hsl(var(--text-secondary))]">
-                  {service.next_action || '-'}
-                </span>
-              </td>
-              <td className="px-6 py-4">
-                <time dateTime={service.last_activity_at} className="text-sm text-[hsl(var(--text-tertiary))]">
+              </div>
+              <div className="flex items-center justify-between mt-2 text-xs text-[hsl(var(--text-tertiary))]">
+                <time dateTime={service.last_activity_at}>
                   {formatDate(service.last_activity_at)}
                 </time>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </>
   );
 }

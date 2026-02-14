@@ -51,7 +51,7 @@ export function KanbanColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        'flex flex-col min-w-[280px] max-w-[280px] bg-[hsl(var(--surface-raised))] rounded-lg border border-[hsl(var(--border-default))]',
+        'flex flex-col min-w-[240px] max-w-[240px] md:min-w-[280px] md:max-w-[280px] bg-[hsl(var(--surface-raised))] rounded-lg border border-[hsl(var(--border-default))]',
         isOver && 'border-blue-500 bg-[hsl(var(--surface-elevated))]/50'
       )}
     >
@@ -79,7 +79,7 @@ export function KanbanColumn({
 
       {/* Cards List */}
       <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
-        <div className="flex-1 p-3 space-y-2 overflow-y-auto max-h-[calc(100vh-300px)]">
+        <div className="flex-1 p-3 space-y-2 overflow-y-auto max-h-[calc(100vh-260px)] md:max-h-[calc(100vh-300px)]">
           {items.map((item) => (
             <WorkItemCard key={item.id} workItem={item} onCardClick={onCardClick} allWorkItems={allWorkItems} />
           ))}

@@ -15,7 +15,7 @@ export default function DashboardLayout({
       <SearchDialog />
       <div className="flex min-h-screen bg-[hsl(var(--surface-ground))]">
         <SidebarNavigation />
-        <main className="flex-1 p-6 md:p-8 md:ml-0">
+        <main className="flex-1 p-4 pt-16 md:p-8 md:pt-8">
           {children}
         </main>
       </div>

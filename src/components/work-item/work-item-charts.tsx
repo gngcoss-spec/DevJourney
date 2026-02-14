@@ -78,7 +78,7 @@ export function WorkItemCharts({ stats }: WorkItemChartsProps) {
       {/* Status Pie Chart */}
       <div className="space-y-2">
         <h3 className="text-sm font-medium text-[hsl(var(--text-secondary))]">상태별 분포</h3>
-        <div className="h-[200px]">
+        <div className="h-[180px] md:h-[200px]">
           {statusData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -109,7 +109,7 @@ export function WorkItemCharts({ stats }: WorkItemChartsProps) {
       {/* Type Bar Chart */}
       <div className="space-y-2">
         <h3 className="text-sm font-medium text-[hsl(var(--text-secondary))]">유형별 분포</h3>
-        <div className="h-[200px]">
+        <div className="h-[180px] md:h-[200px]">
           {typeData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={typeData}>

@@ -115,7 +115,7 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultSta
         }
       }}
     >
-      <div className="w-[640px] max-h-[80vh] bg-background rounded-lg shadow-xl overflow-hidden flex flex-col">
+      <div className="w-[95vw] max-w-[640px] max-h-[85vh] md:max-h-[80vh] bg-background rounded-lg shadow-xl overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h2 id="modal-title" className="text-lg font-semibold text-[hsl(var(--text-primary))]">

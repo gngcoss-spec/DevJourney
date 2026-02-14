@@ -20,7 +20,7 @@ interface WorkItemsFilterProps {
   availableLabels: string[];
 }
 
-const selectClassName = "h-8 rounded-md border border-[hsl(var(--input))] bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-[hsl(var(--ring))] focus-visible:ring-[hsl(var(--ring)/0.5)] focus-visible:ring-[3px]";
+const selectClassName = "h-8 min-w-0 flex-1 sm:flex-none rounded-md border border-[hsl(var(--input))] bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-[hsl(var(--ring))] focus-visible:ring-[hsl(var(--ring)/0.5)] focus-visible:ring-[3px]";
 
 export function WorkItemsFilter({
   statusFilter,
@@ -36,9 +36,9 @@ export function WorkItemsFilter({
   availableLabels,
 }: WorkItemsFilterProps) {
   return (
-    <div className="flex items-center gap-3 flex-wrap">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-wrap">
       {/* 상태 필터 */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 min-w-0">
         <label htmlFor="status-filter" className="text-sm text-[hsl(var(--text-tertiary))]">
           상태:
         </label>

@@ -248,12 +248,12 @@ describe('WorkItemsPage', () => {
 
       render(<WorkItemsPage />, { wrapper: createWrapper() });
 
-      // 제목 확인
-      expect(screen.getByText('Work Items 목록 UI 구현')).toBeInTheDocument();
-      expect(screen.getByText('API 연동 버그 수정')).toBeInTheDocument();
-      expect(screen.getByText('코드 리팩토링')).toBeInTheDocument();
-      expect(screen.getByText('CI/CD 파이프라인 구축')).toBeInTheDocument();
-      expect(screen.getByText('AI 프롬프트 최적화')).toBeInTheDocument();
+      // 제목 확인 (desktop table + mobile card = 2 each)
+      expect(screen.getAllByText('Work Items 목록 UI 구현').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('API 연동 버그 수정').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('코드 리팩토링').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('CI/CD 파이프라인 구축').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('AI 프롬프트 최적화').length).toBeGreaterThanOrEqual(1);
     });
 
     it('헤더에 "새 Work Item" 버튼 표시', () => {
@@ -280,7 +280,7 @@ describe('WorkItemsPage', () => {
 
       render(<WorkItemsPage />, { wrapper: createWrapper() });
 
-      // 유형 뱃지 확인 (aria-label로 검색)
+      // 유형 뱃지 확인 (aria-label은 desktop table에만 존재)
       expect(screen.getByLabelText('유형: feature')).toBeInTheDocument();
       expect(screen.getByLabelText('유형: bug')).toBeInTheDocument();
       expect(screen.getByLabelText('유형: refactor')).toBeInTheDocument();
@@ -298,7 +298,7 @@ describe('WorkItemsPage', () => {
 
       render(<WorkItemsPage />, { wrapper: createWrapper() });
 
-      // 우선순위 뱃지 확인 (aria-label로 검색)
+      // 우선순위 뱃지 확인 (aria-label은 desktop table에만 존재)
       expect(screen.getByLabelText('우선순위: urgent')).toBeInTheDocument();
       expect(screen.getByLabelText('우선순위: high')).toBeInTheDocument();
       expect(screen.getAllByLabelText(/우선순위: medium/)).toHaveLength(2); // 2개
@@ -315,7 +315,7 @@ describe('WorkItemsPage', () => {
 
       render(<WorkItemsPage />, { wrapper: createWrapper() });
 
-      // 상태 뱃지 확인 (aria-label로 검색)
+      // 상태 뱃지 확인 (aria-label은 desktop table에만 존재)
       expect(screen.getByLabelText('상태: in-progress')).toBeInTheDocument();
       expect(screen.getByLabelText('상태: review')).toBeInTheDocument();
       expect(screen.getByLabelText('상태: backlog')).toBeInTheDocument();
@@ -383,8 +383,8 @@ describe('WorkItemsPage', () => {
       await user.selectOptions(statusFilter, 'backlog');
 
       await waitFor(() => {
-        // backlog 항목만 표시
-        expect(screen.getByText('코드 리팩토링')).toBeInTheDocument();
+        // backlog 항목만 표시 (desktop + mobile)
+        expect(screen.getAllByText('코드 리팩토링').length).toBeGreaterThanOrEqual(1);
         // 다른 상태는 표시 안 됨
         expect(screen.queryByText('Work Items 목록 UI 구현')).not.toBeInTheDocument();
         expect(screen.queryByText('API 연동 버그 수정')).not.toBeInTheDocument();
@@ -407,8 +407,8 @@ describe('WorkItemsPage', () => {
       await user.selectOptions(typeFilter, 'bug');
 
       await waitFor(() => {
-        // bug 항목만 표시
-        expect(screen.getByText('API 연동 버그 수정')).toBeInTheDocument();
+        // bug 항목만 표시 (desktop + mobile)
+        expect(screen.getAllByText('API 연동 버그 수정').length).toBeGreaterThanOrEqual(1);
         // 다른 유형은 표시 안 됨
         expect(screen.queryByText('Work Items 목록 UI 구현')).not.toBeInTheDocument();
         expect(screen.queryByText('코드 리팩토링')).not.toBeInTheDocument();
@@ -431,8 +431,8 @@ describe('WorkItemsPage', () => {
       await user.selectOptions(priorityFilter, 'urgent');
 
       await waitFor(() => {
-        // urgent 항목만 표시
-        expect(screen.getByText('API 연동 버그 수정')).toBeInTheDocument();
+        // urgent 항목만 표시 (desktop + mobile)
+        expect(screen.getAllByText('API 연동 버그 수정').length).toBeGreaterThanOrEqual(1);
         // 다른 우선순위는 표시 안 됨
         expect(screen.queryByText('Work Items 목록 UI 구현')).not.toBeInTheDocument();
         expect(screen.queryByText('코드 리팩토링')).not.toBeInTheDocument();
@@ -524,7 +524,7 @@ describe('WorkItemsPage', () => {
       render(<WorkItemsPage />, { wrapper: createWrapper() });
 
       // 행 존재 확인만 수행 (클릭 이벤트는 P3-S3-T1에서 구현)
-      const firstRow = screen.getByText('Work Items 목록 UI 구현').closest('tr');
+      const firstRow = screen.getAllByText('Work Items 목록 UI 구현')[0].closest('tr');
       expect(firstRow).toBeInTheDocument();
     });
   });

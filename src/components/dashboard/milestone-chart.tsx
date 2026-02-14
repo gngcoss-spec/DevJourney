@@ -58,7 +58,7 @@ export function MilestoneChart({ services }: MilestoneChartProps) {
       <BentoCardHeader>
         <BentoCardTitle className="text-subheading">마일스톤 진행률</BentoCardTitle>
       </BentoCardHeader>
-      <div className="h-[300px]">
+      <div className="h-[220px] md:h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(215 20% 22%)" />

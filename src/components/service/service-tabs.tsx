@@ -34,8 +34,8 @@ export function ServiceTabs({ serviceId }: ServiceTabsProps) {
   const basePath = `/services/${serviceId}`;
 
   return (
-    <nav className="border-b border-[hsl(var(--border-default))] overflow-x-auto">
-      <div className="flex space-x-6">
+    <nav className="border-b border-[hsl(var(--border-default))] overflow-x-auto scrollbar-none">
+      <div className="flex space-x-4 md:space-x-6">
         {tabs.map((tab) => {
           const href = `${basePath}${tab.path}`;
           const isActive = tab.path === ''

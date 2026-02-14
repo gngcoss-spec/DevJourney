@@ -136,7 +136,7 @@ export function SearchDialog() {
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent
         showCloseButton={false}
-        className="sm:max-w-[540px] p-0 gap-0"
+        className="w-[95vw] sm:max-w-[540px] p-0 gap-0"
         onKeyDown={handleDialogKeyDown}
       >
         <DialogTitle className="sr-only">검색</DialogTitle>

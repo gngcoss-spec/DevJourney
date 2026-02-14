@@ -119,7 +119,7 @@ function CollapsibleSection({
         </span>
       </button>
       {isOpen && (
-        <div className="space-y-2 ml-6">
+        <div className="space-y-2 ml-3 md:ml-6">
           {logs.map((log) => (
             <Link
               key={log.id}
