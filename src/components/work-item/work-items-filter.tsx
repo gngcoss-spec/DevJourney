@@ -10,21 +10,33 @@ interface WorkItemsFilterProps {
   statusFilter: WorkItemStatus | 'all';
   typeFilter: WorkItemType | 'all';
   priorityFilter: WorkItemPriority | 'all';
+  labelFilter: string;
+  storyPointsFilter: string;
   onStatusChange: (status: WorkItemStatus | 'all') => void;
   onTypeChange: (type: WorkItemType | 'all') => void;
   onPriorityChange: (priority: WorkItemPriority | 'all') => void;
+  onLabelChange: (label: string) => void;
+  onStoryPointsChange: (range: string) => void;
+  availableLabels: string[];
 }
+
+const selectClassName = "h-8 rounded-md border border-[hsl(var(--input))] bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-[hsl(var(--ring))] focus-visible:ring-[hsl(var(--ring)/0.5)] focus-visible:ring-[3px]";
 
 export function WorkItemsFilter({
   statusFilter,
   typeFilter,
   priorityFilter,
+  labelFilter,
+  storyPointsFilter,
   onStatusChange,
   onTypeChange,
   onPriorityChange,
+  onLabelChange,
+  onStoryPointsChange,
+  availableLabels,
 }: WorkItemsFilterProps) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3 flex-wrap">
       {/* 상태 필터 */}
       <div className="flex items-center gap-2">
         <label htmlFor="status-filter" className="text-sm text-[hsl(var(--text-tertiary))]">
@@ -34,7 +46,7 @@ export function WorkItemsFilter({
           id="status-filter"
           value={statusFilter}
           onChange={(e) => onStatusChange(e.target.value as WorkItemStatus | 'all')}
-          className="h-8 rounded-md border border-[hsl(var(--input))] bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-[hsl(var(--ring))] focus-visible:ring-[hsl(var(--ring)/0.5)] focus-visible:ring-[3px]"
+          className={selectClassName}
         >
           <option value="all">전체</option>
           <option value="backlog">backlog</option>
@@ -54,7 +66,7 @@ export function WorkItemsFilter({
           id="type-filter"
           value={typeFilter}
           onChange={(e) => onTypeChange(e.target.value as WorkItemType | 'all')}
-          className="h-8 rounded-md border border-[hsl(var(--input))] bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-[hsl(var(--ring))] focus-visible:ring-[hsl(var(--ring)/0.5)] focus-visible:ring-[3px]"
+          className={selectClassName}
         >
           <option value="all">전체</option>
           <option value="feature">feature</option>
@@ -74,13 +86,50 @@ export function WorkItemsFilter({
           id="priority-filter"
           value={priorityFilter}
           onChange={(e) => onPriorityChange(e.target.value as WorkItemPriority | 'all')}
-          className="h-8 rounded-md border border-[hsl(var(--input))] bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-[hsl(var(--ring))] focus-visible:ring-[hsl(var(--ring)/0.5)] focus-visible:ring-[3px]"
+          className={selectClassName}
         >
           <option value="all">전체</option>
           <option value="low">low</option>
           <option value="medium">medium</option>
           <option value="high">high</option>
           <option value="urgent">urgent</option>
+        </select>
+      </div>
+
+      {/* 라벨 필터 */}
+      <div className="flex items-center gap-2">
+        <label htmlFor="label-filter" className="text-sm text-[hsl(var(--text-tertiary))]">
+          라벨:
+        </label>
+        <select
+          id="label-filter"
+          value={labelFilter}
+          onChange={(e) => onLabelChange(e.target.value)}
+          className={selectClassName}
+        >
+          <option value="all">전체</option>
+          {availableLabels.map((label) => (
+            <option key={label} value={label}>{label}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* 스토리 포인트 필터 */}
+      <div className="flex items-center gap-2">
+        <label htmlFor="sp-filter" className="text-sm text-[hsl(var(--text-tertiary))]">
+          포인트:
+        </label>
+        <select
+          id="sp-filter"
+          value={storyPointsFilter}
+          onChange={(e) => onStoryPointsChange(e.target.value)}
+          className={selectClassName}
+        >
+          <option value="all">전체</option>
+          <option value="none">미추정</option>
+          <option value="1-3">1-3</option>
+          <option value="5-8">5-8</option>
+          <option value="13+">13+</option>
         </select>
       </div>
     </div>

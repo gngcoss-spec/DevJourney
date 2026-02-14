@@ -23,6 +23,8 @@ function createMockComment(overrides: Partial<WorkItemComment> = {}): WorkItemCo
     comment_type: 'comment',
     metadata: null,
     created_at: '2026-02-11T00:00:00Z',
+    updated_at: '2026-02-12T00:00:00Z',
+    is_edited: false,
     ...overrides,
   };
 }

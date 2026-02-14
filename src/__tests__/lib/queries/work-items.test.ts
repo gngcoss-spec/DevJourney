@@ -39,6 +39,8 @@ function createMockWorkItem(overrides: Partial<WorkItem> = {}): WorkItem {
     due_date: null,
     labels: [],
     assignee_id: null,
+    story_points: null,
+    parent_id: null,
     sort_order: 0,
     created_at: '2026-02-12T00:00:00Z',
     updated_at: '2026-02-12T00:00:00Z',

@@ -12,10 +12,22 @@ const mockUseCreateComment = vi.fn(() => ({
   mutate: mockCreateMutate,
   isPending: false,
 }));
+const mockUpdateMutate = vi.fn();
+const mockUseUpdateComment = vi.fn(() => ({
+  mutate: mockUpdateMutate,
+  isPending: false,
+}));
+const mockDeleteMutate = vi.fn();
+const mockUseDeleteComment = vi.fn(() => ({
+  mutate: mockDeleteMutate,
+  isPending: false,
+}));
 
 vi.mock('@/lib/hooks/use-comments', () => ({
   useComments: (...args: unknown[]) => mockUseComments(...args),
   useCreateComment: (...args: unknown[]) => mockUseCreateComment(...args),
+  useUpdateComment: (...args: unknown[]) => mockUseUpdateComment(...args),
+  useDeleteComment: (...args: unknown[]) => mockUseDeleteComment(...args),
 }));
 
 const mockComments: WorkItemComment[] = [
@@ -28,6 +40,8 @@ const mockComments: WorkItemComment[] = [
     comment_type: 'comment',
     metadata: {},
     created_at: '2026-02-13T10:00:00Z',
+    updated_at: '2026-02-12T00:00:00Z',
+    is_edited: false,
   },
   {
     id: 'c-2',
@@ -38,6 +52,8 @@ const mockComments: WorkItemComment[] = [
     comment_type: 'status_change',
     metadata: { from_status: 'backlog', to_status: 'in-progress' },
     created_at: '2026-02-13T11:00:00Z',
+    updated_at: '2026-02-12T00:00:00Z',
+    is_edited: false,
   },
 ];
 

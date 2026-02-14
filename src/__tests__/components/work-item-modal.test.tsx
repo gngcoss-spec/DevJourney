@@ -14,6 +14,8 @@ vi.mock('@/lib/hooks/use-work-items', () => ({
   useCreateWorkItem: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
   useUpdateWorkItem: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
   useDeleteWorkItem: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
+  useWorkItems: vi.fn(() => ({ data: [], isLoading: false })),
+  useWorkItem: vi.fn(() => ({ data: undefined })),
 }));
 
 vi.mock('@/lib/supabase/client', () => ({
@@ -36,10 +38,18 @@ vi.mock('@/lib/hooks/use-comments', () => ({
   useComments: vi.fn(() => ({ data: [], isLoading: false })),
   useCreateComment: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
   useCreateStatusChangeLog: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
+  useUpdateComment: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
+  useDeleteComment: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
 }));
 
 vi.mock('@/lib/hooks/use-team', () => ({
   useTeamMembers: vi.fn(() => ({ data: [], isLoading: false })),
+}));
+
+vi.mock('@/lib/hooks/use-work-item-links', () => ({
+  useWorkItemLinks: vi.fn(() => ({ data: [], isLoading: false })),
+  useCreateWorkItemLink: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
+  useDeleteWorkItemLink: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
 }));
 
 const mockWorkItem: WorkItem = {
@@ -59,6 +69,8 @@ const mockWorkItem: WorkItem = {
   due_date: null,
   labels: [],
   assignee_id: null,
+  story_points: null,
+  parent_id: null,
   sort_order: 1,
   created_at: '2024-01-01T00:00:00Z',
   updated_at: '2024-01-01T00:00:00Z',

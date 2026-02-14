@@ -102,8 +102,9 @@ export const WorkItemsTable = memo(({ workItems, onRowClick }: WorkItemsTablePro
               onClick={() => onRowClick?.(workItem.id)}
               className={onRowClick ? 'hover:bg-[hsl(var(--surface-raised))]/50 cursor-pointer transition-colors' : 'hover:bg-[hsl(var(--surface-raised))]/50 transition-colors'}
             >
-              <td className="px-6 py-4">
+              <td className={`px-6 py-4 ${workItem.parent_id ? 'pl-12' : ''}`}>
                 <div className="text-[hsl(var(--text-secondary))] font-medium">
+                  {workItem.parent_id && <span className="text-[hsl(var(--text-quaternary))] mr-1">↳</span>}
                   {workItem.title}
                 </div>
                 {workItem.description && (

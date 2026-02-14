@@ -16,6 +16,7 @@ interface KanbanColumnProps {
   status: WorkItemStatus;
   title: string;
   items: WorkItem[];
+  allWorkItems?: WorkItem[];
   onQuickCreate?: (status: WorkItemStatus) => void;
   onCardClick?: (workItemId: string) => void;
 }
@@ -32,6 +33,7 @@ export function KanbanColumn({
   status,
   title,
   items,
+  allWorkItems,
   onQuickCreate,
   onCardClick,
 }: KanbanColumnProps) {
@@ -79,7 +81,7 @@ export function KanbanColumn({
       <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
         <div className="flex-1 p-3 space-y-2 overflow-y-auto max-h-[calc(100vh-300px)]">
           {items.map((item) => (
-            <WorkItemCard key={item.id} workItem={item} onCardClick={onCardClick} />
+            <WorkItemCard key={item.id} workItem={item} onCardClick={onCardClick} allWorkItems={allWorkItems} />
           ))}
         </div>
       </SortableContext>

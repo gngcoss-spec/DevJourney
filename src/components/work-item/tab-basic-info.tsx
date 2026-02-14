@@ -7,10 +7,11 @@
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Plus, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -18,8 +19,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { CreateWorkItemInput, UpdateWorkItemInput } from '@/types/database';
+import type { CreateWorkItemInput, UpdateWorkItemInput, LinkType } from '@/types/database';
 import { useTeamMembers } from '@/lib/hooks/use-team';
+import { useWorkItems } from '@/lib/hooks/use-work-items';
+import { useWorkItemLinks, useCreateWorkItemLink, useDeleteWorkItemLink } from '@/lib/hooks/use-work-item-links';
 
 // Zod schema for work item basic info
 const basicInfoSchema = z.object({
@@ -32,6 +35,8 @@ const basicInfoSchema = z.object({
   due_date: z.string().optional(),
   labels: z.array(z.string()).optional(),
   assignee_id: z.string().optional(),
+  story_points: z.number().int().min(0).optional().nullable(),
+  parent_id: z.string().optional().nullable(),
 });
 
 type BasicInfoFormData = z.infer<typeof basicInfoSchema>;
@@ -58,6 +63,8 @@ export interface TabBasicInfoProps {
   formData: Partial<CreateWorkItemInput | UpdateWorkItemInput>;
   onChange: (field: string, value: unknown) => void;
   isEditMode: boolean;
+  serviceId?: string;
+  workItemId?: string;
 }
 
 const TYPE_OPTIONS = [
@@ -83,7 +90,13 @@ const STATUS_OPTIONS = [
   { value: 'done', label: '완료' },
 ] as const;
 
-export function TabBasicInfo({ formData, onChange, isEditMode }: TabBasicInfoProps) {
+const LINK_TYPE_LABELS: Record<LinkType, { label: string; style: string }> = {
+  blocks: { label: '차단', style: 'bg-red-500/20 text-red-400 border-red-500/30' },
+  relates_to: { label: '관련', style: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
+  duplicates: { label: '중복', style: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
+};
+
+export function TabBasicInfo({ formData, onChange, isEditMode, serviceId, workItemId }: TabBasicInfoProps) {
   const {
     register,
     control,
@@ -102,11 +115,21 @@ export function TabBasicInfo({ formData, onChange, isEditMode }: TabBasicInfoPro
       due_date: (formData as Record<string, unknown>).due_date as string || '',
       labels: ((formData as Record<string, unknown>).labels as string[]) || [],
       assignee_id: (formData as Record<string, unknown>).assignee_id as string || '',
+      story_points: (formData as Record<string, unknown>).story_points as number | null ?? null,
+      parent_id: (formData as Record<string, unknown>).parent_id as string | null ?? null,
     },
   });
 
   const { data: teamMembers } = useTeamMembers();
+  const { data: serviceWorkItems } = useWorkItems(serviceId || '');
+  const { data: links } = useWorkItemLinks(workItemId || '');
+  const createLink = useCreateWorkItemLink(workItemId || '');
+  const deleteLink = useDeleteWorkItemLink(workItemId || '');
+
   const [labelInput, setLabelInput] = useState('');
+  const [showLinkForm, setShowLinkForm] = useState(false);
+  const [newLinkTargetId, setNewLinkTargetId] = useState('');
+  const [newLinkType, setNewLinkType] = useState<LinkType>('relates_to');
   const labelsValue = watch('labels') || [];
 
   // Watch form changes and propagate to parent
@@ -118,6 +141,24 @@ export function TabBasicInfo({ formData, onChange, isEditMode }: TabBasicInfoPro
     });
     return () => subscription.unsubscribe();
   }, [watch, onChange]);
+
+  const availableWorkItems = serviceWorkItems?.filter(
+    (item) => item.id !== workItemId
+  ) || [];
+
+  const handleAddLink = () => {
+    if (!newLinkTargetId || !workItemId) return;
+    createLink.mutate(
+      { source_id: workItemId, target_id: newLinkTargetId, link_type: newLinkType },
+      {
+        onSuccess: () => {
+          setShowLinkForm(false);
+          setNewLinkTargetId('');
+          setNewLinkType('relates_to');
+        },
+      }
+    );
+  };
 
   return (
     <div className="space-y-4">
@@ -260,6 +301,40 @@ export function TabBasicInfo({ formData, onChange, isEditMode }: TabBasicInfoPro
         <input type="hidden" {...register('assignee_name')} />
       </div>
 
+      {/* 상위 항목 (생성 시에만) */}
+      {serviceId && (
+        <div className="space-y-2">
+          <Label htmlFor="parent_id">
+            상위 항목
+          </Label>
+          <Controller
+            name="parent_id"
+            control={control}
+            render={({ field }) => (
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value === '__none__' ? null : value);
+                  onChange('parent_id', value === '__none__' ? null : value);
+                }}
+                defaultValue={field.value || '__none__'}
+              >
+                <SelectTrigger id="parent_id">
+                  <SelectValue placeholder="상위 항목을 선택하세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">없음</SelectItem>
+                  {availableWorkItems.map((item) => (
+                    <SelectItem key={item.id} value={item.id}>
+                      {item.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </div>
+      )}
+
       {/* 마감일 */}
       <div className="space-y-2">
         <Label htmlFor="due_date">
@@ -269,6 +344,20 @@ export function TabBasicInfo({ formData, onChange, isEditMode }: TabBasicInfoPro
           id="due_date"
           type="date"
           {...register('due_date')}
+        />
+      </div>
+
+      {/* 스토리 포인트 */}
+      <div className="space-y-2">
+        <Label htmlFor="story_points">
+          스토리 포인트
+        </Label>
+        <Input
+          id="story_points"
+          type="number"
+          min="0"
+          placeholder="0, 1, 2, 3, 5, 8, 13..."
+          {...register('story_points', { valueAsNumber: true })}
         />
       </div>
 
@@ -315,6 +404,96 @@ export function TabBasicInfo({ formData, onChange, isEditMode }: TabBasicInfoPro
           placeholder="라벨을 입력하고 Enter를 누르세요"
         />
       </div>
+
+      {/* 연결된 항목 (편집 모드에서만) */}
+      {isEditMode && workItemId && (
+        <div className="space-y-2">
+          <Label>연결된 항목</Label>
+          {links && links.length > 0 && (
+            <div className="space-y-1.5">
+              {links.map((link) => {
+                const isSource = link.source_id === workItemId;
+                const linkedId = isSource ? link.target_id : link.source_id;
+                const linkedItem = serviceWorkItems?.find((i) => i.id === linkedId);
+                const typeInfo = LINK_TYPE_LABELS[link.link_type];
+                return (
+                  <div key={link.id} className="flex items-center gap-2 text-sm">
+                    <span className={`text-xs px-1.5 py-0.5 rounded border ${typeInfo.style}`}>
+                      {typeInfo.label}
+                    </span>
+                    <span className="text-[hsl(var(--text-secondary))] flex-1 truncate">
+                      {linkedItem?.title || linkedId}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => deleteLink.mutate(link.id)}
+                      className="text-[hsl(var(--text-quaternary))] hover:text-[hsl(var(--status-danger-text))]"
+                      aria-label="링크 삭제"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          {!showLinkForm ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowLinkForm(true)}
+            >
+              <Plus className="h-3.5 w-3.5 mr-1" />
+              항목 연결
+            </Button>
+          ) : (
+            <div className="flex items-end gap-2 p-3 rounded-md border border-[hsl(var(--border-default))] bg-[hsl(var(--surface-raised))]">
+              <div className="flex-1 space-y-1">
+                <label className="text-xs text-[hsl(var(--text-tertiary))]">대상 항목</label>
+                <select
+                  value={newLinkTargetId}
+                  onChange={(e) => setNewLinkTargetId(e.target.value)}
+                  className="w-full h-8 rounded-md border border-[hsl(var(--input))] bg-transparent px-2 text-sm"
+                >
+                  <option value="">선택...</option>
+                  {availableWorkItems.map((item) => (
+                    <option key={item.id} value={item.id}>{item.title}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-[hsl(var(--text-tertiary))]">관계</label>
+                <select
+                  value={newLinkType}
+                  onChange={(e) => setNewLinkType(e.target.value as LinkType)}
+                  className="h-8 rounded-md border border-[hsl(var(--input))] bg-transparent px-2 text-sm"
+                >
+                  <option value="relates_to">관련</option>
+                  <option value="blocks">차단</option>
+                  <option value="duplicates">중복</option>
+                </select>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                onClick={handleAddLink}
+                disabled={!newLinkTargetId || createLink.isPending}
+              >
+                추가
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowLinkForm(false)}
+              >
+                취소
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -63,12 +63,14 @@ export interface WorkItem {
   due_date: string | null;
   labels: string[];
   assignee_id: string | null;
+  story_points: number | null;
+  parent_id: string | null;
   sort_order: number;
   created_at: string;
   updated_at: string;
 }
 
-export type CreateWorkItemInput = Pick<WorkItem, 'service_id' | 'title'> & Partial<Pick<WorkItem, 'description' | 'type' | 'priority' | 'status' | 'problem' | 'options_considered' | 'decision_reason' | 'result' | 'assignee_name' | 'sort_order' | 'due_date' | 'labels' | 'assignee_id'>>;
+export type CreateWorkItemInput = Pick<WorkItem, 'service_id' | 'title'> & Partial<Pick<WorkItem, 'description' | 'type' | 'priority' | 'status' | 'problem' | 'options_considered' | 'decision_reason' | 'result' | 'assignee_name' | 'sort_order' | 'due_date' | 'labels' | 'assignee_id' | 'story_points' | 'parent_id'>>;
 
 export type UpdateWorkItemInput = Partial<Omit<WorkItem, 'id' | 'user_id' | 'service_id' | 'created_at' | 'updated_at'>>;
 
@@ -118,9 +120,28 @@ export interface WorkItemComment {
   comment_type: CommentType;
   metadata: Record<string, unknown> | null;
   created_at: string;
+  updated_at: string;
+  is_edited: boolean;
 }
 
 export type CreateCommentInput = Pick<WorkItemComment, 'work_item_id' | 'author_name' | 'content'> & Partial<Pick<WorkItemComment, 'comment_type' | 'metadata'>>;
+
+export type UpdateCommentInput = Pick<WorkItemComment, 'content'>;
+
+// --- Work Item Links ---
+
+export type LinkType = 'blocks' | 'relates_to' | 'duplicates';
+
+export interface WorkItemLink {
+  id: string;
+  source_id: string;
+  target_id: string;
+  link_type: LinkType;
+  user_id: string;
+  created_at: string;
+}
+
+export type CreateWorkItemLinkInput = Pick<WorkItemLink, 'source_id' | 'target_id'> & Partial<Pick<WorkItemLink, 'link_type'>>;
 
 // --- Decisions ---
 

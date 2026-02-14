@@ -5,8 +5,8 @@
 'use client';
 
 import { useState } from 'react';
-import { MessageSquare, GitBranch, Settings } from 'lucide-react';
-import { useComments, useCreateComment } from '@/lib/hooks/use-comments';
+import { MessageSquare, GitBranch, Settings, Pencil, Trash2 } from 'lucide-react';
+import { useComments, useCreateComment, useUpdateComment, useDeleteComment } from '@/lib/hooks/use-comments';
 import { IconWrapper } from '@/components/common/icon-wrapper';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -26,9 +26,13 @@ const COMMENT_TYPE_ICON_CONFIG: Record<CommentType, { icon: React.ElementType; c
 export function TabActivityLog({ workItemId }: TabActivityLogProps) {
   const [newComment, setNewComment] = useState('');
   const [authorName] = useState('User'); // TODO: Get from auth context
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState('');
 
   const { data: comments, isLoading } = useComments(workItemId);
   const createMutation = useCreateComment(workItemId);
+  const updateMutation = useUpdateComment(workItemId);
+  const deleteMutation = useDeleteComment(workItemId);
 
   const handleAddComment = () => {
     if (!newComment.trim()) {
@@ -47,6 +51,35 @@ export function TabActivityLog({ workItemId }: TabActivityLogProps) {
         },
       }
     );
+  };
+
+  const handleStartEdit = (commentId: string, content: string) => {
+    setEditingId(commentId);
+    setEditContent(content);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingId || !editContent.trim()) return;
+    updateMutation.mutate(
+      { commentId: editingId, content: editContent },
+      {
+        onSuccess: () => {
+          setEditingId(null);
+          setEditContent('');
+        },
+      }
+    );
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditContent('');
+  };
+
+  const handleDelete = (commentId: string) => {
+    if (window.confirm('이 댓글을 삭제하시겠습니까?')) {
+      deleteMutation.mutate(commentId);
+    }
   };
 
   if (isLoading) {
@@ -91,11 +124,62 @@ export function TabActivityLog({ workItemId }: TabActivityLogProps) {
                         hour: '2-digit',
                         minute: '2-digit',
                       })}
+                      {comment.is_edited && (
+                        <span className="ml-1 text-[hsl(var(--text-quaternary))]">(수정됨)</span>
+                      )}
                     </span>
+                    {/* Edit/Delete buttons for user comments only */}
+                    {comment.comment_type === 'comment' && editingId !== comment.id && (
+                      <div className="flex items-center gap-1 ml-auto">
+                        <button
+                          type="button"
+                          onClick={() => handleStartEdit(comment.id, comment.content)}
+                          className="text-[hsl(var(--text-quaternary))] hover:text-[hsl(var(--text-secondary))]"
+                          aria-label="댓글 수정"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(comment.id)}
+                          className="text-[hsl(var(--text-quaternary))] hover:text-[hsl(var(--status-danger-text))]"
+                          aria-label="댓글 삭제"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-sm text-[hsl(var(--text-secondary))] whitespace-pre-wrap">
-                    {comment.content}
-                  </p>
+                  {editingId === comment.id ? (
+                    <div className="space-y-2">
+                      <Textarea
+                        value={editContent}
+                        onChange={(e) => setEditContent(e.target.value)}
+                        rows={2}
+                        className="text-sm"
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={handleSaveEdit}
+                          disabled={!editContent.trim() || updateMutation.isPending}
+                        >
+                          {updateMutation.isPending ? '저장 중...' : '저장'}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={handleCancelEdit}
+                        >
+                          취소
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-[hsl(var(--text-secondary))] whitespace-pre-wrap">
+                      {comment.content}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

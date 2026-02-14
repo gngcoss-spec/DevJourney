@@ -6,11 +6,13 @@ import { useWorkItems, useWorkItem } from '@/lib/hooks/use-work-items';
 import { WorkItemsFilter } from '@/components/work-item/work-items-filter';
 import { WorkItemsTable } from '@/components/work-item/work-items-table';
 import { WorkItemModal } from '@/components/work-item/work-item-modal';
+import { WorkItemCharts } from '@/components/work-item/work-item-charts';
 import { Button } from '@/components/ui/button';
 import { PageLoading } from '@/components/common/page-loading';
 import { PageError } from '@/components/common/page-error';
 import { PageEmpty } from '@/components/common/page-empty';
-import { ListTodo } from 'lucide-react';
+import { ListTodo, BarChart3, ChevronDown, ChevronUp } from 'lucide-react';
+import { computeWorkItemStats } from '@/lib/utils/work-item-stats';
 import type { WorkItemType, WorkItemPriority, WorkItemStatus } from '@/types/database';
 
 export default function WorkItemsPage() {
@@ -22,6 +24,7 @@ export default function WorkItemsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedWorkItemId, setSelectedWorkItemId] = useState<string | null>(null);
   const { data: selectedWorkItem } = useWorkItem(selectedWorkItemId || '');
+  const [showStats, setShowStats] = useState(false);
 
   const handleCreateNew = () => {
     setSelectedWorkItemId(null);
@@ -41,6 +44,13 @@ export default function WorkItemsPage() {
   const [statusFilter, setStatusFilter] = useState<WorkItemStatus | 'all'>('all');
   const [typeFilter, setTypeFilter] = useState<WorkItemType | 'all'>('all');
   const [priorityFilter, setPriorityFilter] = useState<WorkItemPriority | 'all'>('all');
+  const [labelFilter, setLabelFilter] = useState<string>('all');
+  const [storyPointsFilter, setStoryPointsFilter] = useState<string>('all');
+
+  const availableLabels = useMemo(() => {
+    if (!workItems) return [];
+    return [...new Set(workItems.flatMap((i) => i.labels || []))];
+  }, [workItems]);
 
   const filteredWorkItems = useMemo(() => {
     if (!workItems) return [];
@@ -49,10 +59,39 @@ export default function WorkItemsPage() {
       const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
       const matchesType = typeFilter === 'all' || item.type === typeFilter;
       const matchesPriority = priorityFilter === 'all' || item.priority === priorityFilter;
+      const matchesLabel = labelFilter === 'all' || item.labels?.includes(labelFilter);
+      const matchesStoryPoints = storyPointsFilter === 'all'
+        || (storyPointsFilter === 'none' && !item.story_points)
+        || (storyPointsFilter === '1-3' && item.story_points != null && item.story_points >= 1 && item.story_points <= 3)
+        || (storyPointsFilter === '5-8' && item.story_points != null && item.story_points >= 5 && item.story_points <= 8)
+        || (storyPointsFilter === '13+' && item.story_points != null && item.story_points >= 13);
 
-      return matchesStatus && matchesType && matchesPriority;
+      return matchesStatus && matchesType && matchesPriority && matchesLabel && matchesStoryPoints;
     });
-  }, [workItems, statusFilter, typeFilter, priorityFilter]);
+  }, [workItems, statusFilter, typeFilter, priorityFilter, labelFilter, storyPointsFilter]);
+
+  // Sort: parents first, then sub-tasks grouped under their parent
+  const sortedWorkItems = useMemo(() => {
+    const parents = filteredWorkItems.filter((item) => !item.parent_id);
+    const children = filteredWorkItems.filter((item) => item.parent_id);
+    const result = [];
+    for (const parent of parents) {
+      result.push(parent);
+      const subs = children.filter((c) => c.parent_id === parent.id);
+      result.push(...subs);
+    }
+    // Add orphan sub-tasks (parent filtered out)
+    const placed = new Set(result.map((r) => r.id));
+    for (const child of children) {
+      if (!placed.has(child.id)) result.push(child);
+    }
+    return result;
+  }, [filteredWorkItems]);
+
+  const stats = useMemo(() => {
+    if (!workItems) return null;
+    return computeWorkItemStats(workItems);
+  }, [workItems]);
 
   if (isLoading) {
     return <PageLoading />;
@@ -108,21 +147,41 @@ export default function WorkItemsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-[hsl(var(--text-primary))]">Work Items</h1>
-        <Button onClick={() => handleCreateNew()}>
-          새 Work Item
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowStats(!showStats)}
+          >
+            <BarChart3 className="h-4 w-4 mr-1" />
+            통계
+            {showStats ? <ChevronUp className="h-3 w-3 ml-1" /> : <ChevronDown className="h-3 w-3 ml-1" />}
+          </Button>
+          <Button onClick={() => handleCreateNew()}>
+            새 Work Item
+          </Button>
+        </div>
       </div>
+
+      {showStats && stats && (
+        <WorkItemCharts stats={stats} />
+      )}
 
       <WorkItemsFilter
         statusFilter={statusFilter}
         typeFilter={typeFilter}
         priorityFilter={priorityFilter}
+        labelFilter={labelFilter}
+        storyPointsFilter={storyPointsFilter}
         onStatusChange={setStatusFilter}
         onTypeChange={setTypeFilter}
         onPriorityChange={setPriorityFilter}
+        onLabelChange={setLabelFilter}
+        onStoryPointsChange={setStoryPointsFilter}
+        availableLabels={availableLabels}
       />
 
-      {filteredWorkItems.length === 0 && (
+      {sortedWorkItems.length === 0 && (
         <div className="flex flex-col items-center justify-center min-h-[30vh] text-center">
           <p className="text-[hsl(var(--text-tertiary))] text-lg">필터 조건에 맞는 Work Item이 없습니다</p>
           <p className="text-[hsl(var(--text-quaternary))] text-sm mt-2">
@@ -131,8 +190,8 @@ export default function WorkItemsPage() {
         </div>
       )}
 
-      {filteredWorkItems.length > 0 && (
-        <WorkItemsTable workItems={filteredWorkItems} onRowClick={handleRowClick} />
+      {sortedWorkItems.length > 0 && (
+        <WorkItemsTable workItems={sortedWorkItems} onRowClick={handleRowClick} />
       )}
 
       <WorkItemModal

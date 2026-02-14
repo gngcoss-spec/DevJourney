@@ -10,6 +10,7 @@ import type { WorkItem } from '@/types/database';
 interface WorkItemCardProps {
   workItem: WorkItem;
   onCardClick?: (workItemId: string) => void;
+  allWorkItems?: WorkItem[];
 }
 
 const typeBadgeStyles = {
@@ -55,12 +56,16 @@ function DueDateBadge({ dueDate }: { dueDate: string }) {
   );
 }
 
-export function WorkItemCard({ workItem, onCardClick }: WorkItemCardProps) {
+export function WorkItemCard({ workItem, onCardClick, allWorkItems }: WorkItemCardProps) {
   const handleClick = () => {
     if (onCardClick) {
       onCardClick(workItem.id);
     }
   };
+
+  // Sub-task count (only for parent items)
+  const subTasks = allWorkItems?.filter((item) => item.parent_id === workItem.id) || [];
+  const completedSubTasks = subTasks.filter((item) => item.status === 'done');
 
   return (
     <div
@@ -86,7 +91,7 @@ export function WorkItemCard({ workItem, onCardClick }: WorkItemCardProps) {
         </h3>
       </div>
 
-      {/* Type Badge + Due Date */}
+      {/* Type Badge + Story Points + Due Date */}
       <div className="flex items-center gap-2 flex-wrap">
         <span
           className={cn(
@@ -96,6 +101,11 @@ export function WorkItemCard({ workItem, onCardClick }: WorkItemCardProps) {
         >
           {workItem.type}
         </span>
+        {workItem.story_points != null && workItem.story_points > 0 && (
+          <span className="text-xs px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
+            {workItem.story_points}pt
+          </span>
+        )}
         {workItem.due_date && (
           <DueDateBadge dueDate={workItem.due_date} />
         )}
@@ -120,17 +130,24 @@ export function WorkItemCard({ workItem, onCardClick }: WorkItemCardProps) {
         </div>
       )}
 
-      {/* Assignee */}
-      {workItem.assignee_name && (
-        <div className="flex justify-end mt-2">
+      {/* Sub-task count + Assignee */}
+      <div className="flex items-center justify-between mt-2">
+        <div>
+          {!workItem.parent_id && subTasks.length > 0 && (
+            <span className="text-xs text-[hsl(var(--text-tertiary))]">
+              {completedSubTasks.length}/{subTasks.length} sub
+            </span>
+          )}
+        </div>
+        {workItem.assignee_name && (
           <div
             className="w-6 h-6 rounded-full bg-[hsl(var(--status-info-bg))] text-[hsl(var(--status-info-text))] text-xs flex items-center justify-center"
             title={workItem.assignee_name}
           >
             {workItem.assignee_name.charAt(0).toUpperCase()}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

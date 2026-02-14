@@ -10,6 +10,7 @@ export const queryKeys = {
     detail: (id: string) => ['work-items', 'detail', id] as const,
     comments: (id: string) => ['work-items', id, 'comments'] as const,
     aiSessions: (id: string) => ['work-items', id, 'ai-sessions'] as const,
+    links: (id: string) => ['work-items', id, 'links'] as const,
   },
   devLogs: {
     all: ['dev-logs'] as const,

@@ -108,3 +108,38 @@ export async function createStatusChangeLog(
 
   return created as WorkItemComment;
 }
+
+/**
+ * Update an existing comment's content.
+ * Sets is_edited to true and updates updated_at timestamp.
+ */
+export async function updateComment(
+  client: SupabaseClient,
+  commentId: string,
+  content: string
+): Promise<WorkItemComment> {
+  const { data, error } = await client
+    .from('work_item_comments')
+    .update({ content, is_edited: true, updated_at: new Date().toISOString() })
+    .eq('id', commentId)
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data as WorkItemComment;
+}
+
+/**
+ * Delete a comment by ID.
+ */
+export async function deleteComment(
+  client: SupabaseClient,
+  commentId: string
+): Promise<void> {
+  const { error } = await client
+    .from('work_item_comments')
+    .delete()
+    .eq('id', commentId);
+
+  if (error) throw new Error(error.message);
+}

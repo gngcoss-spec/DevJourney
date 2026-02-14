@@ -112,6 +112,7 @@ export function KanbanBoard({
             status={column.status}
             title={column.title}
             items={itemsByStatus[column.status]}
+            allWorkItems={workItems}
             onQuickCreate={onQuickCreate}
             onCardClick={onCardClick}
           />

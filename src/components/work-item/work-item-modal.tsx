@@ -39,6 +39,8 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultSta
       due_date: '',
       labels: [],
       assignee_id: '',
+      story_points: null,
+      parent_id: null,
     }
   );
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -171,6 +173,8 @@ export function WorkItemModal({ isOpen, onClose, workItem, serviceId, defaultSta
                 formData={formData}
                 onChange={handleFormChange}
                 isEditMode={isEditMode}
+                serviceId={serviceId}
+                workItemId={workItem?.id}
               />
             </>
           )}

@@ -34,6 +34,8 @@ const mockComment: WorkItemComment = {
   comment_type: 'comment',
   metadata: {},
   created_at: '2026-02-13T00:00:00Z',
+  updated_at: '2026-02-12T00:00:00Z',
+  is_edited: false,
 };
 
 describe('use-comments hooks', () => {
