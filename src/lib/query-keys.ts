@@ -52,4 +52,8 @@ export const queryKeys = {
   globalSearch: {
     query: (q: string) => ['global-search', q] as const,
   },
+  codeAnalyses: {
+    byService: (serviceId: string) => ['code-analyses', 'service', serviceId] as const,
+    detail: (id: string) => ['code-analyses', id] as const,
+  },
 };

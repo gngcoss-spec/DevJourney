@@ -248,3 +248,56 @@ export interface TeamMember {
 export type CreateTeamMemberInput = Pick<TeamMember, 'display_name'> & Partial<Pick<TeamMember, 'email' | 'role' | 'status'>>;
 
 export type UpdateTeamMemberInput = Partial<Omit<TeamMember, 'id' | 'user_id' | 'invited_by' | 'created_at' | 'updated_at'>>;
+
+// --- Code Analyses ---
+
+export type AnalysisStatus = 'pending' | 'running' | 'completed' | 'failed';
+
+export interface CodeAnalysis {
+  id: string;
+  service_id: string;
+  user_id: string;
+  repo_url: string;
+  repo_owner: string;
+  repo_name: string;
+  status: AnalysisStatus;
+  repo_info: Record<string, unknown> | null;
+  findings: AnalysisFinding[];
+  summary: AnalysisSummary | null;
+  error_message: string | null;
+  analyzed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AnalysisFinding {
+  id: string;
+  category: FindingCategory;
+  severity: FindingSeverity;
+  title: string;
+  description: string;
+  file_path?: string;
+  suggestion: string;
+}
+
+export type FindingCategory =
+  | 'project-structure'
+  | 'dependencies'
+  | 'config-quality'
+  | 'code-patterns'
+  | 'security'
+  | 'documentation'
+  | 'testing';
+
+export type FindingSeverity = 'info' | 'warning' | 'critical';
+
+export interface AnalysisSummary {
+  total_findings: number;
+  by_category: Record<string, number>;
+  by_severity: Record<string, number>;
+  health_score: number;
+}
+
+export type CreateCodeAnalysisInput = Pick<CodeAnalysis, 'service_id' | 'repo_url'>;
+
+export type UpdateCodeAnalysisInput = Partial<Pick<CodeAnalysis, 'status' | 'repo_info' | 'findings' | 'summary' | 'error_message' | 'analyzed_at'>>;

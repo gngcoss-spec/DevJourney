@@ -11,6 +11,7 @@ import {
   Map,
   Scale,
   FileText,
+  SearchCode,
   Settings,
 } from 'lucide-react';
 
@@ -26,6 +27,7 @@ const tabs = [
   { label: 'Roadmap', icon: Map, path: '/roadmap' },
   { label: 'Decisions', icon: Scale, path: '/decisions' },
   { label: 'Documents', icon: FileText, path: '/documents' },
+  { label: '코드 분석', icon: SearchCode, path: '/code-analysis' },
   { label: 'Settings', icon: Settings, path: '/settings' },
 ];
 
